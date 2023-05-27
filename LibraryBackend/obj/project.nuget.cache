@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mJePZZu2WQgVw+GDU7D44rZP+tdZ4kNr8ZNYdDN92pdQKteOssdyGSnGocEjcpW6g3bpNmRqdzF1MAmySmHMWA==",
+  "dgSpecHash": "p5/z78bkP2matYzcFwi46NCpZOocFQRVgyHr1HI/Pt5uoLsppJJ4m0pLZ/OnOlX6iv6yjBQgGYZ0kIWYseTYDA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\phili\\salt\\saltLab\\projet\\BooklibraryBackend\\backend\\LibraryBackend\\LibraryBackend.csproj",
+  "projectFilePath": "C:\\Users\\phili\\salt\\saltLab\\projet\\BooklibraryBackend\\bookLibraryBackend\\LibraryBackend\\LibraryBackend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\phili\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\phili\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
