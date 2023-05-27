@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\phili\\salt\\saltLab\\projet\\BooklibraryBackend\\backend\\LibraryBackend\\LibraryBackend.csproj": {}
+    "C:\\Users\\phili\\salt\\saltLab\\projet\\BooklibraryBackend\\bookLibraryBackend\\LibraryBackend\\LibraryBackend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\phili\\salt\\saltLab\\projet\\BooklibraryBackend\\backend\\LibraryBackend\\LibraryBackend.csproj": {
+    "C:\\Users\\phili\\salt\\saltLab\\projet\\BooklibraryBackend\\bookLibraryBackend\\LibraryBackend\\LibraryBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\phili\\salt\\saltLab\\projet\\BooklibraryBackend\\backend\\LibraryBackend\\LibraryBackend.csproj",
+        "projectUniqueName": "C:\\Users\\phili\\salt\\saltLab\\projet\\BooklibraryBackend\\bookLibraryBackend\\LibraryBackend\\LibraryBackend.csproj",
         "projectName": "LibraryBackend",
-        "projectPath": "C:\\Users\\phili\\salt\\saltLab\\projet\\BooklibraryBackend\\backend\\LibraryBackend\\LibraryBackend.csproj",
+        "projectPath": "C:\\Users\\phili\\salt\\saltLab\\projet\\BooklibraryBackend\\bookLibraryBackend\\LibraryBackend\\LibraryBackend.csproj",
         "packagesPath": "C:\\Users\\phili\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\phili\\salt\\saltLab\\projet\\BooklibraryBackend\\backend\\LibraryBackend\\obj\\",
+        "outputPath": "C:\\Users\\phili\\salt\\saltLab\\projet\\BooklibraryBackend\\bookLibraryBackend\\LibraryBackend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\phili\\AppData\\Roaming\\NuGet\\NuGet.Config",
