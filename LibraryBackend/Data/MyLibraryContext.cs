@@ -15,7 +15,7 @@ using LibraryBackend.Models;
         {
         }
 
-        public DbSet<LibraryBackend.Models.Opinion> Opinion { get; set; }
+        public DbSet<Opinion> Opinion { get; set; }=default!;
 
-        public DbSet<LibraryBackend.Models.Book> Book { get; set; }
+        public DbSet<Book> Book { get; set; }=default!;
     }
