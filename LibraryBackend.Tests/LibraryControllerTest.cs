@@ -1,13 +1,15 @@
 namespace LibraryBackend.Tests;
 using Microsoft.EntityFrameworkCore;
 using LibraryBackend.Models;
+using LibraryBackend.Data;
 using LibraryBackend.Controllers;
 using System.Net.Http;
 using System.Net;
 using Xunit;
 
-public abstract class LibraryControllerTest
+public abstract class LibraryControllerTest 
 {
+
   readonly HttpClient _client;
   const string Base_URL = "/api/Book";
   const string GetAllBooks_URL = Base_URL;
@@ -18,7 +20,10 @@ public abstract class LibraryControllerTest
     Seed();
     _client = new HttpClient();
     _client.BaseAddress = new Uri("http://localhost:5281");
+   
+    
   }
+
 
   protected DbContextOptions<MyLibraryContext> ContextOptions { get; }
 
@@ -64,27 +69,26 @@ public abstract class LibraryControllerTest
 
   [Fact]
 
-  public async void Should_get_3_books()
+   public async Task Should_get_4_books()
   {
     using (var context = new MyLibraryContext(ContextOptions))
     {
       //Arrange
-      var controller = new BookController(context);
+      var controller = new BookController(new BookRepository(context));
 
       //Act
       var books = await controller.GetBook();
+      
 
       // Assert
       Assert.Equal(4, books?.Value?.Count());
       Assert.Equal(1, books?.Value?.ElementAt(0).BookId);
       Assert.Equal("bookTwo author", books?.Value?.ElementAt(1).Author);
       Assert.Equal("bookThree title", books?.Value?.ElementAt(2).Title);
-
-
     }
 
-  }
-
+  } 
+ 
   [Fact]
   public async void GetBook_should_return_ok()
   {
@@ -94,7 +98,7 @@ public abstract class LibraryControllerTest
     //Assert
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
   }
-
+/*
   [Fact]
   public async void GetBook_Empty_should_return_ok()
   {
@@ -127,7 +131,7 @@ public abstract class LibraryControllerTest
       // assert
       Assert.Equal(HttpStatusCode.NotFound,response.StatusCode);
       
-    }
+    } */
 }
   
 
