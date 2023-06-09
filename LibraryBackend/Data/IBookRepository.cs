@@ -5,12 +5,12 @@ namespace LibraryBackend.Data
   public interface IBookRepository
   {
     Book GetBookById(int id);
-    Book GetBookByTitle(int id , string title);
-    IEnumerable<Book> GetAllBooks();
+    Book GetBookByTitle(int id, string title);
+    Task<IEnumerable<Book>> GetAllBooksAsync();
 
-    Book CreateBook (string title, string author);
-    Book UpdateBook(int id, string title,string author);
-    Book DeleteBook (int id);
+    void CreateBook(string title, string author);
+    void UpdateBook(int id, string title, string author);
+    void DeleteBook(int id);
 
   }
 }
