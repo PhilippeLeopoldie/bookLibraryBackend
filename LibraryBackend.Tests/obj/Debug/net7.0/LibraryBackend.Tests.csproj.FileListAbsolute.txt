@@ -1073,3 +1073,5 @@ C:\Users\phili\salt\saltLab\projet\BooklibraryBackend\bookLibraryBackend\Library
 C:\Users\phili\salt\saltLab\projet\BooklibraryBackend\bookLibraryBackend\LibraryBackend.Tests\bin\Debug\net7.0\Microsoft.Extensions.Configuration.Binder.dll
 C:\Users\phili\salt\saltLab\projet\BooklibraryBackend\bookLibraryBackend\LibraryBackend.Tests\bin\Debug\net7.0\Microsoft.Extensions.Hosting.dll
 C:\Users\phili\salt\saltLab\projet\BooklibraryBackend\bookLibraryBackend\LibraryBackend.Tests\bin\Debug\net7.0\Microsoft.Extensions.Options.dll
+C:\Users\phili\salt\saltLab\projet\BooklibraryBackend\bookLibraryBackend\LibraryBackend.Tests\bin\Debug\net7.0\Castle.Core.dll
+C:\Users\phili\salt\saltLab\projet\BooklibraryBackend\bookLibraryBackend\LibraryBackend.Tests\bin\Debug\net7.0\Moq.dll
