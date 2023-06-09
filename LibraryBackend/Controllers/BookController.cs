@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryBackend.Models;
+using LibraryBackend.Data;
 
 namespace LibraryBackend.Controllers
 {
@@ -13,25 +14,25 @@ namespace LibraryBackend.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        private readonly MyLibraryContext _context;
+        //private readonly MyLibraryContext _context;
+        private readonly IBookRepository _bookRepository;
 
-        public BookController(MyLibraryContext context)
+
+        public BookController(IBookRepository bookRepository)
         {
-            _context = context;
+            _bookRepository = bookRepository;
         }
 
         // GET: api/Book
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Book>>> GetBook()
         {
-            if(_context.Book== null || !_context.Book.Any())
-            {
-                return NotFound();
-            } 
-            
-            return await _context.Book.ToListAsync();
-        }
+            var books = await _bookRepository.GetAllBooksAsync();
 
+            return Ok(books);
+            
+        }
+/* 
         // GET: api/Book/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetBook(int id)
@@ -107,6 +108,6 @@ namespace LibraryBackend.Controllers
         private bool BookExists(int id)
         {
             return _context.Book.Any(e => e.BookId == id);
-        }
+        } */
     }
 }
