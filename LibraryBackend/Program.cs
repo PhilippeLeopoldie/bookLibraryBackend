@@ -20,7 +20,8 @@ builder.Services.AddCors(options =>
                         "https://books-library-project-git-master-philippeleopoldie.vercel.app/",
                          "https://books-library-project-philippeleopoldie.vercel.app/",
                          "https://backend-sepia-eight.vercel.app/",
-                         "https://booklibray-backend.herokuapp.com")
+                         "https://booklibray-backend.herokuapp.com",
+                         "https://leopoldie-booklibray-backend.herokuapp.com")
                        .AllowAnyHeader()
                        .AllowAnyMethod()
                        .SetIsOriginAllowed((host) => true)
