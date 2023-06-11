@@ -30,9 +30,10 @@ namespace LibraryBackend.Data
 
 
 
-    Book IBookRepository.GetBookById(int id)
+    async Task<Book> IBookRepository.GetBookByIdAsync(int id)
     {
-      throw new NotImplementedException();
+      return await _context.Book.Include(x => x.Opinions).Where(book => book.BookId == id).FirstAsync();
+      //throw new NotImplementedException();
     }
 
     Book IBookRepository.GetBookByTitle(int id, string title)

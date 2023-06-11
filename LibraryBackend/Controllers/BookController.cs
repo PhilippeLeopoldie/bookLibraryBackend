@@ -25,6 +25,7 @@ namespace LibraryBackend.Controllers
 
         // GET: api/Book
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Book>>> GetBook()
         {
             var books = await _bookRepository.GetAllBooksAsync();
@@ -32,6 +33,15 @@ namespace LibraryBackend.Controllers
             return Ok(books);
             
         }
+
+        
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Book>> GetBookById(int id)
+        {
+            var book = await _bookRepository.GetBookByIdAsync(id);
+            return Ok(book);
+        }
+
 /* 
         // GET: api/Book/5
         [HttpGet("{id}")]
