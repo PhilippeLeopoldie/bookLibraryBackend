@@ -73,6 +73,24 @@ namespace LibraryBackend.Tests
       Assert.Equal(expectedBook?.Author, book.Author);
     }
 
+    [Fact]
+    public async void should_get_not_found_for_getById_with_wrong_id()
+    {
+      // Arrange
+
+      int bookId = 2;
+      Book expectedBook = mockData.FirstOrDefault(x=>x.BookId == bookId);
+      _mockBookRepository.Setup(repositoryMock => repositoryMock.GetBookByIdAsync(bookId)).ReturnsAsync(expectedBook);
+
+      // Act
+      var result = await _bookController.GetBookById(3);
+
+      // Assert
+
+      var notFoundResult = Assert.IsType<NotFoundResult>(result.Result);
+      
+    }
+
 
 
 
