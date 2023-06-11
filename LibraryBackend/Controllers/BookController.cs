@@ -39,6 +39,7 @@ namespace LibraryBackend.Controllers
         public async Task<ActionResult<Book>> GetBookById(int id)
         {
             var book = await _bookRepository.GetBookByIdAsync(id);
+            if (book == null) return NotFound();
             return Ok(book);
         }
 
