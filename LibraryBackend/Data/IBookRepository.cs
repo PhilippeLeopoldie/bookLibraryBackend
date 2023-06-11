@@ -4,7 +4,7 @@ namespace LibraryBackend.Data
 {
   public interface IBookRepository
   {
-    Book GetBookById(int id);
+    Task<Book> GetBookByIdAsync(int id);
     Book GetBookByTitle(int id, string title);
     Task<IEnumerable<Book>> GetAllBooksAsync();
 
