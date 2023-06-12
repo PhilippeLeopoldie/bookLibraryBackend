@@ -58,8 +58,8 @@ namespace LibraryBackend.Tests
       // Arrange
 
       int bookId = 2;
-      Book expectedBook = mockData.FirstOrDefault(x=>x.BookId == bookId);
-      _mockBookRepository.Setup(repositoryMock => repositoryMock.GetBookByIdAsync(bookId)).ReturnsAsync(expectedBook);
+      Book? expectedBook = mockData.FirstOrDefault(x=>x.BookId == bookId);
+      _mockBookRepository.Setup(repositoryMock => repositoryMock.GetBookByIdAsync(bookId)).ReturnsAsync(expectedBook!);
 
       // Act
       var result = await _bookController.GetBookById(bookId);
