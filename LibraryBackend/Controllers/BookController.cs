@@ -54,20 +54,14 @@ namespace LibraryBackend.Controllers
 
     }
 
+    [HttpPost]
+    public async Task<ActionResult<Book>> CreateBook(Book newbook)
+    {
+         throw new NotImplementedException();
+    }
+
     /* 
-            // GET: api/Book/5
-            [HttpGet("{id}")]
-            public async Task<ActionResult<Book>> GetBook(int id)
-            {
-                var book = await _context.Book.FindAsync(id);
-
-                if (book == null)
-                {
-                    return NotFound();
-                }
-
-                return book;
-            }
+            
 
             // PUT: api/Book/5
             // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
