@@ -12,7 +12,7 @@ namespace LibraryBackend.Migrations
 {
     [DbContext(typeof(MyLibraryContext))]
     [Migration("20230609200545_third")]
-    partial class third
+    partial class Third
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
