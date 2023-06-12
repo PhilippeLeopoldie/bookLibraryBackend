@@ -91,6 +91,38 @@ namespace LibraryBackend.Tests
       
     }
 
+    [Fact]
+    public async Task should_create_one_book()
+    {
+      // Arrange
+      var bookToCreate = new Book {
+        BookId = 3,
+        Title= "new Title",
+        Author = "new author"
+      };
+      _mockBookRepository.Setup(repositoryMock => repositoryMock.CreateBook(bookToCreate.Title,bookToCreate.Author));
+
+      // Act
+      var newbookResult = await _bookController.CreateBook(bookToCreate);
+      var createdResult = Assert.IsType<CreatedAtActionResult>(newbookResult.Result);
+      var createdBook = Assert.IsType<Book>(createdResult.Value);
+      var bookId = createdBook.BookId;
+
+      var getResult = await _bookController.GetBookById(bookId);
+      var okResult = Assert.IsType<OkObjectResult>(getResult.Result);
+      var retrievedBook = Assert.IsType<Book>(okResult.Value);
+
+      // Assert
+      Assert.Equal(bookToCreate.BookId, retrievedBook.BookId);
+      Assert.Equal(bookToCreate.Title, retrievedBook.Title);
+      Assert.Equal(bookToCreate.Author, retrievedBook.Author);
+
+
+      
+
+    }
+
+
 
 
 
