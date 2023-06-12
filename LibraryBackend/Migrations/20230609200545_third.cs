@@ -5,7 +5,7 @@
 namespace LibraryBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class third : Migration
+    public partial class Third : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
