@@ -18,9 +18,17 @@ namespace LibraryBackend.Data
       //throw new NotImplementedException();
     }
 
-    void IBookRepository.CreateBook(string title, string author)
+     async Task<Book> IBookRepository.CreateBook(String title, String author)
     {
-      throw new NotImplementedException();
+      var newBook = new Book
+      {
+        Title= title,
+        Author = author
+      };
+
+      _context.Book.Add(newBook);
+      await _context.SaveChangesAsync();
+      return newBook;
     }
 
     void IBookRepository.DeleteBook(int id)
