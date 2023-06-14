@@ -116,7 +116,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task should_send_badRequest_if_bookProperty_empty()
+    public async Task should_send_badRequest_when_create_Book_with_empty_property()
     {
       // Arrange
       var bookToCreate = new Book
