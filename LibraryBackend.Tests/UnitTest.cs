@@ -130,8 +130,8 @@ namespace LibraryBackend.Tests
       // Act
       var result = await _bookController.CreateBook(bookToCreate);
       // Assert
-      var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
-      Assert.Equal(StatusCodes.Status400BadRequest, createdAtActionResult.StatusCode);
+      var requestResult = Assert.IsType<BadRequestResult>(result.Result);
+      Assert.Equal(StatusCodes.Status400BadRequest, requestResult.StatusCode);
 
       /* var createdBook = Assert.IsType<Book>(createdAtActionResult.Value);
       Assert.Equal(bookToCreate.Title, createdBook.Title);
