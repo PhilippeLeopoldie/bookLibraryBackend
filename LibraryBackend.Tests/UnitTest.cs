@@ -116,7 +116,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task should_not_create_one_book_and_send_badRequest()
+    public async Task should_send_badRequest_if_bookProperty_empty()
     {
       // Arrange
       var bookToCreate = new Book
