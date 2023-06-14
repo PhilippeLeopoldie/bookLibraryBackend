@@ -114,5 +114,28 @@ namespace LibraryBackend.Tests
       Assert.Equal(bookToCreate.Title, createdBook.Title);
       Assert.Equal(bookToCreate.Author, createdBook.Author);
     }
+
+    [Fact]
+    public async Task should_not_create_one_book_and_send_badRequest()
+    {
+      // Arrange
+      var bookToCreate = new Book
+      {
+        Title = "",
+        Author = "New author"
+      };
+      _mockBookRepository.Setup(repositoryMock => repositoryMock.CreateBook(bookToCreate.Title, bookToCreate.Author))
+                        .ReturnsAsync(bookToCreate);
+
+      // Act
+      var result = await _bookController.CreateBook(bookToCreate);
+      // Assert
+      var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+      Assert.Equal(StatusCodes.Status400BadRequest, createdAtActionResult.StatusCode);
+
+      /* var createdBook = Assert.IsType<Book>(createdAtActionResult.Value);
+      Assert.Equal(bookToCreate.Title, createdBook.Title);
+      Assert.Equal(bookToCreate.Author, createdBook.Author); */
+    }
   }
 }
