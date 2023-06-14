@@ -1,6 +1,7 @@
 using LibraryBackend.Controllers;
 using LibraryBackend.Data;
 using LibraryBackend.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -58,7 +59,7 @@ namespace LibraryBackend.Tests
       // Arrange
 
       int bookId = 2;
-      Book? expectedBook = mockData.FirstOrDefault(x=>x.BookId == bookId);
+      Book? expectedBook = mockData.FirstOrDefault(x => x.BookId == bookId);
       _mockBookRepository.Setup(repositoryMock => repositoryMock.GetBookByIdAsync(bookId)).ReturnsAsync(expectedBook!);
 
       // Act
@@ -79,7 +80,7 @@ namespace LibraryBackend.Tests
       // Arrange
 
       int bookId = 2;
-      Book? expectedBook = mockData.FirstOrDefault(x=>x.BookId == bookId);
+      Book? expectedBook = mockData.FirstOrDefault(x => x.BookId == bookId);
       _mockBookRepository.Setup(repositoryMock => repositoryMock.GetBookByIdAsync(bookId)).ReturnsAsync(expectedBook!);
 
       // Act
@@ -88,43 +89,30 @@ namespace LibraryBackend.Tests
       // Assert
 
       var notFoundResult = Assert.IsType<NotFoundResult>(result.Result);
-      
+
     }
 
     [Fact]
     public async Task should_create_one_book()
     {
       // Arrange
-      var bookToCreate = new Book {
-        BookId = 3,
-        Title= "new Title",
-        Author = "new author"
+      var bookToCreate = new Book
+      {
+        Title = "New title",
+        Author = "New author"
       };
-      _mockBookRepository.Setup(repositoryMock => repositoryMock.CreateBook(bookToCreate.Title,bookToCreate.Author));
+      _mockBookRepository.Setup(repositoryMock => repositoryMock.CreateBook(bookToCreate.Title, bookToCreate.Author))
+                        .ReturnsAsync(bookToCreate);
 
       // Act
-      var newbookResult = await _bookController.CreateBook(bookToCreate);
-      var createdResult = Assert.IsType<CreatedAtActionResult>(newbookResult.Result);
-      var createdBook = Assert.IsType<Book>(createdResult.Value);
-      var bookId = createdBook.BookId;
-
-      var getResult = await _bookController.GetBookById(bookId);
-      var okResult = Assert.IsType<OkObjectResult>(getResult.Result);
-      var retrievedBook = Assert.IsType<Book>(okResult.Value);
-
+      var result = await _bookController.CreateBook(bookToCreate);
       // Assert
-      Assert.Equal(bookToCreate.BookId, retrievedBook.BookId);
-      Assert.Equal(bookToCreate.Title, retrievedBook.Title);
-      Assert.Equal(bookToCreate.Author, retrievedBook.Author);
+      var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+      Assert.Equal(StatusCodes.Status201Created, createdAtActionResult.StatusCode);
 
-
-      
-
+      var createdBook = Assert.IsType<Book>(createdAtActionResult.Value);
+      Assert.Equal(bookToCreate.Title, createdBook.Title);
+      Assert.Equal(bookToCreate.Author, createdBook.Author);
     }
-
-
-
-
-
   }
 }
