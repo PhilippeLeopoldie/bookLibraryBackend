@@ -53,10 +53,10 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Book>> CreateBook(Book book)
     {
-      /* if (string.IsNullOrEmpty(book.Title) || string.IsNullOrEmpty(book.Author))
+       if (string.IsNullOrEmpty(book.Title) || string.IsNullOrEmpty(book.Author))
       {
         return BadRequest();
-      } */
+      } 
 
       var newBook = await _bookRepository.CreateBook(book.Title, book.Author);
       return CreatedAtAction(nameof(GetBook), new { id = newBook.BookId }, newBook);
