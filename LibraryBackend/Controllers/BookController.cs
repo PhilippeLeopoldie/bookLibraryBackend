@@ -55,9 +55,17 @@ namespace LibraryBackend.Controllers
     }
 
     [HttpPost]
-    public async Task<ActionResult<Book>> CreateBook(Book newbook)
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<Book>> CreateBook(Book book)
     {
-         throw new NotImplementedException();
+      if (string.IsNullOrEmpty(book.Title) || string.IsNullOrEmpty(book.Author))
+      {
+        return BadRequest();
+      }
+
+      var newBook = await _bookRepository.CreateBook(book.Title, book.Author);
+      return CreatedAtAction(nameof(GetBookById), new { id = newBook.BookId }, newBook);
     }
 
     /* 
