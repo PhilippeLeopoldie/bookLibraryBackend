@@ -133,9 +133,6 @@ namespace LibraryBackend.Tests
       var requestResult = Assert.IsType<BadRequestResult>(result.Result);
       Assert.Equal(StatusCodes.Status400BadRequest, requestResult.StatusCode);
 
-      /* var createdBook = Assert.IsType<Book>(createdAtActionResult.Value);
-      Assert.Equal(bookToCreate.Title, createdBook.Title);
-      Assert.Equal(bookToCreate.Author, createdBook.Author); */
     }
   }
 }
