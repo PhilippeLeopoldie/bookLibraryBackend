@@ -62,6 +62,13 @@ namespace LibraryBackend.Controllers
       return CreatedAtAction(nameof(GetBook), new { id = newBook.BookId }, newBook);
     }
 
+    [HttpDelete("{id}")]
+    public Task <ActionResult> DeleteBook(int id)
+    {
+      throw new NotImplementedException();
+    }
+
+
     /* 
             
 

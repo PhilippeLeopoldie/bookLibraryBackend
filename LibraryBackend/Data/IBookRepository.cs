@@ -10,7 +10,7 @@ namespace LibraryBackend.Data
 
     Task<Book> CreateBook(string title, string author);
     void UpdateBook(int id, string title, string author);
-    void DeleteBook(int id);
+    Task DeleteBook(int id);
 
   }
 }
