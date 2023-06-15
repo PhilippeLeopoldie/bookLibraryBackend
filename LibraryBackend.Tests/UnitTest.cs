@@ -124,7 +124,7 @@ namespace LibraryBackend.Tests
         Title = "",
         Author = "New author"
       };
-      _mockBookRepository.Setup(repositoryMock => repositoryMock.CreateBook(bookToCreate.Title, bookToCreate.Author))
+      _mockBookRepository.Setup(MockRepository => MockRepository.CreateBook(bookToCreate.Title, bookToCreate.Author))
                         .ReturnsAsync(bookToCreate);
 
       // Act
@@ -133,6 +133,28 @@ namespace LibraryBackend.Tests
       var requestResult = Assert.IsType<BadRequestResult>(result.Result);
       Assert.Equal(StatusCodes.Status400BadRequest, requestResult.StatusCode);
 
+    }
+
+    [Fact]
+    public async Task should_delete_by_id()
+    {
+      // Arrange
+      var bookIdToDelete= 2;
+      var bookToDelete = mockData.First(book => book.BookId == bookIdToDelete);
+      
+      _mockBookRepository
+      .Setup(MockRepository => MockRepository.DeleteBook(bookToDelete.BookId ))
+      .Returns(Task.CompletedTask);
+
+
+      // Act
+      var result = await _bookController.DeleteBook(bookToDelete.BookId);
+      var response = await _bookController.GetBookById(bookIdToDelete);
+
+      // Assert
+      Assert.IsType<OkObjectResult>(result);
+      var notFoundResult = Assert.IsType<NotFoundObjectResult>(response.Result);
+      Assert.Equal(StatusCodes.Status404NotFound,notFoundResult.StatusCode);
     }
   }
 }

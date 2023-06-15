@@ -5,24 +5,22 @@ namespace LibraryBackend.Data
 {
   public class BookRepository : IBookRepository
   {
-    public readonly MyLibraryContext _context = default!;
+    private readonly MyLibraryContext _context = default!;
 
     public BookRepository(MyLibraryContext context) => _context = context;
 
-    async Task<IEnumerable<Book>> IBookRepository.GetAllBooksAsync()
+    public async Task<IEnumerable<Book>> GetAllBooksAsync()
     {
 
       return await _context.Book.Include(x => x.Opinions).ToListAsync();
 
-
-      //throw new NotImplementedException();
     }
 
-     async Task<Book> IBookRepository.CreateBook(String title, String author)
+    public async Task<Book> CreateBook(String title, String author)
     {
       var newBook = new Book
       {
-        Title= title,
+        Title = title,
         Author = author
       };
 
@@ -31,25 +29,29 @@ namespace LibraryBackend.Data
       return newBook;
     }
 
-    void IBookRepository.DeleteBook(int id)
+    public async Task DeleteBook(int id)
     {
-      throw new NotImplementedException();
+      var bookToDelete = await ((IBookRepository)this).GetBookByIdAsync(id);
+      if (bookToDelete != null)
+      {
+        _context.Book.Remove(bookToDelete);
+        await _context.SaveChangesAsync();
+      }
     }
 
 
-
-    async Task<Book> IBookRepository.GetBookByIdAsync(int id)
+    public async Task<Book> GetBookByIdAsync(int id)
     {
       return await _context.Book.Include(x => x.Opinions).Where(book => book.BookId == id).FirstAsync();
       //throw new NotImplementedException();
     }
 
-    Book IBookRepository.GetBookByTitle(int id, string title)
+    public Book GetBookByTitle(int id, string title)
     {
       throw new NotImplementedException();
     }
 
-    void IBookRepository.UpdateBook(int id, string title, string author)
+    public void UpdateBook(int id, string title, string author)
     {
       throw new NotImplementedException();
     }
