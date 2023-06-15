@@ -136,7 +136,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task should_delete_by_id()
+    public async Task should_delete_book_by_id()
     {
       // Arrange
       var bookIdToDelete= 2;
@@ -152,9 +152,11 @@ namespace LibraryBackend.Tests
       var response = await _bookController.GetBookById(bookIdToDelete);
 
       // Assert
-      Assert.IsType<OkObjectResult>(result);
-      var notFoundResult = Assert.IsType<NotFoundObjectResult>(response.Result);
+      Assert.IsType<NoContentResult>(result);
+      var notFoundResult = Assert.IsType<NotFoundResult>(response.Result);
       Assert.Equal(StatusCodes.Status404NotFound,notFoundResult.StatusCode);
+
+      _mockBookRepository.Verify(mockRepository => mockRepository.DeleteBook(bookToDelete.BookId), Times.Once);
     }
   }
 }
