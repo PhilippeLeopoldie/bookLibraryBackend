@@ -113,6 +113,7 @@ namespace LibraryBackend.Tests
       var createdBook = Assert.IsType<Book>(createdAtActionResult.Value);
       Assert.Equal(bookToCreate.Title, createdBook.Title);
       Assert.Equal(bookToCreate.Author, createdBook.Author);
+      
     }
 
     [Fact]
@@ -158,5 +159,20 @@ namespace LibraryBackend.Tests
 
       _mockBookRepository.Verify(mockRepository => mockRepository.DeleteBook(bookToDelete.BookId), Times.Once);
     }
+
+    [Fact]
+    public async Task should_returns_no_content_for_delete_book_with_non_existing_id()
+    {
+      // Arrange
+
+      var nonExistingId= 99;
+      // act
+      var result = await _bookController.DeleteBook(nonExistingId);
+
+      // Assert
+      Assert.IsType<NotFoundResult>(result);
+      var notFoundResult = Assert.IsType<NotFoundResult>(result);
+    }
+
   }
 }
