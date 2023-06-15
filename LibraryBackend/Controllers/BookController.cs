@@ -63,9 +63,12 @@ namespace LibraryBackend.Controllers
     }
 
     [HttpDelete("{id}")]
-    public Task <ActionResult> DeleteBook(int id)
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeleteBook(int id)
     {
-      throw new NotImplementedException();
+      await _bookRepository.DeleteBook(id);
+      return NoContent();
     }
 
 
