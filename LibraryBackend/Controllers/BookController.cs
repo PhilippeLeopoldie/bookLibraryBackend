@@ -67,10 +67,18 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteBook(int id)
     {
-      if(await _bookRepository.GetBookByIdAsync(id)== null) return NotFound();
-      await _bookRepository.DeleteBook(id);
+      
+        var bookToDelete = await _bookRepository.GetBookByIdAsync(id);
+
+        if(bookToDelete == null) return NotFound();
+      await _bookRepository.DeleteBook(bookToDelete);
       return NoContent();
-    }
+
+      }
+      
+      
+      
+    
 
 
     /* 

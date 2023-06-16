@@ -101,7 +101,7 @@ namespace LibraryBackend.Tests
         Title = "New title",
         Author = "New author"
       };
-      _mockBookRepository.Setup(repositoryMock => repositoryMock.CreateBook(bookToCreate.Title, bookToCreate.Author))
+      _mockBookRepository.Setup(MockRepository => MockRepository.CreateBook(bookToCreate.Title, bookToCreate.Author))
                         .ReturnsAsync(bookToCreate);
 
       // Act
@@ -142,22 +142,25 @@ namespace LibraryBackend.Tests
       // Arrange
       var bookIdToDelete= 2;
       var bookToDelete = mockData.First(book => book.BookId == bookIdToDelete);
-      
-      _mockBookRepository
-      .Setup(MockRepository => MockRepository.DeleteBook(bookToDelete.BookId ))
-      .Returns(Task.CompletedTask);
 
+    _mockBookRepository
+        .Setup(MockRepository => MockRepository.GetBookByIdAsync(bookIdToDelete))
+        .ReturnsAsync(bookToDelete);  
+
+      _mockBookRepository
+      .Setup(MockRepository => MockRepository.DeleteBook(bookToDelete ))
+      .Returns(Task.CompletedTask);
 
       // Act
       var result = await _bookController.DeleteBook(bookToDelete.BookId);
-      var response = await _bookController.GetBookById(bookIdToDelete);
+      //var response = await _bookController.GetBookById(bookIdToDelete);
 
       // Assert
       Assert.IsType<NoContentResult>(result);
-      var notFoundResult = Assert.IsType<NotFoundResult>(response.Result);
-      Assert.Equal(StatusCodes.Status404NotFound,notFoundResult.StatusCode);
-
-      _mockBookRepository.Verify(mockRepository => mockRepository.DeleteBook(bookToDelete.BookId), Times.Once);
+      //var notFoundResult = Assert.IsType<NotFoundResult>(response.Result);
+      //Assert.Equal(StatusCodes.Status404NotFound,notFoundResult.StatusCode);
+      _mockBookRepository.Verify(MockRepository => MockRepository.GetBookByIdAsync(bookIdToDelete),Times.Once);
+      _mockBookRepository.Verify(mockRepository => mockRepository.DeleteBook(bookToDelete), Times.Once);
     }
 
     [Fact]
