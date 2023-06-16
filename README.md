@@ -2,7 +2,7 @@
 
 This is the rewriting of the backend of bookLibraryProject for good practise and improvement: https://github.com/PhilippeLeopoldie/BooksLibraryProject
 
-This backend is deployed on heroku platform using postgres as database on a vercel server
+This backend is deployed on heroku platform using postgres as database on a Vercel platform
 
 # Technologies
 
