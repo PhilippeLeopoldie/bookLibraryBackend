@@ -10,9 +10,9 @@ Entity framework code first approach
 
 ASP.NET Core Web APIs
 
-database : postGres
+Database : postGres
 
-server: Vercel
+Database platform: Vercel
 
 Test Driven Development: UniTest on going: https://github.com/PhilippeLeopoldie/bookLibraryBackend/blob/main/LibraryBackend.Tests/UnitTest.cs
 
