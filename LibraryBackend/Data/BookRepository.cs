@@ -29,21 +29,18 @@ namespace LibraryBackend.Data
       return newBook;
     }
 
-    public async Task DeleteBook(int id)
+    public async Task DeleteBook(Book bookToDelete)
     {
-      var bookToDelete = await ((IBookRepository)this).GetBookByIdAsync(id);
-      if (bookToDelete != null)
-      {
         _context.Book.Remove(bookToDelete);
         await _context.SaveChangesAsync();
-      }
+      
     }
 
 
-    public async Task<Book> GetBookByIdAsync(int id)
+    public async Task<Book?> GetBookByIdAsync(int id)
     {
-      return await _context.Book.Include(x => x.Opinions).Where(book => book.BookId == id).FirstAsync();
-      //throw new NotImplementedException();
+      return await _context.Book.Include(x => x.Opinions).Where(book => book.BookId == id).FirstOrDefaultAsync();
+      
     }
 
     public Book GetBookByTitle(int id, string title)
