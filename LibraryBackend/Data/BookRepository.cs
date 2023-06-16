@@ -31,16 +31,16 @@ namespace LibraryBackend.Data
 
     public async Task DeleteBook(Book bookToDelete)
     {
-        _context.Book.Remove(bookToDelete);
-        await _context.SaveChangesAsync();
-      
+      _context.Book.Remove(bookToDelete);
+      await _context.SaveChangesAsync();
+
     }
 
 
     public async Task<Book?> GetBookByIdAsync(int id)
     {
       return await _context.Book.Include(x => x.Opinions).Where(book => book.BookId == id).FirstOrDefaultAsync();
-      
+
     }
 
     public Book GetBookByTitle(int id, string title)
