@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+
 
 namespace LibraryBackend.Models
 {
@@ -10,7 +10,7 @@ namespace LibraryBackend.Models
     public string? Title { get; set; }
     public string? Author { get; set; }
     
-    [JsonIgnore]
+    
     public List<Opinion>? Opinions { get; set; }
   }
 }
