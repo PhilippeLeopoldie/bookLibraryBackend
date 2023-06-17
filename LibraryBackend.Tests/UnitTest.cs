@@ -16,7 +16,15 @@ namespace LibraryBackend.Tests
     { new Book{
         BookId = 1,
         Title = "title1",
-        Author = "author1"
+        Author = "author1",
+        Opinions = new List<Opinion>
+           { new Opinion{
+            View="View1",
+            BookId=1,
+            Like =5
+           }
+          }
+
     },new Book{
       BookId = 2,
       Title ="title2",
@@ -48,8 +56,10 @@ namespace LibraryBackend.Tests
       Assert.Equal(2, books?.Count());
       Assert.Equal("title1", books?.ElementAt(0).Title);
       Assert.Equal(1, books?.ElementAt(0).BookId);
+      Assert.Equal("View1", books?.ElementAt(0).Opinions?.ElementAt(0).View);
       Assert.Equal("author2", books?.ElementAt(1).Author);
       Assert.Equal(2, books?.ElementAt(1).BookId);
+
 
     }
 
