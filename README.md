@@ -21,7 +21,6 @@ Test Driven Development: UniTest on going: https://github.com/PhilippeLeopoldie/
 
 
 # deploying link:
-https://leopoldie-booklibrary-backend.herokuapp.com/
 
 example of end points getBooks: https://leopoldie-booklibrary-backend.herokuapp.com/api/book
 
