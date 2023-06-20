@@ -48,17 +48,16 @@ namespace LibraryBackend.Data
       throw new NotImplementedException();
     }
 
-    public async Task<Book> UpdateBook(int id, string title, string author)
+    public Book UpdateBook(Book book, string title, string author)
     {
-      var book = await GetBookByIdAsync(id);
-      book.Author=author;
-      book.Title =title;
+      book.Author = author;
+      book.Title = title;
 
       var updatedBook = _context.Book.Update(book);
       _context.SaveChanges();
 
       return updatedBook.Entity;
-      
+
     }
   }
 }
