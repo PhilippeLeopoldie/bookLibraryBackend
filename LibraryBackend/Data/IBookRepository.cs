@@ -9,7 +9,7 @@ namespace LibraryBackend.Data
     Task<IEnumerable<Book>> GetAllBooksAsync();
 
     Task<Book> CreateBook(string title, string author);
-    void UpdateBook(int id, string title, string author);
+    Task<Book> UpdateBook(int id, string title, string author);
     Task DeleteBook(Book book);
 
   }
