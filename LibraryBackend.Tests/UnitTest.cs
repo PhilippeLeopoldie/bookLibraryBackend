@@ -154,7 +154,7 @@ namespace LibraryBackend.Tests
       var bookToDelete = mockData.First(book => book.BookId == bookIdToDelete);
 
       _mockBookRepository
-          .Setup(MockRepository => MockRepository.GetBookByIdAsync(bookIdToDelete))
+          .Setup(mockRepository => mockRepository.GetBookByIdAsync(bookIdToDelete))
           .ReturnsAsync(bookToDelete);
 
       _mockBookRepository
@@ -168,7 +168,7 @@ namespace LibraryBackend.Tests
       // Assert
       Assert.IsType<NoContentResult>(result);
 
-      _mockBookRepository.Verify(MockRepository => MockRepository.GetBookByIdAsync(bookIdToDelete), Times.Once);
+      _mockBookRepository.Verify(mockRepository => mockRepository.GetBookByIdAsync(bookIdToDelete), Times.Once);
       _mockBookRepository.Verify(mockRepository => mockRepository.DeleteBook(bookToDelete), Times.Once);
     }
 
@@ -184,6 +184,53 @@ namespace LibraryBackend.Tests
       // Assert
       Assert.IsType<NotFoundResult>(result);
       var notFoundResult = Assert.IsType<NotFoundResult>(result);
+    }
+
+    [Fact]
+    public async Task should_modify_book()
+    {
+      // Arrange
+
+      var bookTomodify = new Book
+      {
+        BookId = 99,
+        Title = "titleToModify",
+        Author = "authorToModify"
+      };
+      
+      var titleToModify = "titleToModify";
+      var authorToModify = "authorToModify";
+
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository
+      .CreateBook(titleToModify, authorToModify))
+      .ReturnsAsync(bookTomodify);
+
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository
+      .GetBookByIdAsync(bookTomodify.BookId))
+      .ReturnsAsync(bookTomodify);
+
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository
+      .UpdateBook(bookTomodify, titleToModify, authorToModify))
+      .Returns(bookTomodify);
+      // Act
+
+      var result = await _bookController.UpdateBook(bookTomodify.BookId, titleToModify, authorToModify);
+
+
+      // assert
+      var okResult = Assert.IsType<OkObjectResult>(result.Result);
+      var updatedBook = Assert.IsType<Book>(okResult.Value);
+
+      Assert.Equal(bookTomodify.BookId, updatedBook.BookId);
+      Assert.Equal(titleToModify, updatedBook.Title);
+      Assert.Equal(authorToModify, updatedBook.Author);
+
+      _mockBookRepository.Verify(mockRepository => mockRepository.GetBookByIdAsync(bookTomodify.BookId), Times.Once);
+      _mockBookRepository.Verify(mockRepository => mockRepository.UpdateBook(bookTomodify, titleToModify, authorToModify), Times.Once);
+
     }
 
   }
