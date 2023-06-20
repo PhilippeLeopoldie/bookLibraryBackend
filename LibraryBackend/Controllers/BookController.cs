@@ -76,7 +76,14 @@ namespace LibraryBackend.Controllers
 
     }
 
-
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Book>> UpdateBook(int id, string title, string author)
+    {
+      throw new NotImplementedException();
+    }
 
 
 
