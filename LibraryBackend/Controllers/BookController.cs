@@ -82,7 +82,13 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Book>> UpdateBook(int id, string title, string author)
     {
-      throw new NotImplementedException();
+       if(string.IsNullOrWhiteSpace(title)|| string.IsNullOrWhiteSpace(author)) return BadRequest("This field can't be empty");
+      
+      var bookByIdToModify = await _bookRepository.GetBookByIdAsync(id);
+      if(bookByIdToModify == null) return BadRequest();
+      var bookToModify= _bookRepository.UpdateBook(bookByIdToModify,title,author);
+      if(bookToModify == null) return NotFound();
+      return Ok(bookToModify); 
     }
 
 
