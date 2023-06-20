@@ -85,9 +85,8 @@ namespace LibraryBackend.Controllers
        if(string.IsNullOrWhiteSpace(title)|| string.IsNullOrWhiteSpace(author)) return BadRequest("This field can't be empty");
       
       var bookByIdToModify = await _bookRepository.GetBookByIdAsync(id);
-      if(bookByIdToModify == null) return BadRequest();
+      if(bookByIdToModify == null) return NotFound();
       var bookToModify= _bookRepository.UpdateBook(bookByIdToModify,title,author);
-      if(bookToModify == null) return NotFound();
       return Ok(bookToModify); 
     }
 
