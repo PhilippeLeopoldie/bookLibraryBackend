@@ -16,13 +16,13 @@ namespace LibraryBackend.Data
 
     }
 
-    public async Task<Book> CreateBook(String title, String author)
+    public async Task<Book> CreateBook(Book newBook)
     {
-      var newBook = new Book
+     /*  var newBook = new Book
       {
         Title = title,
         Author = author
-      };
+      }; */
 
       _context.Book.Add(newBook);
       await _context.SaveChangesAsync();

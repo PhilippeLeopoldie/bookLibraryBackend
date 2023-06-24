@@ -23,9 +23,7 @@ namespace LibraryBackend.Controllers
     public async Task<ActionResult<IEnumerable<Book>>> GetBook()
     {
       var books = await _bookRepository.GetAllBooksAsync();
-
       return Ok(books);
-
     }
 
 
@@ -58,7 +56,7 @@ namespace LibraryBackend.Controllers
         return BadRequest();
       }
 
-      var newBook = await _bookRepository.CreateBook(book.Title, book.Author);
+      var newBook = await _bookRepository.CreateBook(book);
       return CreatedAtAction(nameof(GetBook), new { id = newBook.BookId }, newBook);
     }
 

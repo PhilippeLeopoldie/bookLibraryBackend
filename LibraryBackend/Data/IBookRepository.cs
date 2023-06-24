@@ -8,7 +8,7 @@ namespace LibraryBackend.Data
     Book GetBookByTitle(int id, string title);
     Task<IEnumerable<Book>> GetAllBooksAsync();
 
-    Task<Book> CreateBook(string title, string author);
+    Task<Book> CreateBook(Book newBook);
     Book UpdateBook(Book book, string title, string author);
     Task DeleteBook(Book book);
 
