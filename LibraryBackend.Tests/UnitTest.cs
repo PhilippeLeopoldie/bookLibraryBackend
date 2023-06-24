@@ -113,7 +113,7 @@ namespace LibraryBackend.Tests
         Author = "New author"
       };
       _mockBookRepository
-        .Setup(MockRepository => MockRepository.CreateBook(bookToCreate.Title, bookToCreate.Author))
+        .Setup(MockRepository => MockRepository.CreateBook(bookToCreate))
         .ReturnsAsync(bookToCreate);
 
       // Act
@@ -138,7 +138,7 @@ namespace LibraryBackend.Tests
         Author = "New author"
       };
       _mockBookRepository
-        .Setup(MockRepository => MockRepository.CreateBook(bookToCreate.Title, bookToCreate.Author))
+        .Setup(MockRepository => MockRepository.CreateBook(bookToCreate))
         .ReturnsAsync(bookToCreate);
 
       // Act
@@ -203,7 +203,7 @@ namespace LibraryBackend.Tests
       var authorToModify = "authorToModify";
 
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.CreateBook(titleToModify, authorToModify))
+      .Setup(mockRepository => mockRepository.CreateBook(bookTomodify))
       .ReturnsAsync(bookTomodify);
 
       _mockBookRepository
