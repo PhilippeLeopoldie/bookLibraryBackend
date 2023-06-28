@@ -3,10 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LibraryBackend.Models
 {
-  public class Book
+  public class Book : BaseEntity
   {
-    [Key]
-    public int BookId { get; set; }
+    
     public string? Title { get; set; }
     public string? Author { get; set; }
     
