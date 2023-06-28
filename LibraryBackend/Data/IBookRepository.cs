@@ -2,15 +2,8 @@ using LibraryBackend.Models;
 
 namespace LibraryBackend.Data
 {
-  public interface IBookRepository
+  public interface IBookRepository : IRepository<Book>
   {
-    Task<Book?> GetBookByIdAsync(int id);
-    Book GetBookByTitle(int id, string title);
-    Task<IEnumerable<Book>> GetAllBooksAsync();
-
-    Task<Book> CreateBook(Book newBook);
-    Book UpdateBook(Book book, string title, string author);
-    Task DeleteBook(Book book);
-
+     Book UpdateBook(Book book, string element1, string author);
   }
 }
