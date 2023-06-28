@@ -32,7 +32,7 @@ namespace LibraryBackend.Controllers
         [HttpGet("{id}")]
         public ActionResult<Opinion> GetOpinionById(int id)
         {
-            var opinion = _context.Opinion.Include(x => x.Book).FirstOrDefault(x => x.OpinionId == id);
+            var opinion = _context.Opinion.Include(x => x.Book).FirstOrDefault(x => x.Id == id);
 
             if (opinion == null)
             {
@@ -47,7 +47,7 @@ namespace LibraryBackend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOpinion(int id, Opinion opinion)
         {
-            if (id != opinion.OpinionId)
+            if (id != opinion.Id)
             {
                 return BadRequest();
             }
@@ -107,7 +107,7 @@ namespace LibraryBackend.Controllers
 
         private bool OpinionExists(int id)
         {
-            return _context.Opinion.Any(e => e.OpinionId == id);
+            return _context.Opinion.Any(e => e.Id == id);
         }
     }
 }

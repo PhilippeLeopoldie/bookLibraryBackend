@@ -57,7 +57,7 @@ namespace LibraryBackend.Controllers
       }
 
       var newBook = await _bookRepository.CreateBook(book);
-      return CreatedAtAction(nameof(GetBook), new { id = newBook.BookId }, newBook);
+      return CreatedAtAction(nameof(GetBook), new { id = newBook.Id }, newBook);
     }
 
     [HttpDelete("{id}")]
