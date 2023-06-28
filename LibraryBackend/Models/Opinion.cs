@@ -2,11 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LibraryBackend.Models
 {
-  public class Opinion
+  public class Opinion : BaseEntity
   {
-    [Key]
-
-    public int OpinionId { get; set; }
+    
 
     public int? Like { get; set; } = 1;
 
