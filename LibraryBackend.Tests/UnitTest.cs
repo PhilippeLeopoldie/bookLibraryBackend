@@ -47,7 +47,7 @@ namespace LibraryBackend.Tests
     {
       // arrange
       _mockBookRepository
-        .Setup(repositoryMock => repositoryMock.GetAllBooksAsync())
+        .Setup(repositoryMock => repositoryMock.GetAllAsync())
         .ReturnsAsync(mockData);
 
       // Act
@@ -71,7 +71,7 @@ namespace LibraryBackend.Tests
       int bookId = 2;
       Book? expectedBook = mockData.FirstOrDefault(x => x.Id == bookId);
       _mockBookRepository
-        .Setup(repositoryMock => repositoryMock.GetBookByIdAsync(bookId))
+        .Setup(repositoryMock => repositoryMock.GetByIdAsync(bookId))
         .ReturnsAsync(expectedBook!);
 
       // Act
@@ -92,7 +92,7 @@ namespace LibraryBackend.Tests
       int bookId = 2;
       Book? expectedBook = mockData.FirstOrDefault(x => x.Id == bookId);
       _mockBookRepository
-        .Setup(repositoryMock => repositoryMock.GetBookByIdAsync(bookId))
+        .Setup(repositoryMock => repositoryMock.GetByIdAsync(bookId))
         .ReturnsAsync(expectedBook!);
 
       // Act
@@ -113,7 +113,7 @@ namespace LibraryBackend.Tests
         Author = "New author"
       };
       _mockBookRepository
-        .Setup(MockRepository => MockRepository.CreateBook(bookToCreate))
+        .Setup(MockRepository => MockRepository.Create(bookToCreate))
         .ReturnsAsync(bookToCreate);
 
       // Act
@@ -138,7 +138,7 @@ namespace LibraryBackend.Tests
         Author = "New author"
       };
       _mockBookRepository
-        .Setup(MockRepository => MockRepository.CreateBook(bookToCreate))
+        .Setup(MockRepository => MockRepository.Create(bookToCreate))
         .ReturnsAsync(bookToCreate);
 
       // Act
@@ -157,11 +157,11 @@ namespace LibraryBackend.Tests
       var bookToDelete = mockData.First(book => book.Id == bookIdToDelete);
 
       _mockBookRepository
-          .Setup(mockRepository => mockRepository.GetBookByIdAsync(bookIdToDelete))
+          .Setup(mockRepository => mockRepository.GetByIdAsync(bookIdToDelete))
           .ReturnsAsync(bookToDelete);
 
       _mockBookRepository
-        .Setup(MockRepository => MockRepository.DeleteBook(bookToDelete))
+        .Setup(MockRepository => MockRepository.Delete(bookToDelete))
         .Returns(Task.CompletedTask);
 
       // Act
@@ -171,8 +171,8 @@ namespace LibraryBackend.Tests
       // Assert
       Assert.IsType<NoContentResult>(result);
 
-      _mockBookRepository.Verify(mockRepository => mockRepository.GetBookByIdAsync(bookIdToDelete), Times.Once);
-      _mockBookRepository.Verify(mockRepository => mockRepository.DeleteBook(bookToDelete), Times.Once);
+      _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(bookIdToDelete), Times.Once);
+      _mockBookRepository.Verify(mockRepository => mockRepository.Delete(bookToDelete), Times.Once);
     }
 
     [Fact]
@@ -203,11 +203,11 @@ namespace LibraryBackend.Tests
       var authorToModify = "authorToModify";
 
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.CreateBook(bookTomodify))
+      .Setup(mockRepository => mockRepository.Create(bookTomodify))
       .ReturnsAsync(bookTomodify);
 
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.GetBookByIdAsync(bookTomodify.Id))
+      .Setup(mockRepository => mockRepository.GetByIdAsync(bookTomodify.Id))
       .ReturnsAsync(bookTomodify);
 
       _mockBookRepository
@@ -223,7 +223,7 @@ namespace LibraryBackend.Tests
       Assert.Equal(bookTomodify.Id, updatedBook.Id);
       Assert.Equal(titleToModify, updatedBook.Title);
       Assert.Equal(authorToModify, updatedBook.Author);
-      _mockBookRepository.Verify(mockRepository => mockRepository.GetBookByIdAsync(bookTomodify.Id), Times.Once);
+      _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(bookTomodify.Id), Times.Once);
       _mockBookRepository.Verify(mockRepository => mockRepository.UpdateBook(bookTomodify, titleToModify, authorToModify), Times.Once);
     }
 
