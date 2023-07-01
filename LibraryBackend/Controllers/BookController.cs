@@ -22,7 +22,7 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Book>>> GetBook()
     {
-      var books = await _bookRepository.GetAllBooksAsync();
+      var books = await _bookRepository.GetAllAsync();
       return Ok(books);
     }
 
@@ -34,7 +34,7 @@ namespace LibraryBackend.Controllers
     {
       try
       {
-        var book = await _bookRepository.GetBookByIdAsync(id);
+        var book = await _bookRepository.GetByIdAsync(id);
         if (book == null) return NotFound();
         return Ok(book);
 
@@ -56,7 +56,7 @@ namespace LibraryBackend.Controllers
         return BadRequest();
       }
 
-      var newBook = await _bookRepository.CreateBook(book);
+      var newBook = await _bookRepository.Create(book);
       return CreatedAtAction(nameof(GetBook), new { id = newBook.Id }, newBook);
     }
 
@@ -66,10 +66,10 @@ namespace LibraryBackend.Controllers
     public async Task<ActionResult> DeleteBook(int id)
     {
 
-      var bookToDelete = await _bookRepository.GetBookByIdAsync(id);
+      var bookToDelete = await _bookRepository.GetByIdAsync(id);
 
       if (bookToDelete == null) return NotFound();
-      await _bookRepository.DeleteBook(bookToDelete);
+      await _bookRepository.Delete(bookToDelete);
       return NoContent();
 
     }
@@ -82,7 +82,7 @@ namespace LibraryBackend.Controllers
     {
        if(string.IsNullOrWhiteSpace(title)|| string.IsNullOrWhiteSpace(author)) return BadRequest("This field can't be empty");
       
-      var bookByIdToModify = await _bookRepository.GetBookByIdAsync(id);
+      var bookByIdToModify = await _bookRepository.GetByIdAsync(id);
       if(bookByIdToModify == null) return NotFound();
       var bookToModify= _bookRepository.UpdateBook(bookByIdToModify,title,author);
       return Ok(bookToModify); 
