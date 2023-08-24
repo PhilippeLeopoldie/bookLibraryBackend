@@ -23,6 +23,7 @@ namespace LibraryBackend.Controllers
     public async Task<ActionResult<IEnumerable<Book>>> GetBook()
     {
       var books = await _bookRepository.GetAllAsync();
+      if (books == null) return NotFound();
       return Ok(books);
     }
 
