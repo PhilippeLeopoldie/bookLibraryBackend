@@ -1,6 +1,6 @@
 # bookLibraryBackend
 
-This is the backend of bookLibraryProject: https://github.com/PhilippeLeopoldie/BooksLibraryProject
+This is the backend of bookLibraryProject (https://github.com/PhilippeLeopoldie/BooksLibraryProject)
 
 This backend is deployed on heroku platform using postgres as database on a Vercel platform
 
