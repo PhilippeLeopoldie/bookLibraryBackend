@@ -9,9 +9,11 @@ namespace LibraryBackend.Tests
 {
   public class UnitTest
   {
-    BookController _bookController;
-    Mock<IBookRepository> _mockBookRepository;
-    List<Book> mockData = new List<Book>
+        readonly BookController _bookController;
+        readonly OpinionController _opinionController;
+        readonly Mock<IBookRepository> _mockBookRepository;
+        readonly Mock<IOpinionRepository> _mockOpinionRepository;
+    List<Book> mockBookData = new List<Book>
     {
       new Book
       {
@@ -39,16 +41,18 @@ namespace LibraryBackend.Tests
     public UnitTest()
     {
       _mockBookRepository = new Mock<IBookRepository>();
+      _mockOpinionRepository = new Mock<IOpinionRepository>();
       _bookController = new BookController(_mockBookRepository.Object);
+      _opinionController = new OpinionController(_mockOpinionRepository.Object);
     }
 
     [Fact]
-    public async void should_get_two_Books()
+    public async void Should_get_two_Books()
     {
       // arrange
       _mockBookRepository
         .Setup(repositoryMock => repositoryMock.GetAllAsync())
-        .ReturnsAsync(mockData);
+        .ReturnsAsync(mockBookData);
 
       // Act
       var result = await _bookController.GetBook();
@@ -65,11 +69,11 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async void should_get_book_by_Id()
+    public async void Should_get_book_by_Id()
     {
       // Arrange
       int bookId = 2;
-      Book? expectedBook = mockData.FirstOrDefault(x => x.Id == bookId);
+      Book? expectedBook = mockBookData.FirstOrDefault(x => x.Id == bookId);
       _mockBookRepository
         .Setup(repositoryMock => repositoryMock.GetByIdAsync(bookId))
         .ReturnsAsync(expectedBook!);
@@ -86,11 +90,11 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async void should_get_not_found_for_getById_with_wrong_id()
+    public async void Should_get_not_found_for_getById_with_wrong_id()
     {
       // Arrange
       int bookId = 2;
-      Book? expectedBook = mockData.FirstOrDefault(x => x.Id == bookId);
+      Book? expectedBook = mockBookData.FirstOrDefault(x => x.Id == bookId);
       _mockBookRepository
         .Setup(repositoryMock => repositoryMock.GetByIdAsync(bookId))
         .ReturnsAsync(expectedBook!);
@@ -104,7 +108,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task should_create_one_book()
+    public async Task Should_create_one_book()
     {
       // Arrange
       var bookToCreate = new Book
@@ -129,7 +133,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task should_send_badRequest_when_create_Book_with_empty_property()
+    public async Task Should_send_badRequest_when_create_Book_with_empty_property()
     {
       // Arrange
       var bookToCreate = new Book
@@ -150,11 +154,11 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task should_delete_book_by_id()
+    public async Task Should_delete_book_by_id()
     {
       // Arrange
       var bookIdToDelete = 2;
-      var bookToDelete = mockData.First(book => book.Id == bookIdToDelete);
+      var bookToDelete = mockBookData.First(book => book.Id == bookIdToDelete);
 
       _mockBookRepository
           .Setup(mockRepository => mockRepository.GetByIdAsync(bookIdToDelete))
@@ -176,7 +180,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task should_returns_not_found_for_delete_book_with_non_existing_id()
+    public async Task Should_returns_not_found_for_delete_book_with_non_existing_id()
     {
       // Arrange
       var nonExistingId = 99;
@@ -189,7 +193,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task should_modify_book()
+    public async Task Should_modify_book()
     {
       // Arrange
       var bookTomodify = new Book
@@ -225,6 +229,28 @@ namespace LibraryBackend.Tests
       Assert.Equal(authorToModify, updatedBook.Author);
       _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(bookTomodify.Id), Times.Once);
       _mockBookRepository.Verify(mockRepository => mockRepository.UpdateBook(bookTomodify, titleToModify, authorToModify), Times.Once);
+    }
+
+     [Fact]
+    public async void Should_get_One_Opinion()
+    {
+      // arrange
+      _mockBookRepository
+        .Setup(repositoryMock => repositoryMock.GetAllAsync())
+        .ReturnsAsync(mockBookData);
+
+      // Act
+      var result = await _bookController.GetBook();
+
+      // Assert
+      var okResult = Assert.IsType<OkObjectResult>(result.Result);
+      var books = Assert.IsAssignableFrom<IEnumerable<Book>>(okResult.Value);
+      Assert.Equal(2, books?.Count());
+      Assert.Equal("title1", books?.ElementAt(0).Title);
+      Assert.Equal(1, books?.ElementAt(0).Id);
+      Assert.Equal("View1", books?.ElementAt(0).Opinions?.ElementAt(0).View);
+      Assert.Equal("author2", books?.ElementAt(1).Author);
+      Assert.Equal(2, books?.ElementAt(1).Id);
     }
 
   }
