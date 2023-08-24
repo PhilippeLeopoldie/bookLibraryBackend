@@ -69,6 +69,25 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
+    public async void Should_return_not_found()
+    {
+      // arrange
+      List<Book>? mockEmptyBookData = null;
+      _mockBookRepository 
+      .Setup(repositoryMock => repositoryMock.GetAllAsync())
+      .ReturnsAsync(mockEmptyBookData!);
+
+      // Act
+      var result = await _bookController.GetBook();
+
+      // Assert
+      var Notfound = Assert.IsType<NotFoundResult>(result.Result);
+
+      
+
+    }
+
+    [Fact]
     public async void Should_get_book_by_Id()
     {
       // Arrange
