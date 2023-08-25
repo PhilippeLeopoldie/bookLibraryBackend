@@ -3,6 +3,7 @@ using LibraryBackend.Data;
 using LibraryBackend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace LibraryBackend.Tests
@@ -11,8 +12,9 @@ namespace LibraryBackend.Tests
   {
         readonly BookController _bookController;
         readonly OpinionController _opinionController;
-        readonly Mock<IBookRepository> _mockBookRepository;
-        readonly Mock<IOpinionRepository> _mockOpinionRepository;
+        readonly Mock<BookRepository> _mockBookRepository;
+        readonly MyLibraryContext _context; 
+        readonly Mock<OpinionRepository> _mockOpinionRepository;
     List<Book> mockBookData = new List<Book>
     {
       new Book
@@ -40,8 +42,13 @@ namespace LibraryBackend.Tests
 
     public UnitTest()
     {
-      _mockBookRepository = new Mock<IBookRepository>();
-      _mockOpinionRepository = new Mock<IOpinionRepository>();
+      var options = new DbContextOptionsBuilder<MyLibraryContext>()
+        .UseInMemoryDatabase(databaseName: "TestDatabase")
+        .Options;
+
+      _context = new MyLibraryContext(options);
+      _mockBookRepository = new Mock<BookRepository>(_context);
+      _mockOpinionRepository = new Mock<OpinionRepository>(_context);
       _bookController = new BookController(_mockBookRepository.Object);
       _opinionController = new OpinionController(_mockOpinionRepository.Object);
     }
