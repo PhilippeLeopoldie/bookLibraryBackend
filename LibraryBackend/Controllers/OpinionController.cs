@@ -15,10 +15,10 @@ namespace LibraryBackend.Controllers
   [ApiController]
   public class OpinionController : ControllerBase
   {
-    //private readonly MyLibraryContext _context;
-    private readonly IOpinionRepository _OpinionRepository;
 
-    public OpinionController(IOpinionRepository opinionRepository)
+    private readonly OpinionRepository _OpinionRepository;
+
+    public OpinionController(OpinionRepository opinionRepository)
     {
       _OpinionRepository = opinionRepository;
     }
