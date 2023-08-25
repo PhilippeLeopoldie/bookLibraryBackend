@@ -3,16 +3,17 @@ using LibraryBackend.Models;
 
 namespace LibraryBackend.Data
 {
-  public class BookRepository : Repository<Book>, IBookRepository
+  public class BookRepository : Repository<Book>
   {
     private readonly MyLibraryContext _context = default!;
+    
 
     public BookRepository(MyLibraryContext context) : base(context)
     {
       _context = context;
     }
 
-     public Book UpdateBook(Book book, string title, string author)
+     public virtual Book UpdateBook(Book book, string title, string author)
     {
       book.Author = author;
       book.Title = title;
@@ -20,7 +21,7 @@ namespace LibraryBackend.Data
       var updatedBook = _context.Book.Update(book);
       _context.SaveChanges();
 
-      return updatedBook.Entity;
+      return   updatedBook.Entity;
 
     } 
   }

@@ -2,7 +2,7 @@ using LibraryBackend.Models;
 
 namespace LibraryBackend.Data
 {
-  public class OpinionRepository : Repository<Opinion>, IOpinionRepository
+  public class OpinionRepository : Repository<Opinion>
   {
     private readonly MyLibraryContext _context =default!;
 
@@ -11,7 +11,7 @@ namespace LibraryBackend.Data
       _context= context;
     }
 
-    public Opinion UpdateOpinion(Opinion opinion, string view, string userName, int like)
+    public virtual Opinion UpdateOpinion(Opinion opinion, string view, string userName, int like)
     {
       opinion.View = view;
       opinion.Like = like;

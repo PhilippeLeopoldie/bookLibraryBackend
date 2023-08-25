@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using LibraryBackend.Data;
 using System.Text.Json.Serialization;
+using LibraryBackend.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,8 +32,8 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
-builder.Services.AddScoped<IBookRepository, BookRepository>();
-builder.Services.AddScoped<IOpinionRepository, OpinionRepository>();
+builder.Services.AddScoped<BookRepository>();
+builder.Services.AddScoped<OpinionRepository>();
 builder.Services.AddScoped(typeof(IRepository<>),typeof(Repository<>));
 builder.Services.AddControllers().AddJsonOptions(x => 
 x.JsonSerializerOptions.ReferenceHandler= ReferenceHandler.Preserve);

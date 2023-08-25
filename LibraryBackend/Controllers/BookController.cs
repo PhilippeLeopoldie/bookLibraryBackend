@@ -8,11 +8,9 @@ namespace LibraryBackend.Controllers
   [ApiController]
   public class BookController : ControllerBase
   {
-    //private readonly MyLibraryContext _context;
-    private readonly IBookRepository _bookRepository;
+    private readonly BookRepository _bookRepository;
 
-
-    public BookController(IBookRepository bookRepository)
+    public BookController(BookRepository bookRepository)
     {
       _bookRepository = bookRepository;
     }
