@@ -15,30 +15,30 @@ namespace LibraryBackend.Data
       _entities = context.Set<T>();
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync()
+    public virtual async Task<IEnumerable<T>> GetAllAsync()
     {
       return await _entities.ToListAsync();
     }
 
-    public async Task<T> Create(T entity)
+    public virtual async Task<T> Create(T entity)
     {  
       _entities.Add(entity);
       await _context.SaveChangesAsync();
       return entity;
     }
 
-    public async Task Delete(T entityToDelete)
+    public virtual async Task Delete(T entityToDelete)
     {
       _context.Remove(entityToDelete);
       await _context.SaveChangesAsync();
     }
 
-    public async Task<T?> GetByIdAsync(int id)
+    public virtual async Task<T?> GetByIdAsync(int id)
     {
        return await _entities.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<T?> FindByConditionAsync(Expression<Func<T,bool>> predicate)
+    public virtual async Task<T?> FindByConditionAsync(Expression<Func<T,bool>> predicate)
     {
       return await _context.Set<T>().FirstOrDefaultAsync(predicate);
     }
