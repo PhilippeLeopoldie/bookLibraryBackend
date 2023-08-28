@@ -34,20 +34,14 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<Book>> GetBookById(int id)
     {
-      try
-      {
+      
+      
         var book = await _bookRepository.GetByIdAsync(id);
         if (book == null) 
         {
           return NotFound();
         }
         return Ok(book);
-
-      }
-      catch (DbException ex)
-      {
-        return StatusCode(StatusCodes.Status500InternalServerError);
-      }
 
     }
 
