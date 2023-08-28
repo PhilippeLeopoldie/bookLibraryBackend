@@ -242,14 +242,16 @@ namespace LibraryBackend.Tests
 
       _mockBookRepository
       .Setup(mockRepository => mockRepository.UpdateBook(bookTomodify, titleToModify, authorToModify))
-      .Returns(bookTomodify);
+      .ReturnsAsync(bookTomodify);
 
       // Act
       var result = await _bookController.UpdateBook(bookTomodify.Id, titleToModify, authorToModify);
 
       // assert
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
-      var updatedBook = Assert.IsType<Book>(okResult.Value);
+      var updatedBookTask = Assert.IsType<Task<Book>>(okResult.Value);
+      var updatedBook= await updatedBookTask;
+
       Assert.Equal(bookTomodify.Id, updatedBook.Id);
       Assert.Equal(titleToModify, updatedBook.Title);
       Assert.Equal(authorToModify, updatedBook.Author);
