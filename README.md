@@ -1,6 +1,7 @@
 # bookLibraryBackend
 
 This is the backend of bookLibraryProject (https://github.com/PhilippeLeopoldie/BooksLibraryProject)
+following the repository pattern.
 
 This backend is deployed on heroku platform using postgres as database on a Vercel platform
 
@@ -16,7 +17,7 @@ Database platform: Vercel
 
 Test Driven Development: UniTest ongoing: https://github.com/PhilippeLeopoldie/bookLibraryBackend/blob/main/LibraryBackend.Tests/UnitTest.cs
 
- and integration Test: implementation ongoing 
+ 
 
 
 
