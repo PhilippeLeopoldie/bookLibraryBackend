@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using LibraryBackend.Models;
 using LibraryBackend.Data;
+using System.Data.Common;
 
 namespace LibraryBackend.Controllers
 {
@@ -29,18 +30,22 @@ namespace LibraryBackend.Controllers
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<Book>> GetBookById(int id)
     {
       try
       {
         var book = await _bookRepository.GetByIdAsync(id);
-        if (book == null) return NotFound();
+        if (book == null) 
+        {
+          return NotFound();
+        }
         return Ok(book);
 
       }
-      catch
+      catch (DbException ex)
       {
-        return NotFound();
+        return StatusCode(StatusCodes.Status500InternalServerError);
       }
 
     }
@@ -73,18 +78,23 @@ namespace LibraryBackend.Controllers
 
     }
 
-    [HttpPut("{id}")]
+    [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Book>> UpdateBook(int id, string title, string author)
+    public async Task<ActionResult<Book>> UpdateBook( Book book)
     {
-       if(string.IsNullOrWhiteSpace(title)|| string.IsNullOrWhiteSpace(author)) return BadRequest("This field can't be empty");
-      
-      var bookByIdToModify = await _bookRepository.GetByIdAsync(id);
-      if(bookByIdToModify == null) return NotFound();
-      var bookToModify= _bookRepository.UpdateBook(bookByIdToModify,title,author);
-      return Ok(bookToModify); 
+      if(string.IsNullOrWhiteSpace(book.Title)|| string.IsNullOrWhiteSpace(book.Author)) 
+      {
+        return BadRequest("This field can't be empty");
+      }
+       
+      var updatedBook= await _bookRepository.UpdateBook(book);
+      if (updatedBook == null)
+      {
+        return NotFound();
+      }
+      return Ok(updatedBook); 
     }
 
     /* 
