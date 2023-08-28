@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using LibraryBackend.Models;
 using LibraryBackend.Data;
+using LibraryBackend.Common;
 using System.Data.Common;
 
 namespace LibraryBackend.Controllers
@@ -84,9 +85,14 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Book>> UpdateBook( Book book)
     {
-      if(string.IsNullOrWhiteSpace(book.Title)|| string.IsNullOrWhiteSpace(book.Author)) 
+      if(string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author)) 
       {
-        return BadRequest("This field can't be empty");
+        var error = new ApiError
+        {
+          Message = "Validation Error",
+          Detail = "Title and Author cannot be empty"
+        };
+        return BadRequest(error);
       }
        
       var updatedBook= await _bookRepository.UpdateBook(book);
@@ -95,12 +101,6 @@ namespace LibraryBackend.Controllers
         return NotFound();
       }
       return Ok(updatedBook); 
-    }
-
-    /* 
-            private bool BookExists(int id)
-            {
-                return _context.Book.Any(e => e.BookId == id);
-            } */
+    }  
   }
 }
