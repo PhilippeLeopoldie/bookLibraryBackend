@@ -1,3 +1,4 @@
+using LibraryBackend.Common;
 using LibraryBackend.Controllers;
 using LibraryBackend.Data;
 using LibraryBackend.Models;
@@ -270,12 +271,13 @@ namespace LibraryBackend.Tests
 
       // Act
       var result = await _bookController.UpdateBook(bookTomodify);
-      var BadrequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-      
-     
+      var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+      var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
 
+      // Assert
+       Assert.Equal ("Validation Error", apiError.Message);
+       Assert.Equal ("Title and Author cannot be empty", apiError.Detail);
     }
-
 
 
      [Fact]
