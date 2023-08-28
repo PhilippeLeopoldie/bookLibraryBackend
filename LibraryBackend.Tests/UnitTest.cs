@@ -175,8 +175,11 @@ namespace LibraryBackend.Tests
       // Act
       var result = await _bookController.CreateBook(bookToCreate);
       // Assert
-      var requestResult = Assert.IsType<BadRequestResult>(result.Result);
-      Assert.Equal(StatusCodes.Status400BadRequest, requestResult.StatusCode);
+      var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+      var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
+      Assert.Equal ("Validation Error", apiError.Message);
+      Assert.Equal ("Title and Author cannot be empty", apiError.Detail);
+      Assert.Equal(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
 
     }
 
@@ -271,12 +274,13 @@ namespace LibraryBackend.Tests
 
       // Act
       var result = await _bookController.UpdateBook(bookTomodify);
-      var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-      var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
+      
 
       // Assert
-       Assert.Equal ("Validation Error", apiError.Message);
-       Assert.Equal ("Title and Author cannot be empty", apiError.Detail);
+      var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+      var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
+      Assert.Equal ("Validation Error", apiError.Message);
+      Assert.Equal ("Title and Author cannot be empty", apiError.Detail);
     }
 
 
