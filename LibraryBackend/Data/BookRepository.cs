@@ -13,13 +13,13 @@ namespace LibraryBackend.Data
       _context = context;
     }
 
-     public virtual Book UpdateBook(Book book, string title, string author)
+     public virtual async Task<Book> UpdateBook(Book book, string title, string author)
     {
       book.Author = author;
       book.Title = title;
 
-      var updatedBook = _context.Book.Update(book);
-      _context.SaveChanges();
+      var updatedBook =  _context.Book.Update(book);
+      await _context.SaveChangesAsync();
 
       return   updatedBook.Entity;
 
