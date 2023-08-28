@@ -1,7 +1,7 @@
 # bookLibraryBackend
 
 This is the backend of bookLibraryProject (https://github.com/PhilippeLeopoldie/BooksLibraryProject)
-following the repository pattern.
+following the repository pattern, implementing CRUD operations and Swagger Documentations.
 
 This backend is deployed on heroku platform using postgres as database on a Vercel platform
 
