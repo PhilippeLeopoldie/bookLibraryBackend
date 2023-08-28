@@ -73,7 +73,10 @@ namespace LibraryBackend.Controllers
 
       var bookToDelete = await _bookRepository.GetByIdAsync(id);
 
-      if (bookToDelete == null) return NotFound();
+      if (bookToDelete == null) 
+      {
+        return NotFound();
+      }
       await _bookRepository.Delete(bookToDelete);
       return NoContent();
 
@@ -81,7 +84,7 @@ namespace LibraryBackend.Controllers
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiError),StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Book>> UpdateBook( Book book)
     {
