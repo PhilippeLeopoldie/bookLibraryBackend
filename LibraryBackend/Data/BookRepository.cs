@@ -1,6 +1,7 @@
 using LibraryBackend.Models;
 
 
+
 namespace LibraryBackend.Data
 {
   public class BookRepository : Repository<Book>
@@ -13,15 +14,21 @@ namespace LibraryBackend.Data
       _context = context;
     }
 
-     public virtual async Task<Book> UpdateBook(Book book, string title, string author)
+     public virtual async Task<Book> UpdateBook(Book book)
     {
-      book.Author = author;
-      book.Title = title;
+      var existingBook = await GetByIdAsync(book.Id);
+      if  (existingBook == null)
+      {
+        throw new Exception($"Book with Id {book.Id} not found");
+      }
 
-      var updatedBook =  _context.Book.Update(book);
+      existingBook.Title = book.Title;
+      existingBook.Author = book.Author;
+      
+      var updatedBook =  _context.Book.Update(existingBook);
       await _context.SaveChangesAsync();
 
-      return   updatedBook.Entity;
+      return   existingBook;
 
     } 
   }
