@@ -11,14 +11,14 @@ namespace LibraryBackend.Data
       _context= context;
     }
 
-    public virtual Opinion UpdateOpinion(Opinion opinion, string view, string userName, int like)
+    public virtual async Task<Opinion> UpdateOpinion(Opinion opinion, string view, string userName, int like)
     {
       opinion.View = view;
       opinion.Like = like;
       opinion.userName = userName;
 
       var updatedOpinion= _context.Opinion.Update(opinion);
-      _context.SaveChanges();
+      await _context.SaveChangesAsync();
 
       return updatedOpinion.Entity;
     }
