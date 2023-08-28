@@ -58,7 +58,12 @@ namespace LibraryBackend.Controllers
     {
       if (string.IsNullOrEmpty(book.Title) || string.IsNullOrEmpty(book.Author))
       {
-        return BadRequest();
+        var error = new ApiError
+        {
+          Message = "Validation Error",
+          Detail = "Title and Author cannot be empty"
+        };
+        return BadRequest(error);
       }
 
       var newBook = await _bookRepository.Create(book);
