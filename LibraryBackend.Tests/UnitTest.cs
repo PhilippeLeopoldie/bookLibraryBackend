@@ -219,7 +219,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_modify_book()
+    public async Task Should_modify_book_for_updateBook()
     {
       // Arrange
       var bookTomodify = new Book
@@ -229,13 +229,9 @@ namespace LibraryBackend.Tests
         Author = "authorToModify"
       };
 
-      
-
       _mockBookRepository
       .Setup(mockRepository => mockRepository.Create(bookTomodify))
       .ReturnsAsync(bookTomodify);
-
-      
 
       _mockBookRepository
       .Setup(mockRepository => mockRepository.UpdateBook(bookTomodify))
@@ -247,14 +243,40 @@ namespace LibraryBackend.Tests
       // assert
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
       var updatedBook = Assert.IsType<Book>(okResult.Value);
-      
-
       Assert.Equal(bookTomodify.Id, updatedBook.Id);
       Assert.Equal("titleToModify", updatedBook.Title);
       Assert.Equal("authorToModify", updatedBook.Author);
       
       _mockBookRepository.Verify(mockRepository => mockRepository.UpdateBook(bookTomodify), Times.Once);
     }
+
+    [Fact]
+    public async Task Should_return_badrequest_for_updateBook_with_empty_Title_and_Author()
+    {
+      // Arrange
+      var bookTomodify = new Book 
+      {
+        Id=99,
+        Title= "",
+        Author = ""
+      };
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository.Create(bookTomodify))
+      .ReturnsAsync(bookTomodify);
+
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository.UpdateBook(bookTomodify))
+      .ReturnsAsync(bookTomodify);
+
+      // Act
+      var result = await _bookController.UpdateBook(bookTomodify);
+      var BadrequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+      
+     
+
+    }
+
+
 
      [Fact]
     public async void Should_get_One_Opinion()
