@@ -121,17 +121,18 @@ namespace LibraryBackend.Tests
     {
       // Arrange
       int bookId = 2;
+      int nonExistingId = 3;
       Book? expectedBook = mockBookData.FirstOrDefault(x => x.Id == bookId);
       _mockBookRepository
         .Setup(repositoryMock => repositoryMock.GetByIdAsync(bookId))
         .ReturnsAsync(expectedBook!);
 
       // Act
-      var result = await _bookController.GetBookById(3);
+      var result = await _bookController.GetBookById(nonExistingId);
 
       // Assert
-      var notFoundResult = Assert.IsType<NotFoundResult>(result.Result);
-
+      var notFoundId = Assert.IsType<NotFoundObjectResult>(result.Result);
+      Assert.Equal($"Book with Id {nonExistingId} not found", notFoundId.Value);
     }
 
     [Fact]
@@ -219,7 +220,8 @@ namespace LibraryBackend.Tests
       var result = await _bookController.DeleteBook(nonExistingId);
 
       // Assert
-      Assert.IsType<NotFoundResult>(result);
+      var nonFoundId = Assert.IsType<NotFoundObjectResult>(result);
+      Assert.Equal($"Book with Id {nonExistingId} not found",nonFoundId.Value);
     }
 
     [Fact]
@@ -235,6 +237,10 @@ namespace LibraryBackend.Tests
 
       _mockBookRepository
       .Setup(mockRepository => mockRepository.Create(bookTomodify))
+      .ReturnsAsync(bookTomodify);
+
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository.GetByIdAsync(bookTomodify.Id))
       .ReturnsAsync(bookTomodify);
 
       _mockBookRepository
@@ -282,7 +288,6 @@ namespace LibraryBackend.Tests
       Assert.Equal ("Validation Error", apiError.Message);
       Assert.Equal ("Title and Author cannot be empty", apiError.Detail);
     }
-
 
      [Fact]
     public async void Should_get_One_Opinion()
