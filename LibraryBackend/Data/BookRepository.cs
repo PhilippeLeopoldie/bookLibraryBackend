@@ -14,22 +14,13 @@ namespace LibraryBackend.Data
       _context = context;
     }
 
-     public virtual async Task<Book> UpdateBook(Book book)
+     public virtual async Task<Book> UpdateBook(Book bookToUpdate)
     {
-      var existingBook = await GetByIdAsync(book.Id);
-      if  (existingBook == null)
-      {
-        throw new Exception($"Book with Id {book.Id} not found");
-      }
-
-      existingBook.Title = book.Title;
-      existingBook.Author = book.Author;
       
-      var updatedBook =  _context.Book.Update(existingBook);
-      await _context.SaveChangesAsync();
-
-      return   existingBook;
-
+        _context.Book.Update(bookToUpdate);
+        await _context.SaveChangesAsync();
+      
+      return   bookToUpdate!;
     } 
   }
 }
