@@ -228,6 +228,7 @@ namespace LibraryBackend.Tests
     public async Task Should_modify_book_for_updateBook()
     {
       // Arrange
+      var id = 99;
       var bookTomodify = new Book
       {
         Id = 99,
@@ -245,10 +246,10 @@ namespace LibraryBackend.Tests
 
       _mockBookRepository
       .Setup(mockRepository => mockRepository.UpdateBook(bookTomodify))
-      .ReturnsAsync(bookTomodify);
+      .ReturnsAsync(bookTomodify); 
 
       // Act
-      var result = await _bookController.UpdateBook(bookTomodify);
+      var result = await _bookController.UpdateBook(id,bookTomodify);
 
       // assert
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -264,9 +265,10 @@ namespace LibraryBackend.Tests
     public async Task Should_return_badrequest_for_updateBook_with_empty_Title_and_Author()
     {
       // Arrange
+      var id = 99;
       var bookTomodify = new Book 
       {
-        Id=99,
+        Id= 99,
         Title= "",
         Author = ""
       };
@@ -279,7 +281,7 @@ namespace LibraryBackend.Tests
       .ReturnsAsync(bookTomodify);
 
       // Act
-      var result = await _bookController.UpdateBook(bookTomodify);
+      var result = await _bookController.UpdateBook(id, bookTomodify);
       
 
       // Assert
