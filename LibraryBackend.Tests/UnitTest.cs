@@ -316,6 +316,36 @@ namespace LibraryBackend.Tests
       Assert.Equal ("Title and Author cannot be empty", apiError.Detail);
     }
 
+    [Fact]
+    public async Task Should_return_badrequest_when_empty_Title_in_UpdateBook_()
+    {
+      // Arrange
+      var id = 99;
+      var bookTomodify = new Book 
+      {
+        Id= 99,
+        Title= "",
+        Author = "Author"
+      };
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository.Create(bookTomodify))
+      .ReturnsAsync(bookTomodify);
+
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository.UpdateBook(bookTomodify))
+      .ReturnsAsync(bookTomodify);
+
+      // Act
+      var result = await _bookController.UpdateBook(id, bookTomodify);
+      
+
+      // Assert
+      var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+      var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
+      Assert.Equal ("Validation Error", apiError.Message);
+      Assert.Equal ("Title and Author cannot be empty", apiError.Detail);
+    }
+
      [Fact]
     public async Task Should_return_badrequest_with_mismatch_id_in_UpdateBook()
     {
