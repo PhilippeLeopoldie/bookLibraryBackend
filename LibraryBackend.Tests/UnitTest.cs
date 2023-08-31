@@ -28,8 +28,20 @@ namespace LibraryBackend.Tests
             new Opinion
            {
             View="View1",
-            BookId=1,
-            Like =5
+            BookId = 1,
+            Like = 5
+           },
+           new Opinion
+           {
+            View="View2",
+            BookId = 1,
+            Like = 3
+           },
+           new Opinion
+           {
+            View="View3",
+            BookId = 1,
+            Like = 4
            }
           }
       },
@@ -108,7 +120,6 @@ namespace LibraryBackend.Tests
       var NotfoundResult = Assert.IsType<NotFoundResult>(result.Result);
     }
 
-
     [Fact]
     public async void Should_get_book_by_Id()
     {
@@ -175,7 +186,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_send_badRequest_when_create_Book_with_empty_property()
+    public async Task Should_send_badRequest_when_empty_property_in_CreateBook()
     {
       // Arrange
       var bookToCreate = new Book
@@ -199,7 +210,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_delete_book_by_id()
+    public async Task Should_delete_book_by_id_in_DeleteBook()
     {
       // Arrange
       var bookIdToDelete = 2;
@@ -225,7 +236,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_returns_not_found_for_delete_book_with_non_existing_id()
+    public async Task Should_returns_not_found_with_non_existing_id_in_DeleteBook()
     {
       // Arrange
       var nonExistingId = 99;
@@ -239,7 +250,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_modify_book_for_UpdateBook()
+    public async Task Should_modify_book_in_UpdateBook()
     {
       // Arrange
       var id = 99;
@@ -276,7 +287,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_return_badrequest_for_UpdateBook_with_empty_Title_and_Author()
+    public async Task Should_return_badrequest_when_empty_Title_and_Author_in_UpdateBook_()
     {
       // Arrange
       var id = 99;
@@ -336,7 +347,7 @@ namespace LibraryBackend.Tests
     }
 
      [Fact]
-    public async void Should_get_One_Opinion()
+    public async void Should_get_Opinions_in_GetBooks()
     {
       // arrange
       _mockBookRepository
@@ -352,9 +363,13 @@ namespace LibraryBackend.Tests
       Assert.Equal(2, books?.Count());
       Assert.Equal("title1", books?.ElementAt(0).Title);
       Assert.Equal(1, books?.ElementAt(0).Id);
-      Assert.Equal("View1", books?.ElementAt(0).Opinions?.ElementAt(0).View);
       Assert.Equal("author2", books?.ElementAt(1).Author);
       Assert.Equal(2, books?.ElementAt(1).Id);
+      Assert.Equal(3,books?.ElementAt(0).Opinions?.Count());
+      Assert.Equal("View1", books?.ElementAt(0).Opinions?.First().View);
+      Assert.Equal("View3", books?.ElementAt(0).Opinions?.Last().View);
+      
+      
     }
 
   }
