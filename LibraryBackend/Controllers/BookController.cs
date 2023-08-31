@@ -61,21 +61,21 @@ namespace LibraryBackend.Controllers
     {
       if(id != book.Id)
       {
-        var error = new ApiError
+        var mismatchError = new ApiError
         {
-          Message = "Mismatch error",
+          Message = "Mismatch Error",
           Detail = $"id{id} mismatch with bookId{book.Id}"
         };
-        return BadRequest(error);
+        return BadRequest(mismatchError);
       }
       if(string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author)) 
       {
-        var error = new ApiError
+        var emptyDataError = new ApiError
         {
           Message = "Validation Error",
           Detail = "Title and Author cannot be empty"
         };
-        return BadRequest(error);
+        return BadRequest(emptyDataError);
       }
       var bookToUpdate = await _bookRepository.GetByIdAsync(book.Id);
       if (bookToUpdate == null)
