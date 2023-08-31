@@ -55,7 +55,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async void Should_get_two_Books()
+    public async void Should_get_two_Books_in_GetBook()
     {
       // arrange
       _mockBookRepository
@@ -131,7 +131,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async void Should_get_not_found_for_getById_with_wrong_id()
+    public async void Should_get_not_found_for_GetById_with_wrong_id()
     {
       // Arrange
       int bookId = 2;
@@ -239,7 +239,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_modify_book_for_updateBook()
+    public async Task Should_modify_book_for_UpdateBook()
     {
       // Arrange
       var id = 99;
@@ -276,7 +276,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_return_badrequest_for_updateBook_with_empty_Title_and_Author()
+    public async Task Should_return_badrequest_for_UpdateBook_with_empty_Title_and_Author()
     {
       // Arrange
       var id = 99;
