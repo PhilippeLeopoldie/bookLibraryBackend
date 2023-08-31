@@ -57,8 +57,17 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiError),StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Book>> UpdateBook(Book book)
+    public async Task<ActionResult<Book>> UpdateBook(int id, Book book)
     {
+      if(id != book.Id)
+      {
+        var error = new ApiError
+        {
+          Message = "Mismatch error",
+          Detail = $"id{id} mismatch with bookId{book.Id}"
+        };
+        return BadRequest(error);
+      }
       if(string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author)) 
       {
         var error = new ApiError
@@ -73,7 +82,7 @@ namespace LibraryBackend.Controllers
       {
         return NotFound($"Book with Id {book.Id} not found");
       }
-      var updatedBook= await _bookRepository.UpdateBook(bookToUpdate);
+      var updatedBook= await _bookRepository.UpdateBook(book);
       return  Ok(updatedBook);
     }
 
