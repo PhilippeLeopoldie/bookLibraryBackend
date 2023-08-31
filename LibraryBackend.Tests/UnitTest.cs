@@ -306,6 +306,36 @@ namespace LibraryBackend.Tests
     }
 
      [Fact]
+    public async Task Should_return_badrequest_with_mismatch_id_in_UpdateBook()
+    {
+      // Arrange
+      var id = 3;
+      var bookToModify = new Book 
+      {
+        Id= 99,
+        Title= "",
+        Author = ""
+      };
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository.Create(bookToModify))
+      .ReturnsAsync(bookToModify);
+
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository.UpdateBook(bookToModify))
+      .ReturnsAsync(bookToModify);
+
+      // Act
+      var result = await _bookController.UpdateBook(id, bookToModify);
+      
+
+      // Assert
+      var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+      var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
+      Assert.Equal ("Mismatch Error", apiError.Message);
+      Assert.Equal ($"id{id} mismatch with bookId{bookToModify.Id}", apiError.Detail);
+    }
+
+     [Fact]
     public async void Should_get_One_Opinion()
     {
       // arrange
