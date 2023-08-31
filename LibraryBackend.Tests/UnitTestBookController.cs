@@ -9,13 +9,13 @@ using Moq;
 
 namespace LibraryBackend.Tests
 {
-  public class UnitTest
+  public class UnitTestBookController
   {
         readonly BookController _bookController;
-        readonly OpinionController _opinionController;
+        
         readonly Mock<BookRepository> _mockBookRepository;
         readonly MyLibraryContext _context; 
-        readonly Mock<OpinionRepository> _mockOpinionRepository;
+        
     List<Book> mockBookData = new List<Book>
     {
       new Book
@@ -53,7 +53,7 @@ namespace LibraryBackend.Tests
       }
     };
 
-    public UnitTest()
+    public UnitTestBookController()
     {
       var options = new DbContextOptionsBuilder<MyLibraryContext>()
         .UseInMemoryDatabase(databaseName: "TestDatabase")
@@ -61,9 +61,9 @@ namespace LibraryBackend.Tests
 
       _context = new MyLibraryContext(options);
       _mockBookRepository = new Mock<BookRepository>(_context);
-      _mockOpinionRepository = new Mock<OpinionRepository>(_context);
+      
       _bookController = new BookController(_mockBookRepository.Object);
-      _opinionController = new OpinionController(_mockOpinionRepository.Object);
+      
     }
 
     [Fact]
@@ -397,10 +397,10 @@ namespace LibraryBackend.Tests
       Assert.Equal(2, books?.ElementAt(1).Id);
       Assert.Equal(3,books?.ElementAt(0).Opinions?.Count());
       Assert.Equal("View1", books?.ElementAt(0).Opinions?.First().View);
-      Assert.Equal("View3", books?.ElementAt(0).Opinions?.Last().View);
-      
-      
+      Assert.Equal("View3", books?.ElementAt(0).Opinions?.Last().View); 
     }
-
+  
   }
+
+ 
 }
