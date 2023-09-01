@@ -31,13 +31,13 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<Book>> GetBookById(int id)
     {
-        var book = await _bookRepository.GetByIdAsync(id);
-        return book == null ? NotFound($"Book with Id {id} not found") : Ok(book);
+      var book = await _bookRepository.GetByIdAsync(id);
+      return book == null ? NotFound($"Book with Id {id} not found") : Ok(book);
     }
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof (ApiError),StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Book>> CreateBook(Book book)
     {
       if (string.IsNullOrEmpty(book.Title) || string.IsNullOrEmpty(book.Author))
@@ -55,11 +55,11 @@ namespace LibraryBackend.Controllers
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiError),StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Book>> UpdateBook(int id, Book book)
     {
-      if(id != book.Id)
+      if (id != book.Id)
       {
         var mismatchError = new ApiError
         {
@@ -68,7 +68,7 @@ namespace LibraryBackend.Controllers
         };
         return BadRequest(mismatchError);
       }
-      if(string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author)) 
+      if (string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
       {
         var emptyDataError = new ApiError
         {
@@ -82,8 +82,8 @@ namespace LibraryBackend.Controllers
       {
         return NotFound($"Book with Id {book.Id} not found");
       }
-      var updatedBook= await _bookRepository.UpdateBook(book);
-      return  Ok(updatedBook);
+      var updatedBook = await _bookRepository.UpdateBook(book);
+      return Ok(updatedBook);
     }
 
     [HttpDelete("{id}")]
@@ -92,7 +92,7 @@ namespace LibraryBackend.Controllers
     public async Task<ActionResult> DeleteBook(int id)
     {
       var bookToDelete = await _bookRepository.GetByIdAsync(id);
-      if (bookToDelete == null) 
+      if (bookToDelete == null)
       {
         return NotFound($"Book with Id {id} not found");
       }
