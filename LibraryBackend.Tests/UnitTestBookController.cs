@@ -13,8 +13,8 @@ namespace LibraryBackend.Tests
   {
     readonly BookController _bookController;
 
-    readonly Mock<BookRepository> _mockBookRepository;
-    readonly MyLibraryContext _context;
+    readonly Mock<IRepository<Book>> _mockBookRepository;
+    
 
     List<Book> mockBookData = new List<Book>
     {
@@ -59,8 +59,8 @@ namespace LibraryBackend.Tests
         .UseInMemoryDatabase(databaseName: "TestDatabase")
         .Options;
 
-      _context = new MyLibraryContext(options);
-      _mockBookRepository = new Mock<BookRepository>(_context);
+      
+      _mockBookRepository = new Mock<IRepository<Book>>();
 
       _bookController = new BookController(_mockBookRepository.Object);
 
@@ -270,7 +270,7 @@ namespace LibraryBackend.Tests
       .ReturnsAsync(bookTomodify);
 
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.UpdateBook(bookTomodify))
+      .Setup(mockRepository => mockRepository.Update(bookTomodify))
       .ReturnsAsync(bookTomodify);
 
       // Act
@@ -283,7 +283,7 @@ namespace LibraryBackend.Tests
       Assert.Equal("titleToModify", updatedBook.Title);
       Assert.Equal("authorToModify", updatedBook.Author);
 
-      _mockBookRepository.Verify(mockRepository => mockRepository.UpdateBook(bookTomodify), Times.Once);
+      _mockBookRepository.Verify(mockRepository => mockRepository.Update(bookTomodify), Times.Once);
     }
 
     [Fact]
@@ -302,7 +302,7 @@ namespace LibraryBackend.Tests
       .ReturnsAsync(bookTomodify);
 
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.UpdateBook(bookTomodify))
+      .Setup(mockRepository => mockRepository.Update(bookTomodify))
       .ReturnsAsync(bookTomodify);
 
       // Act
@@ -332,7 +332,7 @@ namespace LibraryBackend.Tests
       .ReturnsAsync(bookTomodify);
 
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.UpdateBook(bookTomodify))
+      .Setup(mockRepository => mockRepository.Update(bookTomodify))
       .ReturnsAsync(bookTomodify);
 
       // Act
@@ -362,7 +362,7 @@ namespace LibraryBackend.Tests
       .ReturnsAsync(bookToModify);
 
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.UpdateBook(bookToModify))
+      .Setup(mockRepository => mockRepository.Update(bookToModify))
       .ReturnsAsync(bookToModify);
 
       // Act
