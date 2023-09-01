@@ -11,11 +11,11 @@ namespace LibraryBackend.Tests
 {
   public class UnitTestBookController
   {
-        readonly BookController _bookController;
-        
-        readonly Mock<BookRepository> _mockBookRepository;
-        readonly MyLibraryContext _context; 
-        
+    readonly BookController _bookController;
+
+    readonly Mock<BookRepository> _mockBookRepository;
+    readonly MyLibraryContext _context;
+
     List<Book> mockBookData = new List<Book>
     {
       new Book
@@ -61,9 +61,9 @@ namespace LibraryBackend.Tests
 
       _context = new MyLibraryContext(options);
       _mockBookRepository = new Mock<BookRepository>(_context);
-      
+
       _bookController = new BookController(_mockBookRepository.Object);
-      
+
     }
 
     [Fact]
@@ -93,7 +93,7 @@ namespace LibraryBackend.Tests
     {
       // arrange
       List<Book>? mockNullBookData = null;
-      _mockBookRepository 
+      _mockBookRepository
       .Setup(repositoryMock => repositoryMock.GetAllAsync())
       .ReturnsAsync(mockNullBookData!);
 
@@ -109,7 +109,7 @@ namespace LibraryBackend.Tests
     {
       // arrange
       List<Book>? mockEmptyBookData = new();
-      _mockBookRepository 
+      _mockBookRepository
       .Setup(repositoryMock => repositoryMock.GetAllAsync())
       .ReturnsAsync(mockEmptyBookData!);
 
@@ -203,8 +203,8 @@ namespace LibraryBackend.Tests
       // Assert
       var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
       var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
-      Assert.Equal ("Validation Error", apiError.Message);
-      Assert.Equal ("Title and Author cannot be empty", apiError.Detail);
+      Assert.Equal("Validation Error", apiError.Message);
+      Assert.Equal("Title and Author cannot be empty", apiError.Detail);
       Assert.Equal(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
 
     }
@@ -246,7 +246,7 @@ namespace LibraryBackend.Tests
 
       // Assert
       var nonFoundId = Assert.IsType<NotFoundObjectResult>(result);
-      Assert.Equal($"Book with Id {nonExistingId} not found",nonFoundId.Value);
+      Assert.Equal($"Book with Id {nonExistingId} not found", nonFoundId.Value);
     }
 
     [Fact]
@@ -271,10 +271,10 @@ namespace LibraryBackend.Tests
 
       _mockBookRepository
       .Setup(mockRepository => mockRepository.UpdateBook(bookTomodify))
-      .ReturnsAsync(bookTomodify); 
+      .ReturnsAsync(bookTomodify);
 
       // Act
-      var result = await _bookController.UpdateBook(id,bookTomodify);
+      var result = await _bookController.UpdateBook(id, bookTomodify);
 
       // assert
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -282,7 +282,7 @@ namespace LibraryBackend.Tests
       Assert.Equal(bookTomodify.Id, updatedBook.Id);
       Assert.Equal("titleToModify", updatedBook.Title);
       Assert.Equal("authorToModify", updatedBook.Author);
-      
+
       _mockBookRepository.Verify(mockRepository => mockRepository.UpdateBook(bookTomodify), Times.Once);
     }
 
@@ -291,10 +291,10 @@ namespace LibraryBackend.Tests
     {
       // Arrange
       var id = 99;
-      var bookTomodify = new Book 
+      var bookTomodify = new Book
       {
-        Id= 99,
-        Title= "",
+        Id = 99,
+        Title = "",
         Author = ""
       };
       _mockBookRepository
@@ -307,13 +307,13 @@ namespace LibraryBackend.Tests
 
       // Act
       var result = await _bookController.UpdateBook(id, bookTomodify);
-      
+
 
       // Assert
       var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
       var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
-      Assert.Equal ("Validation Error", apiError.Message);
-      Assert.Equal ("Title and Author cannot be empty", apiError.Detail);
+      Assert.Equal("Validation Error", apiError.Message);
+      Assert.Equal("Title and Author cannot be empty", apiError.Detail);
     }
 
     [Fact]
@@ -321,10 +321,10 @@ namespace LibraryBackend.Tests
     {
       // Arrange
       var id = 99;
-      var bookTomodify = new Book 
+      var bookTomodify = new Book
       {
-        Id= 99,
-        Title= "",
+        Id = 99,
+        Title = "",
         Author = "Author"
       };
       _mockBookRepository
@@ -337,24 +337,24 @@ namespace LibraryBackend.Tests
 
       // Act
       var result = await _bookController.UpdateBook(id, bookTomodify);
-      
+
 
       // Assert
       var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
       var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
-      Assert.Equal ("Validation Error", apiError.Message);
-      Assert.Equal ("Title and Author cannot be empty", apiError.Detail);
+      Assert.Equal("Validation Error", apiError.Message);
+      Assert.Equal("Title and Author cannot be empty", apiError.Detail);
     }
 
-     [Fact]
+    [Fact]
     public async Task Should_return_badrequest_with_mismatch_id_in_UpdateBook()
     {
       // Arrange
       var id = 3;
-      var bookToModify = new Book 
+      var bookToModify = new Book
       {
-        Id= 99,
-        Title= "",
+        Id = 99,
+        Title = "",
         Author = ""
       };
       _mockBookRepository
@@ -367,16 +367,16 @@ namespace LibraryBackend.Tests
 
       // Act
       var result = await _bookController.UpdateBook(id, bookToModify);
-      
+
 
       // Assert
       var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
       var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
-      Assert.Equal ("Mismatch Error", apiError.Message);
-      Assert.Equal ($"id{id} mismatch with bookId{bookToModify.Id}", apiError.Detail);
+      Assert.Equal("Mismatch Error", apiError.Message);
+      Assert.Equal($"id{id} mismatch with bookId{bookToModify.Id}", apiError.Detail);
     }
 
-     [Fact]
+    [Fact]
     public async void Should_get_Opinions_in_GetBooks()
     {
       // arrange
@@ -395,12 +395,12 @@ namespace LibraryBackend.Tests
       Assert.Equal(1, books?.ElementAt(0).Id);
       Assert.Equal("author2", books?.ElementAt(1).Author);
       Assert.Equal(2, books?.ElementAt(1).Id);
-      Assert.Equal(3,books?.ElementAt(0).Opinions?.Count());
+      Assert.Equal(3, books?.ElementAt(0).Opinions?.Count());
       Assert.Equal("View1", books?.ElementAt(0).Opinions?.First().View);
-      Assert.Equal("View3", books?.ElementAt(0).Opinions?.Last().View); 
+      Assert.Equal("View3", books?.ElementAt(0).Opinions?.Last().View);
     }
-  
+
   }
 
- 
+
 }
