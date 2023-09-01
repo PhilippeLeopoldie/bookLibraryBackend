@@ -18,10 +18,7 @@ builder.Services.AddCors(options =>
   options.AddPolicy(name: MyAllowSpecificOrigins,
                      policy =>
                      {
-                       policy.WithOrigins("books-library-project.vercel.app/",
-                        "https://books-library-project-git-master-philippeleopoldie.vercel.app/",
-                         "https://books-library-project-philippeleopoldie.vercel.app/",
-                         "https://backend-sepia-eight.vercel.app/",
+                       policy.WithOrigins(
                          "https://booklibray-backend.herokuapp.com",
                          "https://leopoldie-booklibray-backend.herokuapp.com")
                        .AllowAnyHeader()
@@ -32,7 +29,6 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
-builder.Services.AddScoped<BookRepository>();
 builder.Services.AddScoped<OpinionRepository>();
 builder.Services.AddScoped(typeof(IRepository<>),typeof(Repository<>));
 builder.Services.AddControllers().AddJsonOptions(x => 
