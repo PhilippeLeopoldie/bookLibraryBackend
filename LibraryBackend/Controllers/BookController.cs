@@ -9,10 +9,10 @@ namespace LibraryBackend.Controllers
   [ApiController]
   public class BookController : ControllerBase
   {
-    private readonly BookRepository _bookRepository;
+    private readonly IRepository<Book> _bookRepository;
     private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
 
-    public BookController(BookRepository bookRepository)
+    public BookController(IRepository<Book> bookRepository)
     {
       _bookRepository = bookRepository;
     }
@@ -104,7 +104,7 @@ namespace LibraryBackend.Controllers
       {
         return NotFound($"Book with Id {book.Id} not found");
       }
-      var updatedBook = await _bookRepository.UpdateBook(book);
+      var updatedBook = await _bookRepository.Update(book);
       return Ok(updatedBook);
     }
 
