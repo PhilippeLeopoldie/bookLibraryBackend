@@ -10,6 +10,7 @@ namespace LibraryBackend.Controllers
   public class BookController : ControllerBase
   {
     private readonly BookRepository _bookRepository;
+    private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
 
     public BookController(BookRepository bookRepository)
     {
@@ -18,10 +19,20 @@ namespace LibraryBackend.Controllers
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<Book>>> GetBook()
+    public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetBook()
     {
       var books = await _bookRepository.GetAllAsync();
-      return books?.Any() != true ? NotFound() : Ok(books);
+      if(books == null || !books.Any())
+      {
+        return NotFound();
+      }
+      var booksResponse = from book in books 
+        select new BookDtoResponse ()
+        {
+          Book = book,
+          RequestedAt = DateTime.Now.ToString(dateTimeFormat)
+        };
+      return Ok(booksResponse);
     }
 
 
@@ -29,10 +40,21 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<Book>> GetBookById(int id)
+    public async Task<ActionResult<BookDtoResponse>> GetBookById(int id)
     {
-      var book = await _bookRepository.GetByIdAsync(id);
-      return book == null ? NotFound($"Book with Id {id} not found") : Ok(book);
+      var bookById = await _bookRepository.GetByIdAsync(id);
+      if (bookById == null)
+      {
+        return NotFound($"Book with Id {id} not found");
+      }
+      return Ok
+      (
+        new BookDtoResponse
+        {
+          Book = bookById,
+          RequestedAt = DateTime.Now.ToString(dateTimeFormat)
+        }
+      );
     }
 
     [HttpPost]
