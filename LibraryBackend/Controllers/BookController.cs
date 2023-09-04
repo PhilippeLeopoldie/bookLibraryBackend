@@ -22,16 +22,16 @@ namespace LibraryBackend.Controllers
     public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetBook()
     {
       var books = await _bookRepository.GetAllAsync();
-      if(books == null || !books.Any())
+      if (books == null || !books.Any())
       {
         return NotFound();
       }
-      var booksResponse = from book in books 
-        select new BookDtoResponse ()
-        {
-          Book = book,
-          RequestedAt = DateTime.Now.ToString(dateTimeFormat)
-        };
+      var booksResponse = from book in books
+                          select new BookDtoResponse()
+                          {
+                            Book = book,
+                            RequestedAt = DateTime.Now.ToString(dateTimeFormat)
+                          };
       return Ok(booksResponse);
     }
 
@@ -79,18 +79,15 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Book>> UpdateBook(int id, Book book)
+    public async Task<ActionResult<Book>> UpdateBook(int id, BookUpdateDtoRequest bookToUpdate)
     {
-      if (id != book.Id)
+      var bookByIdToUpdate = await _bookRepository.GetByIdAsync(id);
+      if (bookByIdToUpdate == null)
       {
-        var mismatchError = new ApiError
-        {
-          Message = "Mismatch Error",
-          Detail = $"id{id} mismatch with bookId{book.Id}"
-        };
-        return BadRequest(mismatchError);
+        return NotFound($"Book with Id {id} not found");
       }
-      if (string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
+      
+      if (string.IsNullOrWhiteSpace(bookToUpdate.Title) || string.IsNullOrWhiteSpace(bookToUpdate.Author))
       {
         var emptyDataError = new ApiError
         {
@@ -99,12 +96,10 @@ namespace LibraryBackend.Controllers
         };
         return BadRequest(emptyDataError);
       }
-      var bookToUpdate = await _bookRepository.GetByIdAsync(book.Id);
-      if (bookToUpdate == null)
-      {
-        return NotFound($"Book with Id {book.Id} not found");
-      }
-      var updatedBook = await _bookRepository.Update(book);
+      bookByIdToUpdate.Author = bookToUpdate.Author;
+      bookByIdToUpdate.Title = bookToUpdate.Title;
+
+      var updatedBook = await _bookRepository.Update(bookByIdToUpdate);
       return Ok(updatedBook);
     }
 
