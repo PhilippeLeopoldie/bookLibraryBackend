@@ -79,7 +79,7 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Book>> UpdateBook(int id, BookUpdateDtoRequest bookToUpdate)
+    public async Task<ActionResult<Book>> UpdateBook(int id, BookDtoRequest bookToUpdate)
     {
       var bookByIdToUpdate = await _bookRepository.GetByIdAsync(id);
       if (bookByIdToUpdate == null)

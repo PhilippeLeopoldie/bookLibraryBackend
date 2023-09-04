@@ -262,7 +262,7 @@ namespace LibraryBackend.Tests
         Title = "initialTitle",
         Author = "initialAuthor"
       };
-      var bookToModify = new BookUpdateDtoRequest
+      var bookToModify = new BookDtoRequest
       {
 
         Title = "titleToModify",
@@ -306,7 +306,7 @@ namespace LibraryBackend.Tests
         Author = "initialAuthor"
       };
 
-      var bookToUpdate = new BookUpdateDtoRequest
+      var bookToUpdate = new BookDtoRequest
       {
 
         Title = "",
@@ -348,7 +348,7 @@ namespace LibraryBackend.Tests
         Author = "initialAuthor"
       };
 
-      var bookToUpdate = new BookUpdateDtoRequest
+      var bookToUpdate = new BookDtoRequest
       {
 
         Title = "",

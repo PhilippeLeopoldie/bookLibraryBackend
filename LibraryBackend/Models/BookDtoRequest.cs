@@ -1,6 +1,6 @@
 namespace LibraryBackend.Models
 {
-  public class BookUpdateDtoRequest : BaseEntity
+  public class BookDtoRequest : BaseEntity
   {
     public string? Title {get; set;}
 
