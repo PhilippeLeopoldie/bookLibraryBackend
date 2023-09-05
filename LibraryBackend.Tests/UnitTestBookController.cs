@@ -166,42 +166,53 @@ namespace LibraryBackend.Tests
     public async Task Should_create_one_book()
     {
       // Arrange
-      var bookToCreate = new Book
+      var bookDtoRequest = new BookDtoRequest
       {
         Title = "New title",
         Author = "New author"
       };
+      var bookToCreate= new Book 
+      {  
+        Title = bookDtoRequest.Title,
+        Author = bookDtoRequest.Author      
+      };
       _mockBookRepository
-        .Setup(MockRepository => MockRepository.Create(bookToCreate))
+        .Setup(MockRepository => MockRepository.Create(It.IsAny<Book>()))
         .ReturnsAsync(bookToCreate);
 
       // Act
-      var result = await _bookController.CreateBook(bookToCreate);
+      var result = await _bookController.CreateBook(bookDtoRequest);
 
       // Assert
       var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
       Assert.Equal(StatusCodes.Status201Created, createdAtActionResult.StatusCode);
       var createdBook = Assert.IsType<Book>(createdAtActionResult.Value);
-      Assert.Equal(bookToCreate.Title, createdBook.Title);
-      Assert.Equal(bookToCreate.Author, createdBook.Author);
-
+      Assert.Equal(bookDtoRequest.Title, createdBook.Title);
+      Assert.Equal(bookDtoRequest.Author, createdBook.Author);
     }
 
     [Fact]
     public async Task Should_send_badRequest_when_empty_property_in_CreateBook()
     {
       // Arrange
-      var bookToCreate = new Book
+      var bookDtoRequest = new BookDtoRequest
       {
         Title = "",
         Author = "New author"
       };
+
+
+      var bookToCreate = new Book
+      {
+        Title = bookDtoRequest.Title,
+        Author = bookDtoRequest.Author
+      };
       _mockBookRepository
-        .Setup(MockRepository => MockRepository.Create(bookToCreate))
+        .Setup(MockRepository => MockRepository.Create(It.IsAny<Book>()))
         .ReturnsAsync(bookToCreate);
 
       // Act
-      var result = await _bookController.CreateBook(bookToCreate);
+      var result = await _bookController.CreateBook(bookDtoRequest);
       // Assert
       var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
       var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
@@ -262,7 +273,7 @@ namespace LibraryBackend.Tests
         Title = "initialTitle",
         Author = "initialAuthor"
       };
-      var bookToModify = new BookDtoRequest
+      var bookDtoRequest = new BookDtoRequest
       {
 
         Title = "titleToModify",
@@ -282,7 +293,7 @@ namespace LibraryBackend.Tests
       .ReturnsAsync(bookToCreate);
 
       // Act
-      var result = await _bookController.UpdateBook(id, bookToModify);
+      var result = await _bookController.UpdateBook(id, bookDtoRequest);
 
       // assert
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
