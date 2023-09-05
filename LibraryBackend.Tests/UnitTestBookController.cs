@@ -1,3 +1,4 @@
+using System.Data.Common;
 using LibraryBackend.Common;
 using LibraryBackend.Controllers;
 using LibraryBackend.Data;
@@ -14,7 +15,7 @@ namespace LibraryBackend.Tests
     readonly BookController _bookController;
 
     readonly Mock<IRepository<Book>> _mockBookRepository;
-    
+
 
 
     List<Book> mockBookData = new List<Book>
@@ -62,7 +63,7 @@ namespace LibraryBackend.Tests
 
 
       _mockBookRepository = new Mock<IRepository<Book>>();
-      
+
 
       _bookController = new BookController(_mockBookRepository.Object);
 
@@ -85,7 +86,6 @@ namespace LibraryBackend.Tests
       Assert.Equal(2, books?.Count());
       Assert.Equal("title1", books?.ElementAt(0).Book?.Title);
       Assert.Equal(1, books?.ElementAt(0).Book?.Id);
-      // Assert.Equal("View1", books?.ElementAt(0).Opinions?.ElementAt(0).View);
       Assert.Equal("author2", books?.ElementAt(1).Book?.Author);
       Assert.Equal(2, books?.ElementAt(1).Book?.Id);
     }
@@ -163,7 +163,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_create_one_book()
+    public async Task Should_create_one_book_in_CreateBook()
     {
       // Arrange
       var bookDtoRequest = new BookDtoRequest
@@ -171,10 +171,10 @@ namespace LibraryBackend.Tests
         Title = "New title",
         Author = "New author"
       };
-      var bookToCreate= new Book 
-      {  
+      var bookToCreate = new Book
+      {
         Title = bookDtoRequest.Title,
-        Author = bookDtoRequest.Author      
+        Author = bookDtoRequest.Author
       };
       _mockBookRepository
         .Setup(MockRepository => MockRepository.Create(It.IsAny<Book>()))
@@ -192,7 +192,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_send_badRequest_when_empty_property_in_CreateBook()
+    public async Task Should_send_badRequest_when_empty_Title_in_CreateBook()
     {
       // Arrange
       var bookDtoRequest = new BookDtoRequest
@@ -392,6 +392,48 @@ namespace LibraryBackend.Tests
 
 
     [Fact]
+    public async Task Should_return_not_found_in_UpdateBook()
+    {
+
+
+      //Arrange
+
+      var id = 1;
+      Book? nullBook = null;
+
+      var book = new Book
+      {
+        Title = "UpdatedTitle",
+        Author = "updatedAuthor"
+      };
+
+
+      var bookDtoRequest = new BookDtoRequest
+      {
+        Title = "title",
+        Author = "author"
+      };
+
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository.GetByIdAsync(id))
+      .ReturnsAsync(nullBook);
+
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository.Update(book))
+      .ReturnsAsync(book);
+
+      // Act
+
+      var result = await _bookController.UpdateBook(id, bookDtoRequest);
+
+      // Assert
+
+      var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
+      Assert.Equal($"Book with Id {id} not found", notFoundResult.Value);
+
+    }
+
+    [Fact]
     public async void Should_get_Opinions_in_GetBooks()
     {
       // arrange
@@ -409,7 +451,7 @@ namespace LibraryBackend.Tests
       Assert.Equal("title1", booksResponse?.ElementAt(0)?.Book?.Title);
       Assert.Equal(1, booksResponse?.ElementAt(0).Book?.Id);
       Assert.Equal("author2", booksResponse?.ElementAt(1).Book?.Author);
-      
+
     }
 
   }
