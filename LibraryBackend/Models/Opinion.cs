@@ -4,8 +4,6 @@ namespace LibraryBackend.Models
 {
   public class Opinion : BaseEntity
   {
-    
-
     public int? Like { get; set; } = 1;
 
     public string? View { get; set; }
@@ -14,8 +12,6 @@ namespace LibraryBackend.Models
 
     [Required]
     public int? BookId { get; set; }
-
-   
     public Book? Book { get; set; }
 
   }
