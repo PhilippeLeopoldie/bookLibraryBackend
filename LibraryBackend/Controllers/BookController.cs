@@ -60,9 +60,9 @@ namespace LibraryBackend.Controllers
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Book>> CreateBook(Book book)
+    public async Task<ActionResult<Book>> CreateBook(BookDtoRequest bookDto)
     {
-      if (string.IsNullOrEmpty(book.Title) || string.IsNullOrEmpty(book.Author))
+      if (bookDto == null || string.IsNullOrEmpty(bookDto.Title) || string.IsNullOrEmpty(bookDto.Author))
       {
         var error = new ApiError
         {
@@ -71,7 +71,12 @@ namespace LibraryBackend.Controllers
         };
         return BadRequest(error);
       }
-      var newBook = await _bookRepository.Create(book);
+      var bookToCreate = new Book
+        {
+          Title= bookDto.Title,
+          Author = bookDto.Author
+        };
+      var newBook = await _bookRepository.Create(bookToCreate);
       return CreatedAtAction(nameof(GetBook), new { id = newBook.Id }, newBook);
     }
 
