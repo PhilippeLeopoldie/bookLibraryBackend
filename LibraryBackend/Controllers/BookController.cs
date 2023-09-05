@@ -19,6 +19,7 @@ namespace LibraryBackend.Controllers
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetBook()
     {
       var books = await _bookRepository.GetAllAsync();
@@ -39,7 +40,6 @@ namespace LibraryBackend.Controllers
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<BookDtoResponse>> GetBookById(int id)
     {
       var bookById = await _bookRepository.GetByIdAsync(id);
