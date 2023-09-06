@@ -4,6 +4,7 @@ using LibraryBackend.Controllers;
 using LibraryBackend.Data;
 using LibraryBackend.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -119,7 +120,8 @@ namespace LibraryBackend.Tests
       var result = await _bookController.GetBook();
 
       // Assert
-      var NotfoundResult = Assert.IsType<NotFoundResult>(result.Result);
+      var notfoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
+      Assert.Equal("Empty list of books", notfoundResult.Value);
     }
 
     [Fact]
@@ -253,6 +255,10 @@ namespace LibraryBackend.Tests
     {
       // Arrange
       var nonExistingId = 99;
+      
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository.GetByIdAsync(nonExistingId))
+      .ReturnsAsync(null as Book);
 
       // act
       var result = await _bookController.DeleteBook(nonExistingId);
@@ -266,31 +272,23 @@ namespace LibraryBackend.Tests
     public async Task Should_modify_book_in_UpdateBook()
     {
       // Arrange
-      var id = 99;
-      var bookToCreate = new Book
-      {
-        Id = id,
-        Title = "initialTitle",
-        Author = "initialAuthor"
-      };
+      var id = 2;
+      
       var bookDtoRequest = new BookDtoRequest
       {
-
         Title = "titleToModify",
         Author = "authorToModify"
       };
 
-      _mockBookRepository
-      .Setup(mockRepository => mockRepository.Create(bookToCreate))
-      .ReturnsAsync(bookToCreate);
+      var bookById = mockBookData.FirstOrDefault(book => book.Id == id);
 
       _mockBookRepository
       .Setup(mockRepository => mockRepository.GetByIdAsync(id))
-      .ReturnsAsync(bookToCreate);
+      .ReturnsAsync(bookById);
 
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.Update(bookToCreate))
-      .ReturnsAsync(bookToCreate);
+      .Setup(mockRepository => mockRepository.Update(bookById!))
+      .ReturnsAsync(bookById!);
 
       // Act
       var result = await _bookController.UpdateBook(id, bookDtoRequest);
@@ -301,8 +299,7 @@ namespace LibraryBackend.Tests
       Assert.Equal(id, updatedBook.Id);
       Assert.Equal("titleToModify", updatedBook.Title);
       Assert.Equal("authorToModify", updatedBook.Author);
-
-      _mockBookRepository.Verify(mockRepository => mockRepository.Update(bookToCreate), Times.Once);
+      _mockBookRepository.Verify(mockRepository => mockRepository.Update(bookById!), Times.Once);
     }
 
     [Fact]
