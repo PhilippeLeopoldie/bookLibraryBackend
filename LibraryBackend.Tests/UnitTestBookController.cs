@@ -104,7 +104,8 @@ namespace LibraryBackend.Tests
       var result = await _bookController.GetBook();
 
       // Assert
-      var NotfoundResult = Assert.IsType<NotFoundResult>(result.Result);
+      var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
+      Assert.Equal("Empty list of books", notFoundResult.Value);
     }
 
     [Fact]
