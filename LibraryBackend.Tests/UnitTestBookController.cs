@@ -339,44 +339,33 @@ namespace LibraryBackend.Tests
     [Fact]
     public async Task Should_return_badrequest_when_empty_Title_in_UpdateBook_()
     {
-      // Arrange
-      var id = 99;
-      var bookToCreate = new Book
-      {
-        Id = 99,
-        Title = "initialTitle",
-        Author = "initialAuthor"
-      };
-
+     // Arrange
+      var id = 2;
+      var bookById = mockBookData.FirstOrDefault(book => book.Id == id);
       var bookToUpdate = new BookDtoRequest
       {
-
         Title = "",
-        Author = "authorToModify"
+        Author = "AuthorToUpdate"
       };
-
-
-      _mockBookRepository
-      .Setup(mockRepository => mockRepository.Create(bookToCreate))
-      .ReturnsAsync(bookToCreate);
 
       _mockBookRepository
       .Setup(mockRepository => mockRepository.GetByIdAsync(id))
-      .ReturnsAsync(bookToCreate);
+      .ReturnsAsync(bookById);
 
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.Update(bookToCreate))
-      .ReturnsAsync(bookToCreate);
+      .Setup(mockRepository => mockRepository.Update(bookById!))
+      .ReturnsAsync(bookById!);
 
       // Act
       var result = await _bookController.UpdateBook(id, bookToUpdate);
-
 
       // Assert
       var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
       var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
       Assert.Equal("Validation Error", apiError.Message);
       Assert.Equal("Title and Author cannot be empty", apiError.Detail);
+      _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(id), Times.Once);
+      _mockBookRepository.Verify(mockRepository => mockRepository.Update(bookById!), Times.Never);
     }
 
 
