@@ -372,26 +372,19 @@ namespace LibraryBackend.Tests
     [Fact]
     public async Task Should_return_not_found_in_UpdateBook()
     {
-
-
       //Arrange
-
       var id = 1;
       Book? nullBook = null;
-
       var book = new Book
       {
         Title = "UpdatedTitle",
         Author = "updatedAuthor"
       };
-
-
       var bookDtoRequest = new BookDtoRequest
       {
         Title = "title",
         Author = "author"
       };
-
       _mockBookRepository
       .Setup(mockRepository => mockRepository.GetByIdAsync(id))
       .ReturnsAsync(nullBook);
@@ -401,14 +394,13 @@ namespace LibraryBackend.Tests
       .ReturnsAsync(book);
 
       // Act
-
       var result = await _bookController.UpdateBook(id, bookDtoRequest);
 
       // Assert
-
       var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
       Assert.Equal($"Book with Id {id} not found", notFoundResult.Value);
-
+      _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(id),Times.Once);
+      _mockBookRepository.Verify(mockRepository => mockRepository.Update(book),Times.Never);
     }
 
     [Fact]
