@@ -1,12 +1,9 @@
-using System.Data.Common;
 using LibraryBackend.Common;
 using LibraryBackend.Controllers;
 using LibraryBackend.Data;
 using LibraryBackend.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace LibraryBackend.Tests
@@ -14,11 +11,7 @@ namespace LibraryBackend.Tests
   public class UnitTestBookController
   {
     readonly BookController _bookController;
-
     readonly Mock<IRepository<Book>> _mockBookRepository;
-
-
-
     List<Book> mockBookData = new List<Book>
     {
       new Book
@@ -58,16 +51,8 @@ namespace LibraryBackend.Tests
 
     public UnitTestBookController()
     {
-      var options = new DbContextOptionsBuilder<MyLibraryContext>()
-        .UseInMemoryDatabase(databaseName: "TestDatabase")
-        .Options;
-
-
       _mockBookRepository = new Mock<IRepository<Book>>();
-
-
       _bookController = new BookController(_mockBookRepository.Object);
-
     }
 
     [Fact]
@@ -203,8 +188,6 @@ namespace LibraryBackend.Tests
         Title = "",
         Author = "New author"
       };
-
-
       var bookToCreate = new Book
       {
         Title = bookDtoRequest.Title,
@@ -216,6 +199,7 @@ namespace LibraryBackend.Tests
 
       // Act
       var result = await _bookController.CreateBook(bookDtoRequest);
+
       // Assert
       var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
       var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
@@ -231,11 +215,9 @@ namespace LibraryBackend.Tests
       // Arrange
       var bookIdToDelete = 2;
       var bookToDelete = mockBookData.First(book => book.Id == bookIdToDelete);
-
       _mockBookRepository
-          .Setup(mockRepository => mockRepository.GetByIdAsync(bookIdToDelete))
-          .ReturnsAsync(bookToDelete);
-
+        .Setup(mockRepository => mockRepository.GetByIdAsync(bookIdToDelete))
+        .ReturnsAsync(bookToDelete);
       _mockBookRepository
         .Setup(MockRepository => MockRepository.Delete(bookToDelete))
         .Returns(Task.CompletedTask);
@@ -243,10 +225,8 @@ namespace LibraryBackend.Tests
       // Act
       var result = await _bookController.DeleteBook(bookToDelete.Id);
 
-
       // Assert
       Assert.IsType<NoContentResult>(result);
-
       _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(bookIdToDelete), Times.Once);
       _mockBookRepository.Verify(mockRepository => mockRepository.Delete(bookToDelete), Times.Once);
     }
@@ -256,10 +236,9 @@ namespace LibraryBackend.Tests
     {
       // Arrange
       var nonExistingId = 99;
-      
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.GetByIdAsync(nonExistingId))
-      .ReturnsAsync(null as Book);
+        .Setup(mockRepository => mockRepository.GetByIdAsync(nonExistingId))
+        .ReturnsAsync(null as Book);
 
       // act
       var result = await _bookController.DeleteBook(nonExistingId);
@@ -274,22 +253,18 @@ namespace LibraryBackend.Tests
     {
       // Arrange
       var id = 2;
-      
       var bookDtoRequest = new BookDtoRequest
       {
         Title = "titleToModify",
         Author = "authorToModify"
       };
-
       var bookById = mockBookData.FirstOrDefault(book => book.Id == id);
-
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.GetByIdAsync(id))
-      .ReturnsAsync(bookById);
-
+        .Setup(mockRepository => mockRepository.GetByIdAsync(id))
+        .ReturnsAsync(bookById);
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.Update(bookById!))
-      .ReturnsAsync(bookById!);
+        .Setup(mockRepository => mockRepository.Update(bookById!))
+        .ReturnsAsync(bookById!);
 
       // Act
       var result = await _bookController.UpdateBook(id, bookDtoRequest);
@@ -314,18 +289,15 @@ namespace LibraryBackend.Tests
         Title = "",
         Author = ""
       };
-
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.GetByIdAsync(id))
-      .ReturnsAsync(bookById);
-
+        .Setup(mockRepository => mockRepository.GetByIdAsync(id))
+        .ReturnsAsync(bookById);
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.Update(bookById!))
-      .ReturnsAsync(bookById!);
+        .Setup(mockRepository => mockRepository.Update(bookById!))
+        .ReturnsAsync(bookById!);
 
       // Act
       var result = await _bookController.UpdateBook(id, bookToUpdate);
-
 
       // Assert
       var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -339,7 +311,7 @@ namespace LibraryBackend.Tests
     [Fact]
     public async Task Should_return_badrequest_when_empty_Title_in_UpdateBook_()
     {
-     // Arrange
+      // Arrange
       var id = 2;
       var bookById = mockBookData.FirstOrDefault(book => book.Id == id);
       var bookToUpdate = new BookDtoRequest
@@ -349,12 +321,11 @@ namespace LibraryBackend.Tests
       };
 
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.GetByIdAsync(id))
-      .ReturnsAsync(bookById);
-
+        .Setup(mockRepository => mockRepository.GetByIdAsync(id))
+        .ReturnsAsync(bookById);
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.Update(bookById!))
-      .ReturnsAsync(bookById!);
+        .Setup(mockRepository => mockRepository.Update(bookById!))
+        .ReturnsAsync(bookById!);
 
       // Act
       var result = await _bookController.UpdateBook(id, bookToUpdate);
@@ -386,12 +357,11 @@ namespace LibraryBackend.Tests
         Author = "author"
       };
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.GetByIdAsync(id))
-      .ReturnsAsync(nullBook);
-
+        .Setup(mockRepository => mockRepository.GetByIdAsync(id))
+        .ReturnsAsync(nullBook);
       _mockBookRepository
-      .Setup(mockRepository => mockRepository.Update(book))
-      .ReturnsAsync(book);
+        .Setup(mockRepository => mockRepository.Update(book))
+        .ReturnsAsync(book);
 
       // Act
       var result = await _bookController.UpdateBook(id, bookDtoRequest);
@@ -399,8 +369,8 @@ namespace LibraryBackend.Tests
       // Assert
       var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
       Assert.Equal($"Book with Id {id} not found", notFoundResult.Value);
-      _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(id),Times.Once);
-      _mockBookRepository.Verify(mockRepository => mockRepository.Update(book),Times.Never);
+      _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(id), Times.Once);
+      _mockBookRepository.Verify(mockRepository => mockRepository.Update(book), Times.Never);
     }
 
     [Fact]
@@ -421,10 +391,6 @@ namespace LibraryBackend.Tests
       Assert.Equal("title1", booksResponse?.ElementAt(0)?.Book?.Title);
       Assert.Equal(1, booksResponse?.ElementAt(0).Book?.Id);
       Assert.Equal("author2", booksResponse?.ElementAt(1).Book?.Author);
-
     }
-
   }
-
-
 }
