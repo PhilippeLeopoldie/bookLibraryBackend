@@ -74,6 +74,7 @@ namespace LibraryBackend.Tests
       Assert.Equal(1, books?.ElementAt(0).Book?.Id);
       Assert.Equal("author2", books?.ElementAt(1).Book?.Author);
       Assert.Equal(2, books?.ElementAt(1).Book?.Id);
+      _mockBookRepository.Verify(mockRepository => mockRepository.GetAllAsync(), Times.Once);
     }
 
     [Fact]
@@ -91,6 +92,7 @@ namespace LibraryBackend.Tests
       // Assert
       var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
       Assert.Equal("Empty list of books", notFoundResult.Value);
+      _mockBookRepository.Verify(mockRepository => mockRepository.GetAllAsync(), Times.Once);
     }
 
     [Fact]
@@ -108,6 +110,7 @@ namespace LibraryBackend.Tests
       // Assert
       var notfoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
       Assert.Equal("Empty list of books", notfoundResult.Value);
+      _mockBookRepository.Verify(mockRepository => mockRepository.GetAllAsync(), Times.Once);
     }
 
     [Fact]
@@ -129,18 +132,17 @@ namespace LibraryBackend.Tests
       Assert.Equal(expectedBook?.Id, bookResponse?.Book?.Id);
       Assert.Equal(expectedBook?.Title, bookResponse?.Book?.Title);
       Assert.Equal(expectedBook?.Author, bookResponse?.Book?.Author);
+      _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(bookId), Times.Once);
     }
 
     [Fact]
-    public async void Should_get_not_found_for_GetById_with_wrong_id()
+    public async Task Should_get_not_found_for_GetBookById_with_unknown_id()
     {
       // Arrange
-      int bookId = 2;
       int nonExistingId = 3;
-      Book? expectedBook = mockBookData.FirstOrDefault(x => x.Id == bookId);
       _mockBookRepository
-        .Setup(repositoryMock => repositoryMock.GetByIdAsync(bookId))
-        .ReturnsAsync(expectedBook!);
+        .Setup(repositoryMock => repositoryMock.GetByIdAsync(nonExistingId))
+        .ReturnsAsync(null as Book);
 
       // Act
       var result = await _bookController.GetBookById(nonExistingId);
@@ -148,6 +150,7 @@ namespace LibraryBackend.Tests
       // Assert
       var notFoundId = Assert.IsType<NotFoundObjectResult>(result.Result);
       Assert.Equal($"Book with Id {nonExistingId} not found", notFoundId.Value);
+      _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(nonExistingId), Times.Once);
     }
 
     [Fact]
