@@ -56,7 +56,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async void Should_get_two_Books_in_GetBook()
+    public async Task Should_get_all_Books_in_GetBook()
     {
       // arrange
       _mockBookRepository
@@ -78,25 +78,27 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async void Should_return_not_found_for_null_data_in_GetBook()
+    public async Task Should_return_not_found_for_null_data_in_GetBook()
     {
       // arrange
       List<Book>? mockNullBookData = null;
+      #pragma warning disable CS8604
       _mockBookRepository
       .Setup(repositoryMock => repositoryMock.GetAllAsync())
-      .ReturnsAsync(mockNullBookData!);
+      .ReturnsAsync(mockNullBookData);
+      #pragma warning restore CD8604
 
       // Act
       var result = await _bookController.GetBook();
 
       // Assert
       var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
-      Assert.Equal("Empty list of books", notFoundResult.Value);
+      Assert.Equal("No books found!", notFoundResult.Value);
       _mockBookRepository.Verify(mockRepository => mockRepository.GetAllAsync(), Times.Once);
     }
 
     [Fact]
-    public async void Should_return_not_found_for_empty_data_in_GetBook()
+    public async Task Should_return_not_found_for_empty_data_in_GetBook()
     {
       // arrange
       List<Book>? mockEmptyBookData = new();
@@ -109,19 +111,19 @@ namespace LibraryBackend.Tests
 
       // Assert
       var notfoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
-      Assert.Equal("Empty list of books", notfoundResult.Value);
+      Assert.Equal("No books found!", notfoundResult.Value);
       _mockBookRepository.Verify(mockRepository => mockRepository.GetAllAsync(), Times.Once);
     }
 
     [Fact]
-    public async void Should_get_book_by_Id()
+    public async Task Should_get_book_by_Id()
     {
       // Arrange
       int bookId = 2;
       Book? expectedBook = mockBookData.FirstOrDefault(x => x.Id == bookId);
       _mockBookRepository
         .Setup(repositoryMock => repositoryMock.GetByIdAsync(bookId))
-        .ReturnsAsync(expectedBook!);
+        .ReturnsAsync(expectedBook);
 
       // Act
       var result = await _bookController.GetBookById(bookId);
@@ -136,7 +138,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_get_not_found_for_GetBookById_with_unknown_id()
+    public async Task Should_return_not_found_for_non_existing_id_in_GetBookById()
     {
       // Arrange
       int nonExistingId = 3;
@@ -183,7 +185,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_send_badRequest_when_empty_Title_in_CreateBook()
+    public async Task Should_return_badRequest_when_empty_Title_in_CreateBook()
     {
       // Arrange
       var bookDtoRequest = new BookDtoRequest
@@ -235,7 +237,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_returns_not_found_with_non_existing_id_in_DeleteBook()
+    public async Task Should_return_not_found_for_non_existing_id_in_DeleteBook()
     {
       // Arrange
       var nonExistingId = 99;
@@ -342,7 +344,6 @@ namespace LibraryBackend.Tests
       _mockBookRepository.Verify(mockRepository => mockRepository.Update(bookById!), Times.Never);
     }
 
-
     [Fact]
     public async Task Should_return_not_found_in_UpdateBook()
     {
@@ -374,26 +375,6 @@ namespace LibraryBackend.Tests
       Assert.Equal($"Book with Id {id} not found", notFoundResult.Value);
       _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(id), Times.Once);
       _mockBookRepository.Verify(mockRepository => mockRepository.Update(book), Times.Never);
-    }
-
-    [Fact]
-    public async void Should_get_Opinions_in_GetBooks()
-    {
-      // arrange
-      _mockBookRepository
-        .Setup(repositoryMock => repositoryMock.GetAllAsync())
-        .ReturnsAsync(mockBookData);
-
-      // Act
-      var result = await _bookController.GetBook();
-
-      // Assert
-      var okResult = Assert.IsType<OkObjectResult>(result.Result);
-      var booksResponse = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
-      Assert.Equal(2, booksResponse?.Count());
-      Assert.Equal("title1", booksResponse?.ElementAt(0)?.Book?.Title);
-      Assert.Equal(1, booksResponse?.ElementAt(0).Book?.Id);
-      Assert.Equal("author2", booksResponse?.ElementAt(1).Book?.Author);
     }
   }
 }

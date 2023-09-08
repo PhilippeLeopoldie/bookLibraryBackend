@@ -25,7 +25,7 @@ namespace LibraryBackend.Controllers
       var books = await _bookRepository.GetAllAsync();
       if (books == null || !books.Any())
       {
-        return NotFound("Empty list of books");
+        return NotFound("No books found!");
       }
       var booksResponse = from book in books
                           select new BookDtoResponse()
