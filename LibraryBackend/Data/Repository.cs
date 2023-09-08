@@ -45,9 +45,9 @@ namespace LibraryBackend.Data
       return await _entities.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public virtual async Task<T?> FindByConditionAsync(Expression<Func<T, bool>> predicate)
+    public virtual async Task<IEnumerable<T?>> FindByConditionAsync(Expression<Func<T, bool>> predicate)
     {
-      return await _context.Set<T>().FirstOrDefaultAsync(predicate);
+      return await _context.Set<T>().Where(predicate).ToListAsync();
     }
   }
 }

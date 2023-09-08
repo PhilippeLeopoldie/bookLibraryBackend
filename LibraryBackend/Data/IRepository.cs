@@ -9,7 +9,7 @@ namespace LibraryBackend.Data
 
     Task<T?> GetByIdAsync(int id);
 
-    Task<T?> FindByConditionAsync(Expression<Func<T, bool>> predicate);
+    Task<IEnumerable<T?>> FindByConditionAsync(Expression<Func<T, bool>> predicate);
 
     Task<T> Create(T newEntity);
 
