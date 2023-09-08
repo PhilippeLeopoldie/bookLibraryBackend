@@ -8,7 +8,7 @@ namespace LibraryBackend.Models
 
     public string? View { get; set; }
 
-    public string? userName { get; set; }
+    public string? UserName { get; set; }
 
     [Required]
     public int? BookId { get; set; }
