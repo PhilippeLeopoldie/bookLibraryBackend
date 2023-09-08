@@ -13,7 +13,7 @@ namespace LibraryBackend.Tests
   {
         readonly OpinionController _opinionController;
         readonly MyLibraryContext _context; 
-        readonly Mock<OpinionRepository> _mockOpinionRepository;
+        readonly Mock<IRepository<Opinion>> _mockOpinionRepository;
 
 
     public UnitTestOpinionController ()
@@ -24,7 +24,7 @@ namespace LibraryBackend.Tests
 
       _context = new MyLibraryContext(options);
      
-      _mockOpinionRepository = new Mock<OpinionRepository>(_context);
+      _mockOpinionRepository = new Mock<IRepository<Opinion>>(_context);
       
       _opinionController = new OpinionController(_mockOpinionRepository.Object);
     }

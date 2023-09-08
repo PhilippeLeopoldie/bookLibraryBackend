@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryBackend.Models;
-
 using LibraryBackend.Data;
+
+
 
 namespace LibraryBackend.Controllers
 {
@@ -16,9 +17,10 @@ namespace LibraryBackend.Controllers
   public class OpinionController : ControllerBase
   {
 
-    private readonly OpinionRepository _OpinionRepository;
+    private readonly IRepository<Opinion> _OpinionRepository;
+    private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
 
-    public OpinionController(OpinionRepository opinionRepository)
+    public OpinionController(IRepository<Opinion> opinionRepository)
     {
       _OpinionRepository = opinionRepository;
     }
