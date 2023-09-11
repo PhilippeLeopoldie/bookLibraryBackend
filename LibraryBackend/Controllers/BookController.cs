@@ -36,7 +36,6 @@ namespace LibraryBackend.Controllers
       return Ok(booksResponse);
     }
 
-
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -57,6 +56,15 @@ namespace LibraryBackend.Controllers
       );
     }
 
+    [HttpGet("title")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<BookDtoResponse>> GetBookByTitle(string title)
+    {
+     throw new NotImplementedException();
+    }
+
+
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
@@ -72,10 +80,10 @@ namespace LibraryBackend.Controllers
         return BadRequest(error);
       }
       var bookToCreate = new Book
-        {
-          Title= bookDto.Title,
-          Author = bookDto.Author
-        };
+      {
+        Title = bookDto.Title,
+        Author = bookDto.Author
+      };
       var newBook = await _bookRepository.Create(bookToCreate);
       return CreatedAtAction(nameof(GetBook), new { id = newBook.Id }, newBook);
     }
@@ -91,7 +99,7 @@ namespace LibraryBackend.Controllers
       {
         return NotFound($"Book with Id {id} not found");
       }
-      
+
       if (string.IsNullOrWhiteSpace(bookToUpdate.Title) || string.IsNullOrWhiteSpace(bookToUpdate.Author))
       {
         var emptyDataError = new ApiError
