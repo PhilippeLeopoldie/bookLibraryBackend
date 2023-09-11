@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using LibraryBackend.Common;
 using LibraryBackend.Controllers;
 using LibraryBackend.Data;
@@ -120,7 +121,7 @@ namespace LibraryBackend.Tests
     {
       // Arrange
       int bookId = 2;
-      Book? expectedBook = mockBookData.FirstOrDefault(x => x.Id == bookId);
+      var expectedBook = mockBookData.FirstOrDefault(x => x.Id == bookId);
       _mockBookRepository
         .Setup(repositoryMock => repositoryMock.GetByIdAsync(bookId))
         .ReturnsAsync(expectedBook);
@@ -154,6 +155,27 @@ namespace LibraryBackend.Tests
       Assert.Equal($"Book with Id {nonExistingId} not found", notFoundId.Value);
       _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(nonExistingId), Times.Once);
     }
+
+    [Fact]
+    public async Task Should_get_book_by_title()
+    {
+      // Arrange
+      string title = "title1";
+      var expectedBooks = mockBookData.Where(book => book.Title == title);
+      Expression<Func<Book,bool>> condition = book => book.Title == title;
+      _mockBookRepository
+        .Setup(mockRepository => mockRepository.FindByConditionAsync(condition))
+        .ReturnsAsync(expectedBooks);
+
+      // Act
+      var result = await _bookController.GetBookByTitle(title);
+
+      // Assert
+      var okResult = Assert.IsType<OkObjectResult>(result.Result);
+      var books = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
+      Assert.Equal(1, books?.Count());
+    }
+
 
     [Fact]
     public async Task Should_create_one_book_in_CreateBook()
