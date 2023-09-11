@@ -173,6 +173,7 @@ namespace LibraryBackend.Tests
       // Assert
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
       var books = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
+      _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(condition),Times.Once);
       Assert.Equal(1, books?.Count());
     }
 
