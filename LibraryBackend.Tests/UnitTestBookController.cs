@@ -83,11 +83,11 @@ namespace LibraryBackend.Tests
     {
       // arrange
       List<Book>? mockNullBookData = null;
-      #pragma warning disable CS8604
+#pragma warning disable CS8604
       _mockBookRepository
       .Setup(repositoryMock => repositoryMock.GetAllAsync())
       .ReturnsAsync(mockNullBookData);
-      #pragma warning restore CD8604
+#pragma warning restore CD8604
 
       // Act
       var result = await _bookController.GetBook();
@@ -161,20 +161,28 @@ namespace LibraryBackend.Tests
     {
       // Arrange
       string title = "title1";
-      var expectedBooks = mockBookData.Where(book => book.Title == title);
-      Expression<Func<Book,bool>> condition = book => book.Title == title;
+      var expectedBooks = mockBookData
+        .Where(book => book.Title!.ToLower() == title.ToLower()).ToList();
       _mockBookRepository
-        .Setup(mockRepository => mockRepository.FindByConditionAsync(condition))
+        .Setup(mockRepository => mockRepository.FindByConditionAsync(
+          It.IsAny<Expression<Func<Book, bool>>>()))
         .ReturnsAsync(expectedBooks);
-
+        
       // Act
       var result = await _bookController.GetBookByTitle(title);
 
       // Assert
+      Assert.Equal(1, expectedBooks.Count());
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
       var books = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
-      _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(condition),Times.Once);
-      Assert.Equal(1, books?.Count());
+      _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Book, bool>>>()),Times.Once);
+      Assert.Equal(expectedBooks.Count(), books?.Count());
+      foreach(var bookDtoResponse in books!)
+      {
+        Assert.Equal(title, bookDtoResponse.Book?.Title);
+      }
+      
     }
 
 
