@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using LibraryBackend.Models;
 using LibraryBackend.Data;
 using LibraryBackend.Common;
+using System.Linq.Expressions;
+using Microsoft.IdentityModel.Tokens;
 
 namespace LibraryBackend.Controllers
 {
@@ -61,7 +63,20 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<BookDtoResponse>> GetBookByTitle(string title)
     {
-     throw new NotImplementedException();
+      Expression<Func<Book, bool>> condition = book => book.Title!.ToLower() == title.ToLower();
+      var books = await _bookRepository.FindByConditionAsync(condition);
+      if( books.IsNullOrEmpty())
+      {
+        return NotFound($"Book with Title '{title}' not found");
+      }
+      var booksResponse = from book in books
+                          select new BookDtoResponse()
+                          {
+                            Book = book,
+                            RequestedAt = DateTime.Now.ToString(dateTimeFormat)
+                          };
+      return Ok (booksResponse);
+
     }
 
 
