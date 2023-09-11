@@ -160,29 +160,28 @@ namespace LibraryBackend.Tests
     public async Task Should_get_book_by_title()
     {
       // Arrange
-      string title = "title1";
+      string titleTosearch = "title1";
       var expectedBooks = mockBookData
-        .Where(book => book.Title!.ToLower() == title.ToLower()).ToList();
+        .Where(book => book.Title!.ToLower() == titleTosearch.ToLower()).ToList();
       _mockBookRepository
         .Setup(mockRepository => mockRepository.FindByConditionAsync(
           It.IsAny<Expression<Func<Book, bool>>>()))
         .ReturnsAsync(expectedBooks);
-        
+
       // Act
-      var result = await _bookController.GetBookByTitle(title);
+      var result = await _bookController.GetBookByTitle(titleTosearch);
 
       // Assert
       Assert.Equal(1, expectedBooks.Count());
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
       var books = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
       _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
-        It.IsAny<Expression<Func<Book, bool>>>()),Times.Once);
+        It.IsAny<Expression<Func<Book, bool>>>()), Times.Once);
       Assert.Equal(expectedBooks.Count(), books?.Count());
-      foreach(var bookDtoResponse in books!)
+      foreach (var bookDtoResponse in books!)
       {
-        Assert.Equal(title, bookDtoResponse.Book?.Title);
+        Assert.Equal(titleTosearch, bookDtoResponse.Book?.Title);
       }
-      
     }
 
 
