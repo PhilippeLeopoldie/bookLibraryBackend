@@ -172,7 +172,7 @@ namespace LibraryBackend.Tests
       var result = await _bookController.GetBookByTitle(titleTosearch);
 
       // Assert
-      Assert.Equal(1, expectedBooks.Count());
+      Assert.Single(expectedBooks);
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
       var books = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
       _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
