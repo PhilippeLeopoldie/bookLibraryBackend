@@ -227,6 +227,78 @@ namespace LibraryBackend.Tests
       ), Times.Never);
     }
 
+      [Fact]
+    public async Task Should_get_book_by_title_in_GetBookByAuthor()
+    {
+      // Arrange
+      string authorTosearch = "author1";
+      var expectedBooks = mockBookData
+        .Where(book => book.Author!.ToLower() == authorTosearch.ToLower()).ToList();
+      _mockBookRepository
+        .Setup(mockRepository => mockRepository.FindByConditionAsync(
+          It.IsAny<Expression<Func<Book, bool>>>()))
+        .ReturnsAsync(expectedBooks);
+
+      // Act
+      var result = await _bookController.getBookByAuthor(authorTosearch);
+
+      // Assert
+      Assert.Single(expectedBooks);
+      var okResult = Assert.IsType<OkObjectResult>(result.Result);
+      var bookDtoResponses = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
+      _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Book, bool>>>()), Times.Once);
+      foreach (var bookDtoResponse in bookDtoResponses!)
+      {
+        Assert.Equal(authorTosearch, bookDtoResponse.Book?.Author);
+      }
+    }
+
+    [Fact]
+    public async Task Should_return_NotFound_for_non_existing_title_in_GetBookByAuthor()
+    {
+      // Arrange
+      string nonExistingAuthor = "nonExistingAuthor";
+      var emptyBookAuthor = new List<Book>();
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Book, bool>>>()
+      ))
+      .ReturnsAsync(emptyBookAuthor);
+
+      // Act
+      var result = await _bookController.getBookByAuthor(nonExistingAuthor);
+
+      // Assert
+      var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
+      _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Book, bool>>>()), Times.Once);
+      Assert.Equal($"Book with Author '{nonExistingAuthor}' not found", notFoundResult.Value);
+    }
+
+    [Fact]
+    public async Task Should_return_badRequest_when_empty_title_is_passed_to_GetBookByAuthor()
+    {
+      // Arrange
+      var emptyAuthor = "";
+      var emptyBookList = new List<Book>();
+      _mockBookRepository.Setup(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Book, bool>>>()
+      )).ReturnsAsync(emptyBookList);
+
+      // Act
+      var result = await _bookController.getBookByAuthor(emptyAuthor);
+
+      // Assert
+      var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+      var errorResult = Assert.IsType<ApiError>(badRequestResult.Value);
+      Assert.Equal("Author cannot be empty", errorResult.Detail);
+      _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Book, bool>>>()
+      ), Times.Never);
+    }
+
+
     [Fact]
     public async Task Should_create_one_book_in_CreateBook()
     {
