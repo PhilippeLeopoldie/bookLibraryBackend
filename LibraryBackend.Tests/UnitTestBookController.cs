@@ -227,7 +227,7 @@ namespace LibraryBackend.Tests
       ), Times.Never);
     }
 
-      [Fact]
+    [Fact]
     public async Task Should_get_book_by_title_in_GetBookByAuthor()
     {
       // Arrange
@@ -240,7 +240,7 @@ namespace LibraryBackend.Tests
         .ReturnsAsync(expectedBooks);
 
       // Act
-      var result = await _bookController.getBookByAuthor(authorTosearch);
+      var result = await _bookController.GetBookByAuthor(authorTosearch);
 
       // Assert
       Assert.Single(expectedBooks);
@@ -267,7 +267,7 @@ namespace LibraryBackend.Tests
       .ReturnsAsync(emptyBookAuthor);
 
       // Act
-      var result = await _bookController.getBookByAuthor(nonExistingAuthor);
+      var result = await _bookController.GetBookByAuthor(nonExistingAuthor);
 
       // Assert
       var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
@@ -287,7 +287,7 @@ namespace LibraryBackend.Tests
       )).ReturnsAsync(emptyBookList);
 
       // Act
-      var result = await _bookController.getBookByAuthor(emptyAuthor);
+      var result = await _bookController.GetBookByAuthor(emptyAuthor);
 
       // Assert
       var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
