@@ -157,7 +157,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_get_book_by_title()
+    public async Task Should_get_book_by_title_in_GetBookByTitle()
     {
       // Arrange
       string titleTosearch = "title1";
@@ -183,6 +183,27 @@ namespace LibraryBackend.Tests
       }
     }
 
+    [Fact]
+    public async Task Should_return_NotFound_for_non_existing_title_in_GetBookByTitle()
+    {
+      // Arrange
+      string nonExistingTitle = "nonExistingTitle";
+      var emptyBookList = new List<Book>();
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Book, bool>>>()
+      ))
+      .ReturnsAsync(emptyBookList);
+
+      // Act
+      var result = await _bookController.GetBookByTitle(nonExistingTitle);
+
+      // Assert
+      var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
+      _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Book, bool>>>()), Times.Once);
+      Assert.Equal($"Book with Title '{nonExistingTitle}' not found", notFoundResult.Value);
+    }
 
     [Fact]
     public async Task Should_create_one_book_in_CreateBook()
