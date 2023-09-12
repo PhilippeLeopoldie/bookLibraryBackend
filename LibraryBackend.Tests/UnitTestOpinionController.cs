@@ -42,19 +42,19 @@ namespace LibraryBackend.Tests
            {
             View="View1",
             BookId = 1,
-            Like = 5
+            Rate = 5
            },
            new Opinion
            {
             View="View2",
             BookId = 1,
-            Like = 3
+            Rate = 3
            },
            new Opinion
            {
             View="View3",
             BookId = 1,
-            Like = 4
+            Rate = 4
            }
           }
       },
