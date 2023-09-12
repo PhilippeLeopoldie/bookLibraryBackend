@@ -61,6 +61,7 @@ namespace LibraryBackend.Controllers
     [HttpGet("title/{title}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<BookDtoResponse>> GetBookByTitle(string title)
     {
       if (string.IsNullOrWhiteSpace(title))
