@@ -63,9 +63,18 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<BookDtoResponse>> GetBookByTitle(string title)
     {
+      if (string.IsNullOrWhiteSpace(title))
+      {
+        var error = new ApiError
+        {
+          Message = "Validation Error",
+          Detail = "Title cannot be empty"
+        };
+        return BadRequest(error);
+      }
       Expression<Func<Book, bool>> condition = book => book.Title!.ToLower() == title.ToLower();
       var books = await _bookRepository.FindByConditionAsync(condition);
-      if( books.IsNullOrEmpty())
+      if (books.IsNullOrEmpty())
       {
         return NotFound($"Book with Title '{title}' not found");
       }
@@ -75,10 +84,9 @@ namespace LibraryBackend.Controllers
                             Book = book,
                             RequestedAt = DateTime.Now.ToString(dateTimeFormat)
                           };
-      return Ok (booksResponse);
+      return Ok(booksResponse);
 
     }
-
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
