@@ -93,7 +93,7 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BookDtoResponse>> getBookByAuthor(string author)
+    public async Task<ActionResult<BookDtoResponse>> GetBookByAuthor(string author)
     {
       if (string.IsNullOrWhiteSpace(author))
       {
