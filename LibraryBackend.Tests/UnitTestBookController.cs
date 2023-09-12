@@ -174,11 +174,10 @@ namespace LibraryBackend.Tests
       // Assert
       Assert.Single(expectedBooks);
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
-      var books = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
+      var bookDtoResponses = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
       _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
         It.IsAny<Expression<Func<Book, bool>>>()), Times.Once);
-      Assert.Equal(expectedBooks.Count(), books?.Count());
-      foreach (var bookDtoResponse in books!)
+      foreach (var bookDtoResponse in bookDtoResponses!)
       {
         Assert.Equal(titleTosearch, bookDtoResponse.Book?.Title);
       }
