@@ -95,6 +95,15 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<BookDtoResponse>> getBookByAuthor(string author)
     {
+      if (string.IsNullOrWhiteSpace(author))
+      {
+        var error = new ApiError
+        {
+          Message = "Validation Error",
+          Detail = "Author cannot be empty"
+        };
+        return BadRequest(error);
+      }
       Expression<Func<Book, bool>> condition = book => book.Author!.ToLower() == author.ToLower();
       var books = await _bookRepository.FindByConditionAsync(condition);
       var booksResponse = from book in books
