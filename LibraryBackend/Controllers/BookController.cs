@@ -106,6 +106,10 @@ namespace LibraryBackend.Controllers
       }
       Expression<Func<Book, bool>> condition = book => book.Author!.ToLower() == author.ToLower();
       var books = await _bookRepository.FindByConditionAsync(condition);
+      if (books.IsNullOrEmpty())
+      {
+        return NotFound($"Book with Author '{author}' not found");
+      }
       var booksResponse = from book in books
                           select new BookDtoResponse()
                           {
