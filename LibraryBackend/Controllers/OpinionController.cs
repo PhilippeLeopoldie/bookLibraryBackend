@@ -46,7 +46,7 @@ namespace LibraryBackend.Controllers
       var opinions = await _OpinionRepository.FindByConditionAsync(condition);
       if (opinions == null || !opinions.Any())
       {
-        return NotFound();
+        return NotFound("No opinion found!");
       }
       return Ok(opinions);
     }
