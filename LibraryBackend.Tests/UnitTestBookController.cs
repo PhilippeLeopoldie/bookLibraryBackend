@@ -65,7 +65,7 @@ namespace LibraryBackend.Tests
         .ReturnsAsync(mockBookData);
 
       // Act
-      var result = await _bookController.GetBook();
+      var result = await _bookController.GetBooks();
 
       // Assert
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -79,7 +79,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_return_not_found_for_null_data_in_GetBook()
+    public async Task Should_return_not_found_for_null_data_in_GetBooks()
     {
       // arrange
       List<Book>? mockNullBookData = null;
@@ -90,7 +90,7 @@ namespace LibraryBackend.Tests
 #pragma warning restore CD8604
 
       // Act
-      var result = await _bookController.GetBook();
+      var result = await _bookController.GetBooks();
 
       // Assert
       var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
@@ -99,7 +99,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_return_not_found_for_empty_data_in_GetBook()
+    public async Task Should_return_not_found_for_empty_data_in_GetBooks()
     {
       // arrange
       List<Book>? mockEmptyBookData = new();
@@ -108,7 +108,7 @@ namespace LibraryBackend.Tests
       .ReturnsAsync(mockEmptyBookData!);
 
       // Act
-      var result = await _bookController.GetBook();
+      var result = await _bookController.GetBooks();
 
       // Assert
       var notfoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
