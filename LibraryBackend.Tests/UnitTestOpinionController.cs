@@ -64,6 +64,24 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
+    public async Task Should_return_not_found_for_empty_data_in_GetOpinions()
+    {
+      // Arrange
+      List<Opinion>? emptyOpinionData = new List<Opinion>();
+      _mockOpinionRepository
+        .Setup(mockRepository => mockRepository.GetAllAsync())
+        .ReturnsAsync(emptyOpinionData);
+      
+      // Act
+      var actionResult = await _opinionController.GetOpinions();
+
+      // Assert
+      var notFoundResult = Assert.IsType<NotFoundObjectResult>(actionResult.Result);
+      Assert.Equal("No opinion found!", notFoundResult.Value);
+      _mockOpinionRepository.Verify(mockRepository => mockRepository.GetAllAsync(),Times.Once);
+    }
+
+    [Fact]
     public async Task Should_get_all_opinions_in_GetOpinionsByBookId()
     {
       // Arrange
