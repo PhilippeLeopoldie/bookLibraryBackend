@@ -40,7 +40,7 @@ namespace LibraryBackend.Tests
       // Assert
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
       var opinions = Assert.IsAssignableFrom<IEnumerable<Opinion>>(okResult.Value);
-      Assert.Equal(3,opinions.Count());
+      Assert.Equal(3, opinions.Count());
     }
 
     [Fact]
@@ -48,11 +48,11 @@ namespace LibraryBackend.Tests
     {
       // Arrange
       List<Opinion>? nullOpinionData = null;
-      #pragma warning disable CS8604
+#pragma warning disable CS8604
       _mockOpinionRepository
         .Setup(mockRepository => mockRepository.GetAllAsync())
         .ReturnsAsync(nullOpinionData);
-      #pragma warning restore CS8604
+#pragma warning restore CS8604
 
       // Act
       var actionResult = await _opinionController.GetOpinions();
@@ -60,7 +60,7 @@ namespace LibraryBackend.Tests
       // Assert
       var notFoundResult = Assert.IsType<NotFoundObjectResult>(actionResult.Result);
       Assert.Equal("No opinion found!", notFoundResult.Value);
-      _mockOpinionRepository.Verify(mockRepository => mockRepository.GetAllAsync(),Times.Once);
+      _mockOpinionRepository.Verify(mockRepository => mockRepository.GetAllAsync(), Times.Once);
     }
 
     [Fact]
@@ -71,14 +71,14 @@ namespace LibraryBackend.Tests
       _mockOpinionRepository
         .Setup(mockRepository => mockRepository.GetAllAsync())
         .ReturnsAsync(emptyOpinionData);
-      
+
       // Act
       var actionResult = await _opinionController.GetOpinions();
 
       // Assert
       var notFoundResult = Assert.IsType<NotFoundObjectResult>(actionResult.Result);
       Assert.Equal("No opinion found!", notFoundResult.Value);
-      _mockOpinionRepository.Verify(mockRepository => mockRepository.GetAllAsync(),Times.Once);
+      _mockOpinionRepository.Verify(mockRepository => mockRepository.GetAllAsync(), Times.Once);
     }
 
     [Fact]
@@ -91,7 +91,8 @@ namespace LibraryBackend.Tests
                              select opinion;
       _mockOpinionRepository.Setup(mockRepository => mockRepository.FindByConditionAsync(
         It.IsAny<Expression<Func<Opinion, bool>>>()
-      )).ReturnsAsync(expectedOpinions);
+      ))
+      .ReturnsAsync(expectedOpinions);
 
       // Act
       var result = await _opinionController.GetOpinionsByBookId(bookIdToSearch);
@@ -104,6 +105,27 @@ namespace LibraryBackend.Tests
         ), Times.Once);
     }
 
+    [Fact]
+    public async Task Should_return_not_found_for_non_existing_bookId_in_GetOpinionsByBookId()
+    {
+      // Arrange
+      var nonExistingId = 99;
+      var emptyList = new List<Opinion>();
+      _mockOpinionRepository
+        .Setup(mockRepository => mockRepository.FindByConditionAsync(
+          It.IsAny<Expression<Func<Opinion, bool>>>()
+        ))
+        .ReturnsAsync(emptyList);
 
+      // Act 
+      var actionResult = await _opinionController.GetOpinionsByBookId(nonExistingId);
+
+      // Assert
+      var notFoundResult = Assert.IsType<NotFoundObjectResult>(actionResult.Result);
+      Assert.Equal("No opinion found!", notFoundResult.Value);
+      _mockOpinionRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Opinion, bool>>>()
+      ), Times.Once);
+    }
   }
 }
