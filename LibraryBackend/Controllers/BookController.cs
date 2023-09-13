@@ -142,7 +142,7 @@ namespace LibraryBackend.Controllers
       return CreatedAtAction(nameof(GetBooks), new { id = newBook.Id }, newBook);
     }
 
-    [HttpPut]
+    [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
