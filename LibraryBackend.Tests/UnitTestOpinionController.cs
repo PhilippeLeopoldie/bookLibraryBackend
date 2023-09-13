@@ -13,9 +13,7 @@ namespace LibraryBackend.Tests
   public class UnitTestOpinionController
   {
     readonly OpinionController _opinionController;
-
     readonly Mock<IRepository<Opinion>> _mockOpinionRepository;
-
 
     public UnitTestOpinionController()
     {
@@ -43,6 +41,25 @@ namespace LibraryBackend.Tests
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
       var opinions = Assert.IsAssignableFrom<IEnumerable<Opinion>>(okResult.Value);
       Assert.Equal(3,opinions.Count());
+    }
+
+    [Fact]
+    public async Task Should_return_not_found_for_null_data_in_GetOpinions()
+    {
+      // Arrange
+      List<Opinion>? nullOpinionData = null;
+      #pragma warning disable CS8604
+      _mockOpinionRepository
+        .Setup(mockRepository => mockRepository.GetAllAsync())
+        .ReturnsAsync(nullOpinionData);
+      #pragma warning restore CS8604
+
+      // Act
+      var result = await _opinionController.GetOpinions();
+
+      // Assert
+      var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
+      _mockOpinionRepository.Verify(mockRepository => mockRepository.GetAllAsync(),Times.Once);
     }
 
     [Fact]
