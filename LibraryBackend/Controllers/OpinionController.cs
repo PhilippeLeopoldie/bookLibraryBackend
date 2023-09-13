@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using LibraryBackend.Models;
 using LibraryBackend.Data;
 using System.Linq.Expressions;
+using LibraryBackend.Common;
 
 
 namespace LibraryBackend.Controllers
@@ -50,6 +51,15 @@ namespace LibraryBackend.Controllers
       }
       return Ok(opinions);
     }
-
+    
+    //PUT: api/Opinion/2
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Book>> UpdateOpinion(int id, OpinionDtoRequest opinionToUpdate)
+    {
+      throw new NotImplementedException();
+    }
   }
 }
