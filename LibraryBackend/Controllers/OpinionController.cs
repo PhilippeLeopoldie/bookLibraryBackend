@@ -26,12 +26,12 @@ namespace LibraryBackend.Controllers
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<Opinion>>> GetOpinion()
+    public async Task<ActionResult<IEnumerable<Opinion>>> GetOpinions()
     {
-      /* var Opinions = await _OpinionRepository.GetAllAsync();
-      return Ok(Opinions); */
-      throw new NotImplementedException();
+      var Opinions = await _OpinionRepository.GetAllAsync();
+      return Ok(Opinions); 
     }
+
     // GET: api/Opinion/5
     [HttpGet("{bookId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
