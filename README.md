@@ -15,7 +15,7 @@ Database : postGres
 
 Database platform: Vercel
 
-Test Driven Development: using Mock framework, UniTest ongoing: https://github.com/PhilippeLeopoldie/bookLibraryBackend/blob/main/LibraryBackend.Tests/
+Test Driven Development: using Mock library and  xUnit framework for UniTesting: https://github.com/PhilippeLeopoldie/bookLibraryBackend/blob/main/LibraryBackend.Tests/
 
  
 
