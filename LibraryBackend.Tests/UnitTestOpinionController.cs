@@ -31,6 +31,21 @@ namespace LibraryBackend.Tests
     };
 
     [Fact]
+    public async Task Should_get_all_opinions_in_GetOpinions()
+    {
+      // Arrange
+      _mockOpinionRepository!.Setup(mockRepository => mockRepository.GetAllAsync()).ReturnsAsync(mockOpinionData);
+
+      // Act
+      var result = await _opinionController.GetOpinions();
+
+      // Assert
+      var okResult = Assert.IsType<OkObjectResult>(result.Result);
+      var opinions = Assert.IsAssignableFrom<IEnumerable<Opinion>>(okResult.Value);
+      Assert.Equal(3,opinions.Count());
+    }
+
+    [Fact]
     public async Task Should_get_all_opinions_in_GetOpinionsByBookId()
     {
       // Arrange
