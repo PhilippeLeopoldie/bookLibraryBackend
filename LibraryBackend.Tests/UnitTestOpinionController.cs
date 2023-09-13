@@ -55,10 +55,11 @@ namespace LibraryBackend.Tests
       #pragma warning restore CS8604
 
       // Act
-      var result = await _opinionController.GetOpinions();
+      var actionResult = await _opinionController.GetOpinions();
 
       // Assert
-      var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
+      var notFoundResult = Assert.IsType<NotFoundObjectResult>(actionResult.Result);
+      Assert.Equal("No opinion found!", notFoundResult.Value);
       _mockOpinionRepository.Verify(mockRepository => mockRepository.GetAllAsync(),Times.Once);
     }
 
