@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using LibraryBackend.Common;
 using LibraryBackend.Controllers;
 using LibraryBackend.Data;
@@ -11,63 +12,47 @@ namespace LibraryBackend.Tests
 {
   public class UnitTestOpinionController
   {
-        readonly OpinionController _opinionController;
-        readonly MyLibraryContext _context; 
-        readonly Mock<IRepository<Opinion>> _mockOpinionRepository;
+    readonly OpinionController _opinionController;
+
+    readonly Mock<IRepository<Opinion>> _mockOpinionRepository;
 
 
-    public UnitTestOpinionController ()
+    public UnitTestOpinionController()
     {
-       var options = new DbContextOptionsBuilder<MyLibraryContext>()
-        .UseInMemoryDatabase(databaseName: "TestDatabase")
-        .Options;
-
-      _context = new MyLibraryContext(options);
-     
-      _mockOpinionRepository = new Mock<IRepository<Opinion>>(_context);
-      
+      _mockOpinionRepository = new Mock<IRepository<Opinion>>();
       _opinionController = new OpinionController(_mockOpinionRepository.Object);
     }
 
-     List<Book> mockBookData = new List<Book>
+    List<Opinion> mockOpinionData = new List<Opinion>
     {
-      new Book
-      {
-        Id = 1,
-        Title = "title1",
-        Author = "author1",
-        Opinions = new List<Opinion>
-          {
-            new Opinion
-           {
-            View="View1",
-            BookId = 1,
-            Rate = 5
-           },
-           new Opinion
-           {
-            View="View2",
-            BookId = 1,
-            Rate = 3
-           },
-           new Opinion
-           {
-            View="View3",
-            BookId = 1,
-            Rate = 4
-           }
-          }
-      },
-      new Book
-      {
-        Id = 2,
-        Title ="title2",
-        Author ="author2"
-      }
+      new Opinion { View="View1", BookId = 1, Rate = 2 },
+      new Opinion { View="View2", BookId = 2, Rate = 5 },
+      new Opinion { View="View3", BookId = 3, Rate = 4 }
     };
 
+    [Fact]
+    public async Task Should_get_all_opinions_in_GetOpinionsByBookId()
+    {
+      // Arrange
+      var bookIdToSearch = 1;
+      var expectedOpinions = from opinion in mockOpinionData
+                             where opinion.BookId == bookIdToSearch
+                             select opinion;
+      _mockOpinionRepository.Setup(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Opinion, bool>>>()
+      )).ReturnsAsync(expectedOpinions);
 
-  
+      // Act
+      var result = await _opinionController.GetOpinionsByBookId(bookIdToSearch);
+
+      // Assert
+      var okResult = Assert.IsType<OkObjectResult>(result.Result);
+      var listOpinions = Assert.IsAssignableFrom<IEnumerable<Opinion>>(okResult.Value);
+      _mockOpinionRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Opinion, bool>>>()
+        ), Times.Once);
+    }
+
 
   }
 }
