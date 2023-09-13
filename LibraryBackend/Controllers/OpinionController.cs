@@ -38,16 +38,13 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<Opinion>>> GetOpinionsByBookId(int bookId)
     {
-      /* Expression<Func<Opinion, bool>> condition = opinion => opinion.BookId == bookId;
-
+      Expression<Func<Opinion, bool>> condition = opinion => opinion.BookId == bookId;
       var opinions = await _OpinionRepository.FindByConditionAsync(condition);
-
       if (opinions == null || !opinions.Any())
       {
         return NotFound();
       }
-      return Ok(opinions); */
-      throw new NotImplementedException();
+      return Ok(opinions);
     }
 
   }
