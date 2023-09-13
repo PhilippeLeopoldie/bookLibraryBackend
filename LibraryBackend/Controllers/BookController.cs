@@ -22,7 +22,7 @@ namespace LibraryBackend.Controllers
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetBook()
+    public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetBooks()
     {
       var books = await _bookRepository.GetAllAsync();
       if (books == null || !books.Any())
@@ -139,7 +139,7 @@ namespace LibraryBackend.Controllers
         Author = bookDto.Author
       };
       var newBook = await _bookRepository.Create(bookToCreate);
-      return CreatedAtAction(nameof(GetBook), new { id = newBook.Id }, newBook);
+      return CreatedAtAction(nameof(GetBooks), new { id = newBook.Id }, newBook);
     }
 
     [HttpPut]
