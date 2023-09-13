@@ -29,7 +29,7 @@ namespace LibraryBackend.Controllers
     public async Task<ActionResult<IEnumerable<Opinion>>> GetOpinions()
     {
       var Opinions = await _OpinionRepository.GetAllAsync();
-      if(Opinions == null)
+      if(Opinions == null || !Opinions.Any())
       {
         return NotFound("No opinion found!");
       }
