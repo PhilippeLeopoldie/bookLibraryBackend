@@ -127,5 +127,43 @@ namespace LibraryBackend.Tests
         It.IsAny<Expression<Func<Opinion, bool>>>()
       ), Times.Once);
     }
+
+    [Fact]
+    public async Task Should_modify_opinion_By_OpinionId_in_UpdateOpinion()
+    {
+      // Arrange
+      var opinionId = 1;
+      var opinionById = mockOpinionData.FirstOrDefault(opinion => opinion.Id == opinionId);
+      var opinionDto = new OpinionDtoRequest
+      { 
+        Rate = 5,
+        View = "amazing! I'm warmly recommand it",
+        UserName = "Lise" 
+      };
+      _mockOpinionRepository
+        .Setup(opinionRepository => opinionRepository.GetByIdAsync(opinionId))
+        .ReturnsAsync(opinionById);
+
+      _mockOpinionRepository
+        .Setup(mockOpinion => mockOpinion.Update(opinionById!))
+        .ReturnsAsync(opinionById!);
+
+      // Act
+      var actionResult = await _opinionController.UpdateOpinion(opinionId, opinionDto);
+
+      // Arrange
+      var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+      var opinionResult = Assert.IsAssignableFrom<Opinion>(okResult.Value);
+
+      var expectedOpinion = (1, 5, "amazing! I'm warmly recommend it", "Lise");
+      var actualOpinion = (opinionResult.Id, opinionResult.Rate, opinionResult.View, opinionResult.UserName);
+
+      Assert.Equal(expectedOpinion, actualOpinion);
+
+      _mockOpinionRepository
+        .Verify(mockRepository => mockRepository.GetByIdAsync(It.IsAny<int>()), Times.Once);
+      _mockOpinionRepository
+        .Verify(mockRepository => mockRepository.Update(It.IsAny<Opinion>()), Times.Once);
+    }
   }
 }
