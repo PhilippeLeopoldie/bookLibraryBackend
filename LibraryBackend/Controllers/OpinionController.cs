@@ -68,14 +68,17 @@ namespace LibraryBackend.Controllers
         };
         return BadRequest(emptyDataError);
       }
-      var opinionById = await _OpinionRepository.GetByIdAsync(id);
 
+      var opinionById = await _OpinionRepository.GetByIdAsync(id);
+      if (opinionById == null)
+      {
+        return NotFound($"Opinion with Id {id} not found");
+      }
       opinionById.Rate = opinionToUpdate.Rate;
       opinionById.View = opinionToUpdate.View;
       opinionById.UserName = opinionToUpdate.UserName;
 
       var updatedOpinion = await _OpinionRepository.Update(opinionById);
-      
       return Ok(updatedOpinion);
     }
   }
