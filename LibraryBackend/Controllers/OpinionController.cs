@@ -30,11 +30,11 @@ namespace LibraryBackend.Controllers
     public async Task<ActionResult<IEnumerable<Opinion>>> GetOpinions()
     {
       var Opinions = await _OpinionRepository.GetAllAsync();
-      if(Opinions == null || !Opinions.Any())
+      if (Opinions == null || !Opinions.Any())
       {
         return NotFound("No opinion found!");
       }
-      return Ok(Opinions); 
+      return Ok(Opinions);
     }
 
     // GET: api/Opinion/5
@@ -51,7 +51,7 @@ namespace LibraryBackend.Controllers
       }
       return Ok(opinions);
     }
-    
+
     //PUT: api/Opinion/2
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]

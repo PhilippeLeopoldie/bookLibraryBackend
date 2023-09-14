@@ -135,10 +135,10 @@ namespace LibraryBackend.Tests
       var opinionId = 1;
       var opinionById = mockOpinionData.FirstOrDefault(opinion => opinion.Id == opinionId);
       var opinionDto = new OpinionDtoRequest
-      { 
+      {
         Rate = 5,
         View = "amazing! I'm warmly recommend it",
-        UserName = "Lise" 
+        UserName = "Lise"
       };
       _mockOpinionRepository
         .Setup(opinionRepository => opinionRepository.GetByIdAsync(opinionId))
@@ -173,10 +173,10 @@ namespace LibraryBackend.Tests
       var opinionId = 1;
       var opinionById = mockOpinionData.FirstOrDefault(opinion => opinion.Id == opinionId);
       var opinionDto = new OpinionDtoRequest
-      { 
-        
+      {
+
         View = "",
-        UserName = "" 
+        UserName = ""
       };
       _mockOpinionRepository
         .Setup(opinionRepository => opinionRepository.GetByIdAsync(opinionId))
@@ -193,7 +193,7 @@ namespace LibraryBackend.Tests
       var badRequestResult = Assert.IsType<BadRequestObjectResult>(actionResult.Result);
       var error = Assert.IsAssignableFrom<ApiError>(badRequestResult.Value);
 
-      
+
       Assert.Equal("View and UserName cannot be empty", error.Detail);
 
       _mockOpinionRepository
