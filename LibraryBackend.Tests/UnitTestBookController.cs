@@ -453,7 +453,7 @@ namespace LibraryBackend.Tests
       var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
       Assert.Equal("Validation Error", apiError.Message);
       Assert.Equal("Title and Author cannot be empty", apiError.Detail);
-      _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(id), Times.Once);
+      _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(id), Times.Never);
       _mockBookRepository.Verify(mockRepository => mockRepository.Update(bookById!), Times.Never);
     }
 
@@ -484,7 +484,7 @@ namespace LibraryBackend.Tests
       var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
       Assert.Equal("Validation Error", apiError.Message);
       Assert.Equal("Title and Author cannot be empty", apiError.Detail);
-      _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(id), Times.Once);
+      _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(id), Times.Never);
       _mockBookRepository.Verify(mockRepository => mockRepository.Update(bookById!), Times.Never);
     }
 
