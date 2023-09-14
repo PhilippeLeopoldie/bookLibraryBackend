@@ -59,7 +59,15 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Book>> UpdateOpinion(int id, OpinionDtoRequest opinionToUpdate)
     {
-      throw new NotImplementedException();
+      var opinionById = await _OpinionRepository.GetByIdAsync(id);
+
+      opinionById.Rate = opinionToUpdate.Rate;
+      opinionById.View = opinionToUpdate.View;
+      opinionById.UserName = opinionToUpdate.UserName;
+
+      var updatedOpinion = await _OpinionRepository.Update(opinionById);
+      
+      return Ok(updatedOpinion);
     }
   }
 }
