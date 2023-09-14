@@ -137,7 +137,7 @@ namespace LibraryBackend.Tests
       var opinionDto = new OpinionDtoRequest
       { 
         Rate = 5,
-        View = "amazing! I'm warmly recommand it",
+        View = "amazing! I'm warmly recommend it",
         UserName = "Lise" 
       };
       _mockOpinionRepository
