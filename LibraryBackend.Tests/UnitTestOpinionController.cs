@@ -165,5 +165,42 @@ namespace LibraryBackend.Tests
       _mockOpinionRepository
         .Verify(mockRepository => mockRepository.Update(It.IsAny<Opinion>()), Times.Once);
     }
+
+    [Fact]
+    public async Task Should_return_badRequest_for_empty_fields_in_UpdateOpinion()
+    {
+      // Arrange
+      var opinionId = 1;
+      var opinionById = mockOpinionData.FirstOrDefault(opinion => opinion.Id == opinionId);
+      var opinionDto = new OpinionDtoRequest
+      { 
+        
+        View = "",
+        UserName = "" 
+      };
+      _mockOpinionRepository
+        .Setup(opinionRepository => opinionRepository.GetByIdAsync(opinionId))
+        .ReturnsAsync(opinionById);
+
+      _mockOpinionRepository
+        .Setup(mockOpinion => mockOpinion.Update(opinionById!))
+        .ReturnsAsync(opinionById!);
+
+      // Act
+      var actionResult = await _opinionController.UpdateOpinion(opinionId, opinionDto);
+
+      // Arrange
+      var badRequestResult = Assert.IsType<BadRequestObjectResult>(actionResult.Result);
+      var error = Assert.IsAssignableFrom<ApiError>(badRequestResult.Value);
+
+      
+      Assert.Equal("View and UserName cannot be empty", error.Detail);
+
+      _mockOpinionRepository
+        .Verify(mockRepository => mockRepository.GetByIdAsync(It.IsAny<int>()), Times.Never);
+      _mockOpinionRepository
+        .Verify(mockRepository => mockRepository.Update(It.IsAny<Opinion>()), Times.Never);
+
+    }
   }
 }
