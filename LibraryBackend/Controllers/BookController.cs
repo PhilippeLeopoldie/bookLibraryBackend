@@ -148,12 +148,6 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Book>> UpdateBook(int id, BookDtoRequest bookToUpdate)
     {
-      var bookByIdToUpdate = await _bookRepository.GetByIdAsync(id);
-      if (bookByIdToUpdate == null)
-      {
-        return NotFound($"Book with Id {id} not found");
-      }
-
       if (string.IsNullOrWhiteSpace(bookToUpdate.Title) || string.IsNullOrWhiteSpace(bookToUpdate.Author))
       {
         var emptyDataError = new ApiError
@@ -163,9 +157,14 @@ namespace LibraryBackend.Controllers
         };
         return BadRequest(emptyDataError);
       }
+
+      var bookByIdToUpdate = await _bookRepository.GetByIdAsync(id);
+      if (bookByIdToUpdate == null)
+      {
+        return NotFound($"Book with Id {id} not found");
+      }
       bookByIdToUpdate.Author = bookToUpdate.Author;
       bookByIdToUpdate.Title = bookToUpdate.Title;
-
       var updatedBook = await _bookRepository.Update(bookByIdToUpdate);
       return Ok(updatedBook);
     }
