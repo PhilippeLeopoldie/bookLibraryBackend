@@ -202,5 +202,43 @@ namespace LibraryBackend.Tests
         .Verify(mockRepository => mockRepository.Update(It.IsAny<Opinion>()), Times.Never);
 
     }
+
+    [Fact]
+    public async Task Should_return_notFound_when_no_opinion_in_UpdateOpinion()
+    {
+      // Arrange
+      var opinionId = 1;
+      var nullOpinion = null as Opinion;
+      var opinion = new Opinion
+      {
+        Id = 1,
+        View = "view",
+        UserName = "username"
+      };
+      var opinionDto = new OpinionDtoRequest
+      {
+        View = "viewdTO",
+        UserName = "usernameDTO"
+      };
+      _mockOpinionRepository
+        .Setup(opinionRepository => opinionRepository.GetByIdAsync(opinionId))
+        .ReturnsAsync(nullOpinion);
+
+      _mockOpinionRepository
+        .Setup(mockOpinion => mockOpinion.Update(opinion))
+        .ReturnsAsync(opinion);
+
+      // Act
+      var actionResult = await _opinionController.UpdateOpinion(opinionId, opinionDto);
+
+      // Arrange
+      var notFoundResult = Assert.IsType<NotFoundObjectResult>(actionResult.Result);
+      Assert.Equal($"Opinion with Id {opinionId} not found", notFoundResult.Value);
+      _mockOpinionRepository
+        .Verify(mockRepository => mockRepository.GetByIdAsync(It.IsAny<int>()), Times.Once);
+      _mockOpinionRepository
+        .Verify(mockRepository => mockRepository.Update(It.IsAny<Opinion>()), Times.Never);
+
+    }
   }
 }
