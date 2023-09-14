@@ -59,6 +59,15 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Book>> UpdateOpinion(int id, OpinionDtoRequest opinionToUpdate)
     {
+      if (string.IsNullOrWhiteSpace(opinionToUpdate.UserName) || string.IsNullOrWhiteSpace(opinionToUpdate.View))
+      {
+        var emptyDataError = new ApiError
+        {
+          Message = "Validation Error",
+          Detail = "View and UserName cannot be empty"
+        };
+        return BadRequest(emptyDataError);
+      }
       var opinionById = await _OpinionRepository.GetByIdAsync(id);
 
       opinionById.Rate = opinionToUpdate.Rate;
