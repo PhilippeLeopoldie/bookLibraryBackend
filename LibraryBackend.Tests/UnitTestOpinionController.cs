@@ -23,9 +23,9 @@ namespace LibraryBackend.Tests
 
     List<Opinion> mockOpinionData = new List<Opinion>
     {
-      new Opinion { View="View1", BookId = 1, Rate = 2 },
-      new Opinion { View="View2", BookId = 2, Rate = 5 },
-      new Opinion { View="View3", BookId = 3, Rate = 4 }
+      new Opinion { Id = 1, View = "View1", BookId = 1, Rate = 2, UserName = "Lise"},
+      new Opinion { Id = 2, View = "View2", BookId = 2, Rate = 5, UserName = "Paul"},
+      new Opinion { Id = 3, View = "View3", BookId = 3, Rate = 4, UserName = "Frank"}
     };
 
     [Fact]
