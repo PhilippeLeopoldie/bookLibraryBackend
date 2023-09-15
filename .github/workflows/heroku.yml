@@ -19,9 +19,12 @@ jobs:
           dotnet-version: 7.0.203 # Specify the .NET version you're using
       
       - name: Navigate to Project Directory
-        run: cd ./LibraryBackend
+        run: 
+          pwd
+          cd ./LibraryBackend
 
       - name: Build .NET Core application
+          pwd
         run: dotnet build LibraryBackend.csproj --configuration Release
 
       - name: Deploy to Heroku
