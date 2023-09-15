@@ -19,7 +19,7 @@ jobs:
           dotnet-version: 7.0.203 # Specify the .NET version you're using
       
       - name: Navigate to Project Directory
-        run: cd LibraryBackend
+        run: cd ../../LibraryBackend
 
       - name: Build .NET Core application
         run: dotnet build --configuration Release
