@@ -1,0 +1,31 @@
+name: Deploy to Heroku
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 7.0 # Specify the .NET version you're using
+
+      - name: Build .NET Core application
+        run: dotnet build --configuration Release
+
+      - name: Deploy to Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          echo $HEROKU_API_KEY | heroku login -i
+          heroku container:login
+          heroku container:push -a leopoldie-booklibrary-backend
+          heroku container:release -a leopoldie-booklibrary-backend
