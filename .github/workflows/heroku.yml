@@ -22,11 +22,11 @@ jobs:
         run: 
           pwd
           cd ./LibraryBackend
-          ls
         shell: bash
 
       - name: Build .NET Core application
-          pwd
+          ls
+        shell: bash
         run: dotnet build LibraryBackend.csproj --configuration Release
 
       - name: Deploy to Heroku
