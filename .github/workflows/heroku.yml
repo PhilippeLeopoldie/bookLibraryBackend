@@ -22,6 +22,7 @@ jobs:
         run: 
           pwd
           cd ./LibraryBackend
+          ls
         shell: bash
 
       - name: Build .NET Core application
