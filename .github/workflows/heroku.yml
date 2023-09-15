@@ -24,7 +24,7 @@ jobs:
 
       - name: Build .NET Core application
           
-        run: 
+        run: |
           ls -la
           dotnet build LibraryBackend.csproj --configuration Release
         shell: bash
