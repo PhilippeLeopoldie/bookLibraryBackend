@@ -7,19 +7,10 @@ using LibraryBackend.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add database context and connection string
-string connectionString="";
-if(builder.Environment.IsDevelopment())
-{
-  connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
-}
-else
-{
-  connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")!;
-  if(string.IsNullOrEmpty(connectionString))
-  {
-    throw new ApplicationException("Production connection string not found.");
-  }
-}
+
+  var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+
 
 builder.Services.AddDbContext<MyLibraryContext>(options =>
     options.UseNpgsql(connectionString));
