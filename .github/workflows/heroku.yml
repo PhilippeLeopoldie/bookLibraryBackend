@@ -13,10 +13,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: set up Node.js 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 7.0.203 # Specify the .NET version you're using
+          dotnet-version: 7.0.203
       
       - name: Navigate to Project Directory
         run: cd ./LibraryBackend
