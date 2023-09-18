@@ -37,6 +37,14 @@ jobs:
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
 
+      - name: RetryHeroku Login
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          for i in {1..5}; do
+            echo $HEROKU_API_KEY | heroku login -i && break || sleep 5
+          done
+
       - name: Deploy to Heroku
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
@@ -46,8 +54,4 @@ jobs:
           heroku container:push -a leopoldie-booklibrary-backend
           heroku container:release -a leopoldie-booklibrary-backend
 
-      - name: RetryHeroku Login
-        run: |
-          for i in {1..5}; do
-            echo $HEROKU_API_KEY | heroku login -i && break || sleep 5
-          done
+      
