@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
                      policy =>
                      {
                        policy.WithOrigins(
-                         "https://booklibray-backend-20f7a19cecb2.herokuapp.com/")
+                         "https://booklibrary-backend-20f7a19cecb2.herokuapp.com/")
                        .AllowAnyHeader()
                        .AllowAnyMethod()
                        .SetIsOriginAllowed((host) => true)
