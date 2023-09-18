@@ -45,3 +45,9 @@ jobs:
           heroku container:login
           heroku container:push -a leopoldie-booklibrary-backend
           heroku container:release -a leopoldie-booklibrary-backend
+
+      - name: RetryHeroku Login
+        run: |
+          for i in {1..5}; do
+            echo $HEROKU_API_KEY | heroku login -i && break || sleep 5
+          done
