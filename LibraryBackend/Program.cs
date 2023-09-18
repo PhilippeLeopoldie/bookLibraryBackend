@@ -23,8 +23,7 @@ builder.Services.AddCors(options =>
                      policy =>
                      {
                        policy.WithOrigins(
-                         "https://booklibray-backend.herokuapp.com",
-                         "https://leopoldie-booklibray-backend.herokuapp.com")
+                         "https://booklibray-backend.herokuapp.com")
                        .AllowAnyHeader()
                        .AllowAnyMethod()
                        .SetIsOriginAllowed((host) => true)
