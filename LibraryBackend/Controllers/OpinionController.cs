@@ -87,6 +87,16 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Opinion>> CreateOpinion (OpinionDtoRequest newOpinion)
     {
+      if(newOpinion == null || newOpinion.Rate == null || newOpinion.BookId == null ||
+        string.IsNullOrWhiteSpace(newOpinion.View) || string.IsNullOrWhiteSpace(newOpinion.UserName))
+      {
+        var error = new ApiError
+        {
+          Message = "Validation Error",
+          Detail = "Rate, View and UserName cannot be empty"
+        };
+        return BadRequest(error);
+      }
       var opinionCreated = await _OpinionRepository.Create(
         new Opinion 
         {
