@@ -87,7 +87,16 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Opinion>> CreateOpinion (OpinionDtoRequest newOpinion)
     {
-      throw new NotImplementedException();
+      var opinionCreated = await _OpinionRepository.Create(
+        new Opinion 
+        {
+          BookId = newOpinion.BookId,
+          Rate = newOpinion.Rate,
+          View = newOpinion.View,
+          UserName = newOpinion.UserName
+        }
+      );
+      return CreatedAtAction(nameof(GetOpinions) , new {id = opinionCreated.Id }, opinionCreated );  
     }
   }
 }
