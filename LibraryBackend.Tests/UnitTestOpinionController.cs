@@ -151,7 +151,7 @@ namespace LibraryBackend.Tests
       // Act
       var actionResult = await _opinionController.UpdateOpinion(opinionId, opinionDto);
 
-      // Arrange
+      // Assert
       var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
       var opinionResult = Assert.IsAssignableFrom<Opinion>(okResult.Value);
 
@@ -189,7 +189,7 @@ namespace LibraryBackend.Tests
       // Act
       var actionResult = await _opinionController.UpdateOpinion(opinionId, opinionDto);
 
-      // Arrange
+      // Assert
       var badRequestResult = Assert.IsType<BadRequestObjectResult>(actionResult.Result);
       var error = Assert.IsAssignableFrom<ApiError>(badRequestResult.Value);
 
@@ -231,7 +231,7 @@ namespace LibraryBackend.Tests
       // Act
       var actionResult = await _opinionController.UpdateOpinion(opinionId, opinionDto);
 
-      // Arrange
+      // Assert
       var notFoundResult = Assert.IsType<NotFoundObjectResult>(actionResult.Result);
       Assert.Equal($"Opinion with Id {opinionId} not found", notFoundResult.Value);
       _mockOpinionRepository
@@ -240,5 +240,41 @@ namespace LibraryBackend.Tests
         .Verify(mockRepository => mockRepository.Update(It.IsAny<Opinion>()), Times.Never);
 
     }
+
+    [Fact]
+    public async Task Should_create_one_opinion_with_valid_input_in_CreateOpinion()
+    {
+      // Arrange
+      var opinionDtoRequest = new OpinionDtoRequest 
+      {
+        BookId = 2,
+        Rate = 3,
+        View = "view2",
+        UserName = "userName2"
+      };
+      var opinionToCreate = new Opinion
+      {
+        BookId = opinionDtoRequest.BookId,
+        Rate = opinionDtoRequest.Rate,
+        View = opinionDtoRequest.View,
+        UserName = opinionDtoRequest.UserName
+      };
+      _mockOpinionRepository
+        .Setup(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()))
+        .ReturnsAsync(opinionToCreate);
+
+      // Act
+      var result = await _opinionController.CreateOpinion(opinionDtoRequest);
+
+      // Assert
+      var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+      Assert.Equal(StatusCodes.Status201Created, createdAtActionResult.StatusCode);
+      var createdOpinion = Assert.IsType<Opinion>(createdAtActionResult.Value);
+      var expectedOpinion = (opinionDtoRequest.BookId,opinionDtoRequest.Rate, opinionDtoRequest.View, opinionDtoRequest.UserName) ;
+      var actualOpinion = (createdOpinion.BookId, createdOpinion.Rate, createdOpinion.View, createdOpinion.UserName);
+      Assert.Equal(expectedOpinion, actualOpinion);
+      _mockOpinionRepository.Verify(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()), Times.Once);
+    }
+
   }
 }
