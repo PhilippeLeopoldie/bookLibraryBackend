@@ -81,5 +81,13 @@ namespace LibraryBackend.Controllers
       var updatedOpinion = await _OpinionRepository.Update(opinionById);
       return Ok(updatedOpinion);
     }
+
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<Opinion>> CreateOpinion (OpinionDtoRequest newOpinion)
+    {
+      throw new NotImplementedException();
+    }
   }
 }
