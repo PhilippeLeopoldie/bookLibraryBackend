@@ -276,5 +276,37 @@ namespace LibraryBackend.Tests
       _mockOpinionRepository.Verify(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()), Times.Once);
     }
 
+    [Fact]
+    public async Task Should_return_badRequest_when_empty_fields_in_CreateOpinion()
+    {
+      // Arrange
+      var opinionDtoRequest = new OpinionDtoRequest 
+      {
+        BookId = 2,
+        Rate = 3,
+        View = "",
+        UserName = ""
+      };
+      var opinionToCreate = new Opinion
+      {
+        BookId = opinionDtoRequest.BookId,
+        Rate = opinionDtoRequest.Rate,
+        View = opinionDtoRequest.View,
+        UserName = opinionDtoRequest.UserName
+      };
+      _mockOpinionRepository
+        .Setup(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()))
+        .ReturnsAsync(opinionToCreate);
+
+      // Act
+      var result = await _opinionController.CreateOpinion(opinionDtoRequest);
+
+      // Assert
+      var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+      var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
+      Assert.Equal("Validation Error", apiError.Message);
+      Assert.Equal("Rate, View and UserName cannot be empty", apiError.Detail);
+      _mockOpinionRepository.Verify(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()), Times.Once);
+    }
   }
 }
