@@ -306,7 +306,7 @@ namespace LibraryBackend.Tests
       var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
       Assert.Equal("Validation Error", apiError.Message);
       Assert.Equal("Rate, View and UserName cannot be empty", apiError.Detail);
-      _mockOpinionRepository.Verify(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()), Times.Once);
+      _mockOpinionRepository.Verify(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()), Times.Never);
     }
   }
 }
