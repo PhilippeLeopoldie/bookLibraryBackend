@@ -87,7 +87,7 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Opinion>> CreateOpinion (OpinionDtoRequest newOpinion)
     {
-      if(newOpinion == null || newOpinion.Rate == null || newOpinion.BookId == null ||
+      if(newOpinion == null || newOpinion.Rate?.Equals(0) == true || newOpinion.BookId == null ||
         string.IsNullOrWhiteSpace(newOpinion.View) || string.IsNullOrWhiteSpace(newOpinion.UserName))
       {
         var error = new ApiError
