@@ -38,7 +38,7 @@ namespace LibraryBackend.Controllers
     }
 
     // GET: api/Opinion/5
-    [HttpGet("{bookId}")]
+    [HttpGet("BookId={bookId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<Opinion>>> GetOpinionsByBookId(int bookId)
