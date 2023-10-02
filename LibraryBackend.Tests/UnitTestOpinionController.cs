@@ -194,7 +194,7 @@ namespace LibraryBackend.Tests
       var error = Assert.IsAssignableFrom<ApiError>(badRequestResult.Value);
 
 
-      Assert.Equal("View and UserName cannot be empty", error.Detail);
+      Assert.Equal("View or UserName cannot be empty", error.Detail);
 
       _mockOpinionRepository
         .Verify(mockRepository => mockRepository.GetByIdAsync(It.IsAny<int>()), Times.Never);
@@ -305,7 +305,7 @@ namespace LibraryBackend.Tests
       var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
       var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
       Assert.Equal("Validation Error", apiError.Message);
-      Assert.Equal("Rate, View and UserName cannot be empty", apiError.Detail);
+      Assert.Equal("View, UserName or Rate cannot be empty", apiError.Detail);
       _mockOpinionRepository.Verify(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()), Times.Never);
     }
 
@@ -338,7 +338,7 @@ namespace LibraryBackend.Tests
       var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
       var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
       Assert.Equal("Validation Error", apiError.Message);
-      Assert.Equal("Rate, View and UserName cannot be empty", apiError.Detail);
+      Assert.Equal("View, UserName or Rate cannot be empty", apiError.Detail);
       _mockOpinionRepository.Verify(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()), Times.Never);
     }
   }
