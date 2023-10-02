@@ -129,7 +129,7 @@ namespace LibraryBackend.Controllers
         var error = new ApiError
         {
           Message = "Validation Error",
-          Detail = "Title and Author cannot be empty"
+          Detail = "Title or Author cannot be empty"
         };
         return BadRequest(error);
       }
@@ -153,7 +153,7 @@ namespace LibraryBackend.Controllers
         var emptyDataError = new ApiError
         {
           Message = "Validation Error",
-          Detail = "Title and Author cannot be empty"
+          Detail = "Title or Author cannot be empty"
         };
         return BadRequest(emptyDataError);
       }
