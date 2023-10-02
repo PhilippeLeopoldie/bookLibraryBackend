@@ -64,7 +64,7 @@ namespace LibraryBackend.Controllers
         var emptyDataError = new ApiError
         {
           Message = "Validation Error",
-          Detail = "View and UserName cannot be empty"
+          Detail = "View or UserName cannot be empty"
         };
         return BadRequest(emptyDataError);
       }
@@ -93,7 +93,7 @@ namespace LibraryBackend.Controllers
         var error = new ApiError
         {
           Message = "Validation Error",
-          Detail = "Rate, View and UserName cannot be empty"
+          Detail = "View, UserName or Rate cannot be empty"
         };
         return BadRequest(error);
       }
