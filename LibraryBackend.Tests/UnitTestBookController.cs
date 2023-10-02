@@ -228,7 +228,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_get_book_by_title_in_GetBookByAuthor()
+    public async Task Should_get_book_by_author_in_GetBookByAuthor()
     {
       // Arrange
       string authorTosearch = "author1";
@@ -255,7 +255,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_return_NotFound_for_non_existing_title_in_GetBookByAuthor()
+    public async Task Should_return_NotFound_for_non_existing_author_in_GetBookByAuthor()
     {
       // Arrange
       string nonExistingAuthor = "nonExistingAuthor";
@@ -277,7 +277,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_return_badRequest_when_empty_title_is_passed_to_GetBookByAuthor()
+    public async Task Should_return_badRequest_when_empty_author_is_passed_to_GetBookByAuthor()
     {
       // Arrange
       var emptyAuthor = "";
