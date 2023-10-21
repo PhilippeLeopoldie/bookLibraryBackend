@@ -25,7 +25,8 @@ namespace LibraryBackend.Tests
     {
       new Opinion { Id = 1, View = "View1", BookId = 1, Rate = 2, UserName = "Lise"},
       new Opinion { Id = 2, View = "View2", BookId = 2, Rate = 5, UserName = "Paul"},
-      new Opinion { Id = 3, View = "View3", BookId = 3, Rate = 4, UserName = "Frank"}
+      new Opinion { Id = 3, View = "View3", BookId = 3, Rate = 4, UserName = "Frank"},
+      new Opinion { Id = 4, View = "View4", BookId = 1, Rate = 3, UserName = "Louis"},
     };
 
     [Fact]
@@ -40,7 +41,7 @@ namespace LibraryBackend.Tests
       // Assert
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
       var opinions = Assert.IsAssignableFrom<IEnumerable<Opinion>>(okResult.Value);
-      Assert.Equal(3, opinions.Count());
+      Assert.Equal(4, opinions.Count());
     }
 
     [Fact]
@@ -86,13 +87,13 @@ namespace LibraryBackend.Tests
     {
       // Arrange
       var bookIdToSearch = 1;
-      var expectedOpinions = from opinion in mockOpinionData
+      var ActualOpinions = from opinion in mockOpinionData
                              where opinion.BookId == bookIdToSearch
                              select opinion;
       _mockOpinionRepository.Setup(mockRepository => mockRepository.FindByConditionAsync(
         It.IsAny<Expression<Func<Opinion, bool>>>()
       ))
-      .ReturnsAsync(expectedOpinions);
+      .ReturnsAsync(ActualOpinions);
 
       // Act
       var result = await _opinionController.GetOpinionsByBookId(bookIdToSearch);
@@ -103,6 +104,13 @@ namespace LibraryBackend.Tests
       _mockOpinionRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
         It.IsAny<Expression<Func<Opinion, bool>>>()
         ), Times.Once);
+        Assert.Equal(2,ActualOpinions.Count());
+        var actualLastOpinion = listOpinions.Last();
+        
+        var expectedLastOpinion = new Opinion { Id = 4, View = "View4", BookId = 1, Rate = 3, UserName = "Louis"};
+
+        Assert.Equivalent(expectedLastOpinion, actualLastOpinion);
+        Assert.Equal(DateTime.Now.ToString("yyyy-MM-dd"),actualLastOpinion.PostDate);
     }
 
     [Fact]
