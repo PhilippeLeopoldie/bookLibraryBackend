@@ -52,6 +52,9 @@ namespace LibraryBackend.Migrations
                         .IsRequired()
                         .HasColumnType("integer");
 
+                    b.Property<string>("PostDate")
+                        .HasColumnType("text");
+
                     b.Property<int?>("Rate")
                         .HasColumnType("integer");
 
