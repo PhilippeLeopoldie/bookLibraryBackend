@@ -4,11 +4,13 @@ namespace LibraryBackend.Models
 {
   public class Opinion : BaseEntity
   {
-    public int? Rate { get; set; } = 1;
+    public int? Rate { get; set; } 
 
     public string? View { get; set; }
 
     public string? UserName { get; set; }
+
+    public string? PostDate {get; set;} = DateTime.Now.ToString("yyyy-MM-dd");
 
     [Required]
     public int? BookId { get; set; }
