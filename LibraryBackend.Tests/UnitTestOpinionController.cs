@@ -110,7 +110,7 @@ namespace LibraryBackend.Tests
         var expectedLastOpinion = new Opinion { Id = 4, View = "View4", BookId = 1, Rate = 3, UserName = "Louis"};
 
         Assert.Equivalent(expectedLastOpinion, actualLastOpinion);
-        Assert.Equal(DateTime.Now.ToString("yyyy-MM-dd"),actualLastOpinion.PostDate);
+        Assert.Equal(DateTime.Now.ToString("yyyy/MM/dd"),actualLastOpinion.PostDate);
     }
 
     [Fact]

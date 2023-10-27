@@ -10,7 +10,7 @@ namespace LibraryBackend.Models
 
     public string? UserName { get; set; }
 
-    public string? PostDate {get; set;} = DateTime.Now.ToString("yyyy-MM-dd");
+    public string? PostDate {get; set;} = DateTime.Now.ToString("yyyy/MM/dd");
 
     [Required]
     public int? BookId { get; set; }
