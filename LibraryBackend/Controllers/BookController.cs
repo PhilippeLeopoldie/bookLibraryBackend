@@ -136,7 +136,8 @@ namespace LibraryBackend.Controllers
       var bookToCreate = new Book
       {
         Title = bookDto.Title,
-        Author = bookDto.Author
+        Author = bookDto.Author,
+        ImageUrl = bookDto.ImageUrl
       };
       var newBook = await _bookRepository.Create(bookToCreate);
       return CreatedAtAction(nameof(GetBooks), new { id = newBook.Id }, newBook);
@@ -165,6 +166,7 @@ namespace LibraryBackend.Controllers
       }
       bookByIdToUpdate.Author = bookToUpdate.Author;
       bookByIdToUpdate.Title = bookToUpdate.Title;
+      bookByIdToUpdate.ImageUrl= bookToUpdate.ImageUrl;
       var updatedBook = await _bookRepository.Update(bookByIdToUpdate);
       return Ok(updatedBook);
     }
