@@ -130,6 +130,10 @@ namespace LibraryBackend.Controllers
         || 
         book.Author!.ToLower().Contains(titleOrAuthor);
       var books = await _bookRepository.FindByConditionAsync(condition);
+      if (books.IsNullOrEmpty())
+      {
+        return NotFound($"Book with Title or Author '{titleOrAuthor}' not found");
+      }
       var booksResponse = from book in books
                           select new BookDtoResponse
                           {
