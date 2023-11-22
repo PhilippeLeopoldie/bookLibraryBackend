@@ -5,6 +5,7 @@ using LibraryBackend.Data;
 using LibraryBackend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Moq;
 
 namespace LibraryBackend.Tests
@@ -298,6 +299,39 @@ namespace LibraryBackend.Tests
       ), Times.Never);
     }
 
+
+    [Fact]
+
+    public async Task Should_get_books_by_title_or_author()
+    {
+      // Arrange
+      string titleOrAuthor = "title1";
+      var expectedBooks = mockBookData
+        .Where(book => 
+          book.Title!.ToLower().Contains(titleOrAuthor)
+          || 
+          book.Author!.ToLower().Contains(titleOrAuthor)).ToList();
+          
+      _mockBookRepository
+        .Setup(mockRepository => mockRepository.FindByConditionAsync(
+          It.IsAny<Expression<Func<Book, bool>>>()))
+          .ReturnsAsync(expectedBooks);
+
+      // Act
+      var books = await _bookController.GetBookByTitleOrAuthor(titleOrAuthor);
+
+      // Assert
+      Assert.Single(expectedBooks);
+      var okResult = Assert.IsType<OkObjectResult>(books.Result);
+      var bookDtoResponses = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
+      _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Book, bool>>>()), Times.Once);
+      foreach (var bookDtoResponse in bookDtoResponses!)
+      {
+        Assert.Equal(titleOrAuthor, bookDtoResponse.Book?.Title);
+        Assert.NotEqual(titleOrAuthor, bookDtoResponse.Book?.Author);
+      }
+    }
 
     [Fact]
     public async Task Should_create_one_book_in_CreateBook()
