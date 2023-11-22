@@ -125,6 +125,15 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<BookDtoRequest>> GetBookByTitleOrAuthor(string titleOrAuthor)
     {
+      if (string.IsNullOrWhiteSpace(titleOrAuthor))
+      {
+        var error = new ApiError
+        {
+          Message = "Validation Error",
+          Detail = "Author cannot be empty"
+        };
+        return BadRequest(error);
+      }
       Expression<Func<Book, bool>> condition = book => 
         book.Title!.ToLower().Contains(titleOrAuthor) 
         || 
