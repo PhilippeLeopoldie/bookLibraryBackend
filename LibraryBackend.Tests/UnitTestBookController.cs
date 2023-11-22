@@ -311,7 +311,6 @@ namespace LibraryBackend.Tests
           book.Title!.ToLower().Contains(titleOrAuthor)
           || 
           book.Author!.ToLower().Contains(titleOrAuthor)).ToList();
-          
       _mockBookRepository
         .Setup(mockRepository => mockRepository.FindByConditionAsync(
           It.IsAny<Expression<Func<Book, bool>>>()))
@@ -331,6 +330,28 @@ namespace LibraryBackend.Tests
         Assert.Equal(titleOrAuthor, bookDtoResponse.Book?.Title);
         Assert.NotEqual(titleOrAuthor, bookDtoResponse.Book?.Author);
       }
+    }
+
+    [Fact]
+    public async Task Should_return_NotFound_for_non_existing_title_or_author_in_GetBookByTitleOrAuthor()
+    {
+      // Arrange
+      string nonExistingAuthor = "nonExistingAuthor";
+      var emptyBookAuthor = new List<Book>();
+      _mockBookRepository
+      .Setup(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Book, bool>>>()
+      ))
+      .ReturnsAsync(emptyBookAuthor);
+
+      // Act
+      var emptyBookList = await _bookController.GetBookByTitleOrAuthor(nonExistingAuthor);
+
+       // Assert
+      var notFoundResult = Assert.IsType<NotFoundObjectResult>(emptyBookList.Result);
+      _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Book, bool>>>()), Times.Once);
+      Assert.Equal($"Book with Title or Author '{nonExistingAuthor}' not found", notFoundResult.Value);
     }
 
     [Fact]
