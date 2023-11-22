@@ -125,7 +125,18 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<BookDtoRequest>> GetBookByTitleOrAuthor(string titleOrAuthor)
     {
-      throw new NotImplementedException();
+      Expression<Func<Book, bool>> condition = book => 
+        book.Title!.ToLower().Contains(titleOrAuthor) 
+        || 
+        book.Author!.ToLower().Contains(titleOrAuthor);
+      var books = await _bookRepository.FindByConditionAsync(condition);
+      var booksResponse = from book in books
+                          select new BookDtoResponse
+                          {
+                            Book=book,
+                            RequestedAt = DateTime.Now.ToString(dateTimeFormat)
+                          };
+      return Ok(booksResponse);
     }
 
     [HttpPost]
