@@ -119,6 +119,15 @@ namespace LibraryBackend.Controllers
       return Ok(booksResponse);
     }
 
+    [HttpGet("TitleOrAuthor/{titleOrAuthor}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<BookDtoRequest>> GetBookByTitleOrAuthor(string titleOrAuthor)
+    {
+      throw new NotImplementedException();
+    }
+
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
