@@ -355,6 +355,28 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
+    public async Task Should_return_badRequest_when_empty_title_or_author_is_passed_to_GetBookByTitleOrAuthor()
+    {
+      // Arrange
+      var emptyAuthor = " ";
+      var emptyBookList = new List<Book>();
+      _mockBookRepository.Setup(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Book, bool>>>()
+      )).ReturnsAsync(emptyBookList);
+
+      // Act
+      var result = await _bookController.GetBookByTitleOrAuthor(emptyAuthor);
+
+      // Assert
+      var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+      var errorResult = Assert.IsType<ApiError>(badRequestResult.Value);
+      Assert.Equal("Author cannot be empty", errorResult.Detail);
+      _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
+        It.IsAny<Expression<Func<Book, bool>>>()
+      ), Times.Never);
+    }
+
+    [Fact]
     public async Task Should_create_one_book_in_CreateBook()
     {
       // Arrange
