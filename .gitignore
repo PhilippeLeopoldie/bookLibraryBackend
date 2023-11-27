@@ -1,0 +1,6 @@
+LibraryBackend/.vercel
+LibraryBackend/bin
+LibraryBackend/obj
+LibraryBackend.Tests/bin
+LibraryBackend/LibraryBackend.sln
+/bookLibraryBackend.sln
