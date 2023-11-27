@@ -30,7 +30,7 @@ namespace LibraryBackend.Controllers
         return NotFound("No books found!");
       }
       var booksResponse = from book in books
-                          select new BookDtoResponse()
+                          select new BookDtoResponse
                           {
                             Book = book,
                             RequestedAt = DateTime.Now.ToString(dateTimeFormat)
