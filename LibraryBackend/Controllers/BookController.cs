@@ -134,6 +134,7 @@ namespace LibraryBackend.Controllers
         };
         return BadRequest(error);
       }
+      titleOrAuthor = titleOrAuthor.ToLower(); 
       Expression<Func<Book, bool>> condition = book => 
         book.Title!.ToLower().Contains(titleOrAuthor) 
         || 
