@@ -1,13 +1,30 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using LibraryBackend.Data;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add database context and connection string
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<MyLibraryContext>(options =>
-    options.UseNpgsql(connectionString));
+//var connectionString = builder.Environment.GetEnvironmentVariable("DefaultConnection");
+
+if(builder.Environment.IsProduction())
+{
+  var productionConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+  builder.Services.AddDbContext<MyLibraryContext>(options =>
+  options.UseNpgsql(productionConnectionString));
+
+}
+else
+{
+  builder.Configuration.AddUserSecrets<Program>();
+  var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+  builder.Services.AddDbContext<MyLibraryContext>(options =>
+  options.UseNpgsql(connectionString));
+   
+}
+
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
