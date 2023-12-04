@@ -351,7 +351,7 @@ namespace LibraryBackend.Tests
       var notFoundResult = Assert.IsType<NotFoundObjectResult>(emptyBookList.Result);
       _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
         It.IsAny<Expression<Func<Book, bool>>>()), Times.Once);
-      Assert.Equal($"Book with Title or Author '{nonExistingTitleOrAuthor}' not found", notFoundResult.Value);
+      Assert.Equal($"Book with Title or Author '{nonExistingTitleOrAuthor.ToLower()}' not found", notFoundResult.Value);
     }
 
     [Fact]
