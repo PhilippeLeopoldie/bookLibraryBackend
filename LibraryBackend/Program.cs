@@ -5,7 +5,8 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add database context and connection string
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = Environment.GetEnvironmentVariable("");
 builder.Services.AddDbContext<MyLibraryContext>(options =>
     options.UseNpgsql(connectionString));
 

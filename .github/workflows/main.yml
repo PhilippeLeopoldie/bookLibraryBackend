@@ -1,0 +1,34 @@
+name: Deploy to Heroku
+
+on:
+  push:
+    branches:
+      - 4-create-git-actions-2
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '7.0'  
+
+    - name: Restore Dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release
+
+    - name: Deploy to Heroku
+      run: |
+        heroku login -i
+        heroku container:login
+        heroku container:push web -a booklibrary-backend
+        heroku container:release web -a booklibrary-backend
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
