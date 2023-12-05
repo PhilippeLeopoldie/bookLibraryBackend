@@ -6,16 +6,12 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add database context and connection string
-//var productionConnectionString = builder.Environment.GetEnvironmentVariable("DefaultConnection");
 
 if(builder.Environment.IsProduction())
 {
-  //var productionConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
   var productionConnectionString = Environment.GetEnvironmentVariable("DefaultConnection");
   builder.Services.AddDbContext<MyLibraryContext>(options =>
   options.UseNpgsql(productionConnectionString));
-
 }
 else
 {
@@ -23,7 +19,6 @@ else
   var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
   builder.Services.AddDbContext<MyLibraryContext>(options =>
   options.UseNpgsql(connectionString));
-   
 }
 
 
@@ -47,6 +42,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddControllers().AddJsonOptions(x =>
 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
