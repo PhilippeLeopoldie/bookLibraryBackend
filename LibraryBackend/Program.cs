@@ -7,11 +7,12 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add database context and connection string
-//var connectionString = builder.Environment.GetEnvironmentVariable("DefaultConnection");
+//var productionConnectionString = builder.Environment.GetEnvironmentVariable("DefaultConnection");
 
 if(builder.Environment.IsProduction())
 {
-  var productionConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+  //var productionConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+  var productionConnectionString = Environment.GetEnvironmentVariable("DefaultConnection");
   builder.Services.AddDbContext<MyLibraryContext>(options =>
   options.UseNpgsql(productionConnectionString));
 
