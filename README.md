@@ -31,6 +31,6 @@ Test Driven Development: using Mock library and  xUnit framework for UniTesting:
 # deploying link:
 
   -example of end points:  
-    [getBooks](https://booklibrary-backend-20f7a19cecb2.herokuapp.com/api/book)  
-    [getOpinions](https://booklibrary-backend-20f7a19cecb2.herokuapp.com/api/Opinion)
+    [getBooks](https://booklibrary-backend-20f7a19cecb2.herokuapp.com/api/books)  
+    [getOpinions](https://booklibrary-backend-20f7a19cecb2.herokuapp.com/api/Opinions)
 
