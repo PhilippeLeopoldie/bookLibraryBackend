@@ -18,6 +18,8 @@ namespace LibraryBackend.Controllers
   public class OpinionController : ControllerBase
   {
     private readonly IRepository<Opinion> _OpinionRepository;
+
+    private const string notFoundErrorMessage = "No opinion found!";
     public OpinionController(IRepository<Opinion> opinionRepository)
     {
       _OpinionRepository = opinionRepository;
@@ -32,7 +34,7 @@ namespace LibraryBackend.Controllers
       var Opinions = await _OpinionRepository.GetAllAsync();
       if (Opinions == null || !Opinions.Any())
       {
-        return NotFound("No opinion found!");
+        return NotFound(notFoundErrorMessage);
       }
       return Ok(Opinions);
     }
@@ -47,7 +49,7 @@ namespace LibraryBackend.Controllers
       var opinions = await _OpinionRepository.FindByConditionAsync(condition);
       if (opinions == null || !opinions.Any())
       {
-        return NotFound("No opinion found!");
+        return NotFound(notFoundErrorMessage);
       }
       return Ok(opinions);
     }
@@ -55,7 +57,7 @@ namespace LibraryBackend.Controllers
     // GET: api/Opinion/highestRate
     [HttpGet("highestRate")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiError),StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public  async Task<ActionResult<Opinion>> GetOpinionWithHighestRate()
     {
       var opinions = await _OpinionRepository.FindByConditionAsync(opinions => true);
