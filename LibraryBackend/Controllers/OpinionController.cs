@@ -58,7 +58,11 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(typeof(ApiError),StatusCodes.Status400BadRequest)]
     public  async Task<ActionResult<Opinion>> GetOpinionWithHighestRate()
     {
-      throw new NotImplementedException();
+      var opinions = await _OpinionRepository.FindByConditionAsync(opinions => true);
+      var opinionHighestRate = opinions
+        .OrderByDescending(opinion => opinion?.Rate)
+        .FirstOrDefault();
+        return Ok(opinionHighestRate);
     }
     
 
