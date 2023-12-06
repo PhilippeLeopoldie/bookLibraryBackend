@@ -196,6 +196,24 @@ namespace LibraryBackend.Tests
         var opinionResponses = Assert.IsAssignableFrom<Opinion>(okResult.Value);
         Assert.Equal(expectedOpinionBestRate.First().Rate,opinionResponses.Rate);
     }
+
+    [Fact]
+    public async Task Should_return_NotFound_when_no_Opinion_in_GetOpinionWithHighestRate()
+    {
+      // Arrange
+      var emptyListOfOpinion = new List<Opinion>();
+      _mockOpinionRepository
+        .Setup(mockRepository => mockRepository.FindByConditionAsync(
+          It.IsAny<Expression<Func<Opinion, bool>>>()))
+        .ReturnsAsync(emptyListOfOpinion);
+
+        // Act
+        var resultOpinion = await _opinionController.GetOpinionWithHighestRate();
+        
+        // Assert
+        var NotFoundResult = Assert.IsType<NotFoundObjectResult>(resultOpinion.Result);
+        Assert.Equal(notFoundErrorMessage, NotFoundResult.Value);
+    }
     
     [Fact]
     public async Task Should_return_badRequest_for_empty_fields_in_UpdateOpinion()
