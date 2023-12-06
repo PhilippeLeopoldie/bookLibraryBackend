@@ -9,6 +9,7 @@ using LibraryBackend.Models;
 using LibraryBackend.Data;
 using System.Linq.Expressions;
 using LibraryBackend.Common;
+using Microsoft.IdentityModel.Tokens;
 
 
 namespace LibraryBackend.Controllers
@@ -61,6 +62,10 @@ namespace LibraryBackend.Controllers
     public  async Task<ActionResult<Opinion>> GetOpinionWithHighestRate()
     {
       var opinions = await _OpinionRepository.FindByConditionAsync(opinions => true);
+      if(opinions.IsNullOrEmpty()) 
+      {
+        return NotFound(notFoundErrorMessage);
+      } 
       var opinionHighestRate = opinions
         .OrderByDescending(opinion => opinion?.Rate)
         .FirstOrDefault();
