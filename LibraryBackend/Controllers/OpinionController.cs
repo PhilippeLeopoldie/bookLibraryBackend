@@ -52,6 +52,16 @@ namespace LibraryBackend.Controllers
       return Ok(opinions);
     }
 
+    // GET: api/Opinion/highestRate
+    [HttpGet("highestRate")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiError),StatusCodes.Status400BadRequest)]
+    public  async Task<ActionResult<Opinion>> GetOpinionWithHighestRate()
+    {
+      throw new NotImplementedException();
+    }
+    
+
     //PUT: api/Opinion/2
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
