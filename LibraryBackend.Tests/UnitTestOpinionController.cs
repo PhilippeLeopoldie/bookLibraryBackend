@@ -175,6 +175,28 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
+    public async Task Should_get_Opinion_with_the_highest_rate()
+    {
+      // Arrange
+      var expectedOpinionBestRate = mockOpinionData
+        .OrderByDescending(opinion => opinion.Rate)
+        .ToList();
+        
+      _mockOpinionRepository
+        .Setup(mockRepository => mockRepository.FindByConditionAsync(
+          It.IsAny<Expression<Func<Opinion, bool>>>()))
+        .ReturnsAsync(expectedOpinionBestRate);
+
+        // Act
+        var resultOpinion = await _opinionController.GetOpinionWithHighestRate();
+        
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(resultOpinion.Result);
+        var opinionResponses = Assert.IsAssignableFrom<Opinion>(okResult.Value);
+        Assert.Equal(expectedOpinionBestRate.First().Rate,opinionResponses.Rate);
+    }
+    
+    [Fact]
     public async Task Should_return_badRequest_for_empty_fields_in_UpdateOpinion()
     {
       // Arrange
