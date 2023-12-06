@@ -14,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LibraryBackend.Controllers
 {
-  [Route("api/[controller]")]
+  [Route("api/[controller]s")]
   [ApiController]
   public class OpinionController : ControllerBase
   {
