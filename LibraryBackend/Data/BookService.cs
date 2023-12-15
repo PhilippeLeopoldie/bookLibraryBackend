@@ -27,7 +27,7 @@ namespace LibraryBackend.Data
       {
         return null;
       }
-      book.AverageRate = Math.Round(average);
+      book.AverageRate = average;
       var updatedBook= await _bookRepository.Update(book);
       return updatedBook;
     }

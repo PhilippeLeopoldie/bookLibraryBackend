@@ -18,7 +18,7 @@ namespace LibraryBackend.Data
       var opinions = await _opinionRepository.FindByConditionAsync(opinion => opinion.BookId == bookId);
       var opinionAverageRate = opinions.Any() ? opinions.Average(opinion => opinion?.Rate ?? 0.0) : 0.0 ;
       var roundedAverage = Math.Round(opinionAverageRate,1);
-      await _bookService.EditAverageRate(bookId,roundedAverage);
+      await _bookService.EditAverageRate(bookId, roundedAverage);
       return roundedAverage;
     }
   }
