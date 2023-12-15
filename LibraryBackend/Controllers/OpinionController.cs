@@ -19,11 +19,13 @@ namespace LibraryBackend.Controllers
   public class OpinionController : ControllerBase
   {
     private readonly IRepository<Opinion> _OpinionRepository;
+    private readonly IOpinionService _opinionService;
 
     private const string notFoundErrorMessage = "No opinion found!";
-    public OpinionController(IRepository<Opinion> opinionRepository)
+    public OpinionController(IRepository<Opinion> opinionRepository, IOpinionService opinionService)
     {
       _OpinionRepository = opinionRepository;
+      _opinionService = opinionService;
     }
 
     // GET: api/Opinion
@@ -55,21 +57,19 @@ namespace LibraryBackend.Controllers
       return Ok(opinions);
     }
 
-    // GET: api/Opinion/highestRate
-    [HttpGet("highestRate")]
+    // GET: api/Opinion/averageRate
+    [HttpGet("averageRate")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public  async Task<ActionResult<Opinion>> GetOpinionWithHighestRate()
+    public  async Task<ActionResult<double>> GetAverageRateByBookId(int bookId)
     {
-      var opinions = await _OpinionRepository.FindByConditionAsync(opinions => true);
-      if(opinions.IsNullOrEmpty()) 
+      var opinionAverageRate = await _opinionService.AverageOpinionRate(bookId);
+      if(opinionAverageRate == 0.0) 
       {
         return NotFound(notFoundErrorMessage);
       } 
-      var opinionHighestRate = opinions
-        .OrderByDescending(opinion => opinion?.Rate)
-        .FirstOrDefault();
-        return Ok(opinionHighestRate);
+      
+        return Ok(opinionAverageRate);
     }
     
 
@@ -127,6 +127,7 @@ namespace LibraryBackend.Controllers
           UserName = newOpinion.UserName
         }
       );
+      await _opinionService.AverageOpinionRate(opinionCreated.Id);
       return CreatedAtAction(nameof(GetOpinions) , new {id = opinionCreated.Id }, opinionCreated );  
     }
   }
