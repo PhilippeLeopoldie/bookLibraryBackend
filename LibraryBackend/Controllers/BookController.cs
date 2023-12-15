@@ -60,67 +60,6 @@ namespace LibraryBackend.Controllers
       );
     }
 
-    [HttpGet("title/{title}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BookDtoResponse>> GetBookByTitle(string title)
-    {
-      if (string.IsNullOrWhiteSpace(title))
-      {
-        var error = new ApiError
-        {
-          Message = "Validation Error",
-          Detail = "Title cannot be empty"
-        };
-        return BadRequest(error);
-      }
-      Expression<Func<Book, bool>> condition = book => book.Title!.ToLower() == title.ToLower();
-      var books = await _bookRepository.FindByConditionAsync(condition);
-      if (books.IsNullOrEmpty())
-      {
-        return NotFound($"Book with Title '{title}' not found");
-      }
-      var booksResponse = from book in books
-                          select new BookDtoResponse()
-                          {
-                            Book = book,
-                            RequestedAt = DateTime.Now.ToString(dateTimeFormat)
-                          };
-      return Ok(booksResponse);
-
-    }
-
-    [HttpGet("author/{author}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BookDtoResponse>> GetBookByAuthor(string author)
-    {
-      if (string.IsNullOrWhiteSpace(author))
-      {
-        var error = new ApiError
-        {
-          Message = "Validation Error",
-          Detail = "Author cannot be empty"
-        };
-        return BadRequest(error);
-      }
-      Expression<Func<Book, bool>> condition = book => book.Author!.ToLower() == author.ToLower();
-      var books = await _bookRepository.FindByConditionAsync(condition);
-      if (books.IsNullOrEmpty())
-      {
-        return NotFound($"Book with Author '{author}' not found");
-      }
-      var booksResponse = from book in books
-                          select new BookDtoResponse()
-                          {
-                            Book = book,
-                            RequestedAt = DateTime.Now.ToString(dateTimeFormat)
-                          };
-      return Ok(booksResponse);
-    }
-
     [HttpGet("TitleOrAuthor/{titleOrAuthor}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
