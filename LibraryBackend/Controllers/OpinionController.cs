@@ -108,7 +108,7 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Opinion>> CreateOpinion (OpinionDtoRequest newOpinion)
     {
-      if(newOpinion == null || newOpinion.Rate?.Equals(0) == true || newOpinion.BookId == null ||
+      if(newOpinion == null || newOpinion.Rate?.Equals(0) == true || 
         string.IsNullOrWhiteSpace(newOpinion.View) || string.IsNullOrWhiteSpace(newOpinion.UserName))
       {
         var error = new ApiError
@@ -127,7 +127,10 @@ namespace LibraryBackend.Controllers
           UserName = newOpinion.UserName
         }
       );
-      await _opinionService.AverageOpinionRate(opinionCreated.Id);
+      
+      
+        await _opinionService.AverageOpinionRate(newOpinion.BookId);
+      
       return CreatedAtAction(nameof(GetOpinions) , new {id = opinionCreated.Id }, opinionCreated );  
     }
   }
