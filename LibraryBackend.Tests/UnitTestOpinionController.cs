@@ -46,7 +46,7 @@ namespace LibraryBackend.Tests
       // Assert
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
       var opinions = Assert.IsAssignableFrom<IEnumerable<Opinion>>(okResult.Value);
-      Assert.Equal(4, opinions.Count());
+      Assert.Equal(6, opinions.Count());
     }
 
     [Fact]
