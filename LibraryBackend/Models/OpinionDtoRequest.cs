@@ -11,6 +11,6 @@ namespace LibraryBackend.Models
     public string? UserName { get; set; }
 
     [Required]
-    public int? BookId { get; set; }
+    public int BookId { get; set; }
   }
 }
