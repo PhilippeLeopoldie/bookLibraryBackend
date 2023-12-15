@@ -14,20 +14,24 @@ namespace LibraryBackend.Tests
   {
     readonly OpinionController _opinionController;
     readonly Mock<IRepository<Opinion>> _mockOpinionRepository;
+    readonly Mock<IOpinionService> _mockOpinionService;
 
     private const string notFoundErrorMessage = "No opinion found!";
     public UnitTestOpinionController()
     {
       _mockOpinionRepository = new Mock<IRepository<Opinion>>();
-      _opinionController = new OpinionController(_mockOpinionRepository.Object);
+      _mockOpinionService = new Mock<IOpinionService>();
+      _opinionController = new OpinionController(_mockOpinionRepository.Object, _mockOpinionService.Object);
     }
 
     List<Opinion> mockOpinionData = new List<Opinion>
     {
-      new Opinion { Id = 1, View = "View1", BookId = 1, Rate = 2, UserName = "Lise"},
-      new Opinion { Id = 2, View = "View2", BookId = 2, Rate = 5, UserName = "Paul"},
-      new Opinion { Id = 3, View = "View3", BookId = 3, Rate = 4, UserName = "Frank"},
-      new Opinion { Id = 4, View = "View4", BookId = 1, Rate = 3, UserName = "Louis"},
+      new Opinion { Id = 1, View = "View1", BookId = 1, Rate = 2.0, UserName = "Lise"},
+      new Opinion { Id = 2, View = "View2", BookId = 2, Rate = 5.2, UserName = "Paul"},
+      new Opinion { Id = 5, View = "View2", BookId = 2, Rate = 3.3, UserName = "Lisa"},
+      new Opinion { Id = 6, View = "View2", BookId = 2, Rate = 4.4, UserName = "Paula"},
+      new Opinion { Id = 3, View = "View3", BookId = 3, Rate = 4.0, UserName = "Frank"},
+      new Opinion { Id = 4, View = "View4", BookId = 1, Rate = 3.0, UserName = "Louis"},
     };
 
     [Fact]
@@ -176,39 +180,36 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_get_Opinion_with_the_highest_rate()
+    public async Task Should_get_Opinion_with_the_average_rate_in_GetAverageRateByBookId()
     {
+      var bookId =2;
       // Arrange
-      var expectedOpinionBestRate = mockOpinionData
-        .OrderByDescending(opinion => opinion.Rate)
-        .ToList();
-        
-      _mockOpinionRepository
-        .Setup(mockRepository => mockRepository.FindByConditionAsync(
-          It.IsAny<Expression<Func<Opinion, bool>>>()))
-        .ReturnsAsync(expectedOpinionBestRate);
+      var expectedAverageRate =3.0;
+      _mockOpinionService
+        .Setup(mockService => mockService.AverageOpinionRate(bookId))
+        .ReturnsAsync(expectedAverageRate);
 
         // Act
-        var resultOpinion = await _opinionController.GetOpinionWithHighestRate();
+        var resultOpinion = await _opinionController.GetAverageRateByBookId(bookId);
         
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(resultOpinion.Result);
-        var opinionResponses = Assert.IsAssignableFrom<Opinion>(okResult.Value);
-        Assert.Equal(expectedOpinionBestRate.First().Rate,opinionResponses.Rate);
+        var opinionResponses = Assert.IsType<double>(okResult.Value);
+        Assert.Equal(expectedAverageRate,opinionResponses);
     }
 
     [Fact]
-    public async Task Should_return_NotFound_when_no_Opinion_in_GetOpinionWithHighestRate()
+    public async Task Should_return_NotFound_when_no_Opinion_in_GetAverageRateByBookId()
     {
+      var bookId =2;
       // Arrange
-      var emptyListOfOpinion = new List<Opinion>();
-      _mockOpinionRepository
-        .Setup(mockRepository => mockRepository.FindByConditionAsync(
-          It.IsAny<Expression<Func<Opinion, bool>>>()))
-        .ReturnsAsync(emptyListOfOpinion);
+      var expectedAverageRate =0.0;
+      _mockOpinionService
+        .Setup(mockService => mockService.AverageOpinionRate(bookId))
+        .ReturnsAsync(expectedAverageRate);
 
         // Act
-        var resultOpinion = await _opinionController.GetOpinionWithHighestRate();
+        var resultOpinion = await _opinionController.GetAverageRateByBookId(bookId);
         
         // Assert
         var NotFoundResult = Assert.IsType<NotFoundObjectResult>(resultOpinion.Result);
