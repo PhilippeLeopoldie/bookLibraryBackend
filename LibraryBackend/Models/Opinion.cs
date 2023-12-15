@@ -4,7 +4,7 @@ namespace LibraryBackend.Models
 {
   public class Opinion : BaseEntity
   {
-    public int? Rate { get; set; } 
+    public double? Rate { get; set; } 
 
     public string? View { get; set; }
 
