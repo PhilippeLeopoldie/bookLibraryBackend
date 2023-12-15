@@ -12,11 +12,13 @@ namespace LibraryBackend.Controllers
   public class BookController : ControllerBase
   {
     private readonly IRepository<Book> _bookRepository;
+    private readonly IBookService _bookService;
     private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
 
-    public BookController(IRepository<Book> bookRepository)
+    public BookController(IRepository<Book> bookRepository, IBookService bookService)
     {
       _bookRepository = bookRepository;
+      _bookService = bookService;
     }
 
     [HttpGet]

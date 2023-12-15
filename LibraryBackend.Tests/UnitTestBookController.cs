@@ -14,6 +14,7 @@ namespace LibraryBackend.Tests
   {
     readonly BookController _bookController;
     readonly Mock<IRepository<Book>> _mockBookRepository;
+    readonly Mock<BookService> _mockBookService;
     List<Book> mockBookData = new List<Book>
     {
       new Book
@@ -54,7 +55,8 @@ namespace LibraryBackend.Tests
     public UnitTestBookController()
     {
       _mockBookRepository = new Mock<IRepository<Book>>();
-      _bookController = new BookController(_mockBookRepository.Object);
+      _mockBookService = new Mock<BookService>(_mockBookRepository.Object);
+      _bookController = new BookController(_mockBookRepository.Object, _mockBookService.Object);
     }
 
     [Fact]
