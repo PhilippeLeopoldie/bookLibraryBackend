@@ -2,7 +2,7 @@ using LibraryBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace LibraryBackend.Data
+namespace LibraryBackend.Repositories
 {
   public class Repository<T> : IRepository<T> where T : BaseEntity
   {

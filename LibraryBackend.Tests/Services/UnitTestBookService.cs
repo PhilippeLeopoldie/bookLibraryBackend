@@ -1,6 +1,7 @@
 using Moq;
 using LibraryBackend.Models;
-using LibraryBackend.Data;
+using LibraryBackend.Services;
+using LibraryBackend.Repositories;
 
 namespace LibraryBackend.Tests
 {

@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using LibraryBackend.Models;
 
-namespace LibraryBackend.Data
+namespace LibraryBackend.Repositories
 {
   public interface IRepository<T> where T : BaseEntity
   {

@@ -1,6 +1,7 @@
 using LibraryBackend.Models;
+using LibraryBackend.Repositories;
 
-namespace LibraryBackend.Data 
+namespace LibraryBackend.Services 
 {
   public class BookService : IBookService
   {

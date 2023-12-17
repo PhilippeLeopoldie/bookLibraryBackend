@@ -1,6 +1,6 @@
 using LibraryBackend.Models;
 
-namespace LibraryBackend.Data 
+namespace LibraryBackend.Services 
 {
   public interface IBookService
   {
