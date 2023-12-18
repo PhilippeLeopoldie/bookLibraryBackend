@@ -3,17 +3,20 @@ using LibraryBackend.Services;
 using LibraryBackend.Repositories;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-if(builder.Environment.IsProduction())
+// in production environment variable set on heruko
+if (builder.Environment.IsProduction())
 {
   var productionConnectionString = Environment.GetEnvironmentVariable("DefaultConnection");
   builder.Services.AddDbContext<MyLibraryContext>(options =>
   options.UseNpgsql(productionConnectionString));
 }
-else
+else // in development environment variable set using user secrets
 {
   builder.Configuration.AddUserSecrets<Program>();
   var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -49,6 +52,53 @@ x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Authentication
+builder.Services
+  .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+  .AddJwtBearer(options =>
+  {
+    var validIssuer = "";
+    var validAudience = "";
+    var issuerSigningKey = "";
+
+    // in production environment variable set on heruko
+    if (builder.Environment.IsProduction())
+    {
+      validIssuer = Environment.GetEnvironmentVariable("validIssuer");
+      validAudience = Environment.GetEnvironmentVariable("validAudience");
+      issuerSigningKey = Environment.GetEnvironmentVariable("issuerSigningkey");
+
+    }
+    else // in development
+    {
+      // Read configurtion values from appsettings.Development.json
+      var userConfig = builder.Configuration.GetSection("JwtConfiguration");
+      validIssuer = userConfig["validIssuer"];
+      validAudience = userConfig["validAudience"];
+
+      // Use user secrets
+      builder.Configuration.AddUserSecrets<Program>();
+      issuerSigningKey = builder.Configuration["JwtConfiguration:issuerSigningKey"];
+      
+    }
+
+    // Check issuerSigningKey nullability before using it
+    byte[] issuerSigningKeyBytes = issuerSigningKey is not null 
+    ? Encoding.UTF8.GetBytes(issuerSigningKey)
+    : Array.Empty<byte>();
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+      ClockSkew = TimeSpan.Zero,
+      ValidateIssuer = true,
+      ValidateAudience = true,
+      ValidateLifetime = true,
+      ValidateIssuerSigningKey = true,
+      ValidIssuer = validIssuer,
+      ValidAudience = validAudience,
+      IssuerSigningKey = new SymmetricSecurityKey(issuerSigningKeyBytes),
+    };
+  });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -59,6 +109,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
