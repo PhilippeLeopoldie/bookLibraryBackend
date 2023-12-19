@@ -42,11 +42,17 @@ namespace LibraryBackend.Controllers
     }
 
     [HttpGet("TopBook/")]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<BookDtoResponse>> GetHighestAverageRate()
     {
       var topBook = await _bookService.HighestAverageRate();
+
+      if(topBook == null)
+      {
+        return NotFound("No Top Book found!");
+      }
+
       var bookResponse =  new BookDtoResponse
                           {
                             Book = topBook,
