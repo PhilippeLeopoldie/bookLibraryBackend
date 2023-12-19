@@ -1,23 +1,22 @@
 using LibraryBackend.Models;
 using LibraryBackend.Repositories;
+using Microsoft.EntityFrameworkCore;
 
-namespace LibraryBackend.Services 
+namespace LibraryBackend.Services
 {
   public class BookService : IBookService
   {
     private readonly IRepository<Book> _bookRepository;
-    
-    
-    public BookService (IRepository<Book> bookRepository )
+    private readonly MyLibraryContext _dbContext;
+    public BookService(IRepository<Book> bookRepository, MyLibraryContext dbContext)
     {
       _bookRepository = bookRepository;
+      _dbContext = dbContext;
     }
 
-    public async Task<Book> HighestRate()
+    public async Task<Book?> HighestAverageRate()
     {
-      var books = await _bookRepository.GetAllAsync();
-      var bookWithHighestRate = books.OrderByDescending(book => book.AverageRate).First();
-      return bookWithHighestRate;
+      throw new NotImplementedException();
     }
 
     public async Task<Book?> EditAverageRate(int bookId, double average)
@@ -29,7 +28,7 @@ namespace LibraryBackend.Services
         return null;
       }
       book.AverageRate = average;
-      var updatedBook= await _bookRepository.Update(book);
+      var updatedBook = await _bookRepository.Update(book);
       return updatedBook;
     }
   }
