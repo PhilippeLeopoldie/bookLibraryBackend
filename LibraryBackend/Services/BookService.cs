@@ -16,7 +16,21 @@ namespace LibraryBackend.Services
 
     public async Task<Book?> HighestAverageRate()
     {
-      throw new NotImplementedException();
+      var books = await _dbContext.Book
+          .Include(book => book.Opinions)
+          .ToListAsync();
+
+      var topBook = books
+          .Where(book => book.Opinions != null && book.Opinions.Any(opinion => opinion.Rate >= 3))
+          .OrderByDescending(book => book.Opinions != null ?
+          book.Opinions.Count(opinion => opinion.Rate >= 3)
+          :0)
+          .ThenByDescending(book => book.Opinions != null ?
+           book.Opinions.Where(opinion => opinion.Rate >= 3).Average(opinion => opinion.Rate)
+           :null)
+          .FirstOrDefault();
+
+      return topBook;
     }
 
     public async Task<Book?> EditAverageRate(int bookId, double average)
