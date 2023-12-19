@@ -66,5 +66,21 @@ namespace LibraryBackend.Tests
       _mockBookRepository.Verify(repo => repo.GetByIdAsync(It.IsAny<int>()), Times.Once);
       _mockBookRepository.Verify(repo => repo.Update(It.IsAny<Book>()), Times.Once);
     }
+
+    [Fact]
+    public async Task Should_Get_Highest_Rate_in_HighestAverageRate()
+    {
+        // Arrange
+        var books = TestData.GetTestBooks();
+        await _myLibraryContext.AddRangeAsync(books);
+        await _myLibraryContext.SaveChangesAsync();
+
+        // Act
+        var highestRateBook = await _bookService.HighestAverageRate();
+
+        // Assert
+        Assert.NotNull(highestRateBook);
+        Assert.Equal("Book 5", highestRateBook?.Title);
+    }
   }
 }
