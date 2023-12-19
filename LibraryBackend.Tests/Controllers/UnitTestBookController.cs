@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using LibraryBackend.Tests.Data;
 using Moq;
 
 namespace LibraryBackend.Tests
@@ -64,7 +65,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_get_all_Books_in_GetBook()
+    public async Task Should_get_all_Books_in_GetBooks()
     {
       // arrange
       _mockBookRepository
@@ -121,6 +122,24 @@ namespace LibraryBackend.Tests
       var notfoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
       Assert.Equal("No books found!", notfoundResult.Value);
       _mockBookRepository.Verify(mockRepository => mockRepository.GetAllAsync(), Times.Once);
+    }
+    
+    [Fact]
+    public async Task Should_get_HighestAverageRate_in_GetHighestAverageBook()
+    {
+      // Arrange
+      var book = TestData.GetTestBooks().FirstOrDefault();
+      _mockBookService
+      .Setup(mockService => mockService.HighestAverageRate())
+      .ReturnsAsync(book);
+
+      // Act
+      var bookResult = await _bookController.GetHighestAverageRate();
+
+      // Assert 
+      var okResult = Assert.IsType<OkObjectResult>(bookResult.Result);
+      var bookResponse = Assert.IsType<BookDtoResponse>(okResult.Value);
+      Assert.Equal("Book 1", bookResponse?.Book?.Title);
     }
 
     [Fact]

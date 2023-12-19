@@ -14,7 +14,7 @@ namespace LibraryBackend.Services
       _dbContext = dbContext;
     }
 
-    public async Task<Book?> HighestAverageRate()
+    public virtual async Task<Book?> HighestAverageRate()
     {
       var books = await _dbContext.Book
           .Include(book => book.Opinions)
