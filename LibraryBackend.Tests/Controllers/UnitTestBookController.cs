@@ -143,6 +143,24 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
+    public async Task Should_return_not_found_when_null_in_GetHighestAverageBook()
+    {
+      // Arrange
+      
+      _mockBookService
+      .Setup(mockService => mockService.HighestAverageRate())
+      .ReturnsAsync(null as Book);
+
+      // Act
+      var bookResult = await _bookController.GetHighestAverageRate();
+
+      // Assert 
+      var notFoundResult = Assert.IsType<NotFoundObjectResult>(bookResult.Result);
+      Assert.Equal("No Top Book found!", notFoundResult.Value);
+      
+    }
+
+    [Fact]
     public async Task Should_get_book_by_Id()
     {
       // Arrange
