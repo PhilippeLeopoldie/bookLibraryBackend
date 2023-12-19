@@ -46,8 +46,13 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<BookDtoResponse>> GetHighestAverageRate()
     {
-      throw new NotImplementedException();
-      
+      var topBook = await _bookService.HighestAverageRate();
+      var bookResponse =  new BookDtoResponse
+                          {
+                            Book = topBook,
+                            RequestedAt = DateTime.Now.ToString(dateTimeFormat)
+                          };
+      return Ok(bookResponse);
     }
 
     [HttpGet("{id}")]
