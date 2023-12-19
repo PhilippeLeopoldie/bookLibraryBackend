@@ -16,4 +16,12 @@ using LibraryBackend.Models;
         public DbSet<Opinion> Opinion { get; set; }=default!;
 
         public DbSet<Book> Book { get; set; }=default!;
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseInMemoryDatabase("TestDatabase");
+        }
     }
+}

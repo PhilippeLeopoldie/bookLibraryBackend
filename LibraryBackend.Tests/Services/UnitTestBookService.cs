@@ -2,6 +2,8 @@ using Moq;
 using LibraryBackend.Models;
 using LibraryBackend.Services;
 using LibraryBackend.Repositories;
+using LibraryBackend.Tests.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryBackend.Tests
 {
@@ -9,12 +11,20 @@ namespace LibraryBackend.Tests
   {
     readonly IBookService _bookService;
     readonly Mock<IRepository<Book>> _mockBookRepository;
+    readonly MyLibraryContext _myLibraryContext;
 
 
     public UnitTestBookService()
     {
       _mockBookRepository = new Mock<IRepository<Book>>();
-      _bookService = new BookService(_mockBookRepository.Object);
+
+      //in-memory DbContext
+      var options = new DbContextOptionsBuilder<MyLibraryContext>()
+        .UseInMemoryDatabase("TestDatabase")
+        .Options;
+
+      _myLibraryContext = new MyLibraryContext(options);
+      _bookService = new BookService(_mockBookRepository.Object, _myLibraryContext);
     }
 
 

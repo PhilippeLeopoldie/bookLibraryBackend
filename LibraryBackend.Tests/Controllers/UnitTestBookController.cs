@@ -6,6 +6,7 @@ using LibraryBackend.Models;
 using LibraryBackend.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 
@@ -16,6 +17,7 @@ namespace LibraryBackend.Tests
     readonly BookController _bookController;
     readonly Mock<IRepository<Book>> _mockBookRepository;
     readonly Mock<BookService> _mockBookService;
+    readonly MyLibraryContext _mylibraryContext;
     List<Book> mockBookData = new List<Book>
     {
       new Book
@@ -56,7 +58,8 @@ namespace LibraryBackend.Tests
     public UnitTestBookController()
     {
       _mockBookRepository = new Mock<IRepository<Book>>();
-      _mockBookService = new Mock<BookService>(_mockBookRepository.Object);
+      _mylibraryContext = new MyLibraryContext(new DbContextOptions<MyLibraryContext>());
+      _mockBookService = new Mock<BookService>(_mockBookRepository.Object, _mylibraryContext);
       _bookController = new BookController(_mockBookRepository.Object, _mockBookService.Object);
     }
 
