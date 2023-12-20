@@ -128,18 +128,18 @@ namespace LibraryBackend.Tests
     public async Task Should_get_HighestAverageRate_in_GetHighestAverageBook()
     {
       // Arrange
-      var book = TestData.GetTestBooks().FirstOrDefault();
+      var book = TestData.GetTestBooks();
       _mockBookService
-      .Setup(mockService => mockService.HighestAverageRate())
-      .ReturnsAsync(book);
+      .Setup(mockService => mockService.HighestAverageRate(1))
+      .ReturnsAsync(book.Take(1).ToList());
 
       // Act
-      var bookResult = await _bookController.GetHighestAverageRate();
+      var bookResult = await _bookController.GetHighestAverageRate(1);
 
       // Assert 
       var okResult = Assert.IsType<OkObjectResult>(bookResult.Result);
-      var bookResponse = Assert.IsType<BookDtoResponse>(okResult.Value);
-      Assert.Equal("Book 1", bookResponse?.Book?.Title);
+      var bookResponse = Assert.IsAssignableFrom<IEnumerable<TopBooksDtoResponse>>(okResult.Value);
+      Assert.Equal("Book 1", bookResponse?.First()?.Title);
     }
 
     [Fact]
@@ -148,11 +148,11 @@ namespace LibraryBackend.Tests
       // Arrange
       
       _mockBookService
-      .Setup(mockService => mockService.HighestAverageRate())
-      .ReturnsAsync(null as Book);
+      .Setup(mockService => mockService.HighestAverageRate(1))
+      .ReturnsAsync(null as List<Book>);
 
       // Act
-      var bookResult = await _bookController.GetHighestAverageRate();
+      var bookResult = await _bookController.GetHighestAverageRate(1);
 
       // Assert 
       var notFoundResult = Assert.IsType<NotFoundObjectResult>(bookResult.Result);

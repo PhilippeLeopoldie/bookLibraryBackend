@@ -41,22 +41,27 @@ namespace LibraryBackend.Controllers
       return Ok(booksResponse);
     }
 
-    [HttpGet("TopBook/")]
+    [HttpGet("TopBooks")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<BookDtoResponse>> GetHighestAverageRate()
+    public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetHighestAverageRate([FromQuery]int numberOfBooks)
     {
-      var topBook = await _bookService.HighestAverageRate();
+      var topBooks = await _bookService.HighestAverageRate(numberOfBooks);
 
-      if(topBook == null)
+      if(topBooks == null || !topBooks.Any())
       {
         return NotFound("No Top Book found!");
       }
 
-      var bookResponse =  new BookDtoResponse
+      var bookResponse =  from book in topBooks
+                          select new TopBooksDtoResponse
                           {
-                            Book = topBook,
-                            RequestedAt = DateTime.Now.ToString(dateTimeFormat)
+                            Id = book.Id,
+                            Title = book.Title,
+                            Author = book.Author,
+                            ImageUrl = book.ImageUrl,
+                            AverageRate = book.AverageRate,
+                            Opinions = book.Opinions,
                           };
       return Ok(bookResponse);
     }
