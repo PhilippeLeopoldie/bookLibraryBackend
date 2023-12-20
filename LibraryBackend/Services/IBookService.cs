@@ -4,7 +4,7 @@ namespace LibraryBackend.Services
 {
   public interface IBookService
   {
-    Task <Book?> HighestAverageRate();
+    Task <IEnumerable<Book>?> HighestAverageRate(int numberOfBooks);
     Task <Book?> EditAverageRate (int bookId, double average);
   }
 }

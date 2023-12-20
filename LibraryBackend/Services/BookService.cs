@@ -14,7 +14,8 @@ namespace LibraryBackend.Services
       _dbContext = dbContext;
     }
 
-    public virtual async Task<Book?> HighestAverageRate()
+    // Top  books with the biggest number of review that has a rate >=3
+    public virtual async Task<IEnumerable<Book>?> HighestAverageRate(int numberOfBooks)
     {
       var books = await _dbContext.Book
           .Include(book => book.Opinions)
@@ -28,7 +29,7 @@ namespace LibraryBackend.Services
           .ThenByDescending(book => book.Opinions != null ?
            book.Opinions.Where(opinion => opinion.Rate >= 3).Average(opinion => opinion.Rate)
            :null)
-          .FirstOrDefault();
+          .Take(numberOfBooks).ToList();
 
       return topBook;
     }

@@ -76,11 +76,12 @@ namespace LibraryBackend.Tests
         await _myLibraryContext.SaveChangesAsync();
 
         // Act
-        var highestRateBook = await _bookService.HighestAverageRate();
+        var highestRateBook = await _bookService.HighestAverageRate(1);
 
         // Assert
         Assert.NotNull(highestRateBook);
-        Assert.Equal("Book 5", highestRateBook?.Title);
+        Assert.IsAssignableFrom<IEnumerable<Book>>(highestRateBook);
+        Assert.Equal("Book 5", highestRateBook.First().Title);
     }
   }
 }
