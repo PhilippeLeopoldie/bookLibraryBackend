@@ -6,5 +6,6 @@ namespace LibraryBackend.Services
   {
     Task <IEnumerable<Book>?> HighestAverageRate(int numberOfBooks);
     Task <Book?> EditAverageRate (int bookId, double average);
+    Task <IEnumerable<Book?>> ListOfBooksAsync();
   }
 }
