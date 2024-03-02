@@ -27,7 +27,7 @@ namespace LibraryBackend.Controllers
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetBooks()
     {
-      var books = await _bookRepository.GetAllAsync();
+      var books = await _bookService.ListOfBooksAsync();
       if (books == null || !books.Any())
       {
         return NotFound("No books found!");
