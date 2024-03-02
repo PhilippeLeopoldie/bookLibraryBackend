@@ -68,8 +68,8 @@ namespace LibraryBackend.Tests
     public async Task Should_get_all_Books_in_GetBooks()
     {
       // arrange
-      _mockBookRepository
-        .Setup(repositoryMock => repositoryMock.GetAllAsync())
+      _mockBookService
+        .Setup(mockBookService => mockBookService.ListOfBooksAsync())
         .ReturnsAsync(mockBookData);
 
       // Act
@@ -83,7 +83,7 @@ namespace LibraryBackend.Tests
       Assert.Equal(1, books?.ElementAt(0).Book?.Id);
       Assert.Equal("author2", books?.ElementAt(1).Book?.Author);
       Assert.Equal(2, books?.ElementAt(1).Book?.Id);
-      _mockBookRepository.Verify(mockRepository => mockRepository.GetAllAsync(), Times.Once);
+      _mockBookService.Verify(mockBookService => mockBookService.ListOfBooksAsync(), Times.Once);
     }
 
     [Fact]
@@ -92,8 +92,8 @@ namespace LibraryBackend.Tests
       // arrange
       List<Book>? mockNullBookData = null;
 #pragma warning disable CS8604
-      _mockBookRepository
-      .Setup(repositoryMock => repositoryMock.GetAllAsync())
+      _mockBookService
+      .Setup(mockBookService => mockBookService.ListOfBooksAsync())
       .ReturnsAsync(mockNullBookData);
 #pragma warning restore CD8604
 
@@ -103,7 +103,7 @@ namespace LibraryBackend.Tests
       // Assert
       var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
       Assert.Equal("No books found!", notFoundResult.Value);
-      _mockBookRepository.Verify(mockRepository => mockRepository.GetAllAsync(), Times.Once);
+      _mockBookService.Verify(mockBookService => mockBookService.ListOfBooksAsync(), Times.Once);
     }
 
     [Fact]
@@ -111,8 +111,8 @@ namespace LibraryBackend.Tests
     {
       // arrange
       List<Book>? mockEmptyBookData = new();
-      _mockBookRepository
-      .Setup(repositoryMock => repositoryMock.GetAllAsync())
+      _mockBookService
+      .Setup(mockBookService => mockBookService.ListOfBooksAsync())
       .ReturnsAsync(mockEmptyBookData!);
 
       // Act
@@ -121,7 +121,7 @@ namespace LibraryBackend.Tests
       // Assert
       var notfoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
       Assert.Equal("No books found!", notfoundResult.Value);
-      _mockBookRepository.Verify(mockRepository => mockRepository.GetAllAsync(), Times.Once);
+      _mockBookService.Verify(mockBookService => mockBookService.ListOfBooksAsync(), Times.Once);
     }
     
     [Fact]
