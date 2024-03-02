@@ -29,7 +29,25 @@ namespace LibraryBackend.Tests
 
 
     [Fact]
+    public async Task Should_Get_All_books_async()
+    {
+      // Arrange
+      var testBookData = TestData.GetTestBooks();
+      _mockBookRepository
+        .Setup(mockBookRepository => mockBookRepository.GetAllAsync())
+        .ReturnsAsync(testBookData);
+      
+      // Act
+      var listOfBooks = await _bookService.ListOfBooksAsync();
 
+      // Assert
+      Assert.NotNull(listOfBooks);
+      Assert.IsAssignableFrom<IEnumerable<Book>>(listOfBooks);
+      _mockBookRepository.Verify(repo => repo.GetAllAsync(), Times.Once);
+      Assert.Equal(5, listOfBooks.Count());
+    }
+
+    [Fact]
     public async Task Should_Edit_Average_Rate_in_EditAverageRate()
     {
       // arrange
@@ -71,8 +89,8 @@ namespace LibraryBackend.Tests
     public async Task Should_Get_Highest_Rate_in_HighestAverageRate()
     {
         // Arrange
-        var books = TestData.GetTestBooks();
-        await _myLibraryContext.AddRangeAsync(books);
+        var testBookData = TestData.GetTestBooks();
+        await _myLibraryContext.AddRangeAsync(testBookData);
         await _myLibraryContext.SaveChangesAsync();
 
         // Act
