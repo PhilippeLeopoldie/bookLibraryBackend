@@ -5,6 +5,7 @@ using LibraryBackend.Repositories;
 using LibraryBackend.Common;
 using System.Linq.Expressions;
 using Microsoft.IdentityModel.Tokens;
+using PagedList;
 
 namespace LibraryBackend.Controllers
 {
@@ -25,14 +26,16 @@ namespace LibraryBackend.Controllers
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetBooks()
+    public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetBooks(int page = 1, int pageSize = 3)
     {
       var books = await _bookService.ListOfBooksAsync();
       if (books == null || !books.Any())
       {
         return NotFound("No books found!");
       }
-      var booksResponse = from book in books
+      var pagedBooks = books.ToPagedList(page, pageSize);
+      
+      var booksResponse = from book in pagedBooks
                           select new BookDtoResponse
                           {
                             Book = book,

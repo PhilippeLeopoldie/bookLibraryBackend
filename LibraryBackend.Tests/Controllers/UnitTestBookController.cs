@@ -53,6 +53,18 @@ namespace LibraryBackend.Tests
         Id = 2,
         Title ="title2",
         Author ="author2"
+      },
+      new Book
+      {
+        Id = 3,
+        Title ="title3",
+        Author ="author3"
+      },
+      new Book
+      {
+        Id = 4,
+        Title ="title4",
+        Author ="author4"
       }
     };
 
@@ -65,7 +77,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_get_all_Books_in_GetBooks()
+    public async Task Should_get_3_Books_in_GetBooks()
     {
       // arrange
       _mockBookService
@@ -78,7 +90,7 @@ namespace LibraryBackend.Tests
       // Assert
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
       var books = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
-      Assert.Equal(2, books?.Count());
+      Assert.Equal(3, books?.Count());
       Assert.Equal("title1", books?.ElementAt(0).Book?.Title);
       Assert.Equal(1, books?.ElementAt(0).Book?.Id);
       Assert.Equal("author2", books?.ElementAt(1).Book?.Author);
