@@ -17,7 +17,7 @@ namespace LibraryBackend.Repositories
 
     public virtual async Task<IEnumerable<T>> GetAllAsync()
     {
-      return await _entities.ToListAsync();
+      return await _entities.OrderByDescending(entity => entity.Id).ToListAsync();
     }
 
     public virtual async Task<T> Create(T entity)
