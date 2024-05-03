@@ -26,7 +26,7 @@ namespace LibraryBackend.Controllers
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetBooks(int page = 1, int pageSize = 3)
+    public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetBooks([FromQuery]int page = 1, int pageSize = 3)
     {
       var books = await _bookService.ListOfBooksAsync();
       if (books == null || !books.Any())
