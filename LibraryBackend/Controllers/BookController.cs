@@ -16,6 +16,7 @@ namespace LibraryBackend.Controllers
     private readonly IRepository<Book> _bookRepository;
     private readonly IBookService _bookService;
     private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
+    private readonly int pageSizeLimit = 6;
 
     public BookController(IRepository<Book> bookRepository, IBookService bookService)
     {
@@ -26,22 +27,35 @@ namespace LibraryBackend.Controllers
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetBooks([FromQuery]int page = 1, int pageSize = 3)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetBooks([FromQuery]int page , int pageSize)
     {
       var books = await _bookService.ListOfBooksAsync();
       if (books == null || !books.Any())
       {
         return NotFound("No books found!");
       }
-      var pagedBooks = books.ToPagedList(page, pageSize);
       
-      var booksResponse = from book in pagedBooks
+       if (page <= 0 || pageSize <= 0 || pageSize > pageSizeLimit)
+      {
+        return BadRequest($"Invalid page (0 < page) or pageSize parameters (0 < pageSize < {pageSizeLimit+1})");
+      }
+      var totalBooksCount = books.Count();
+      var totalPagesCount = (int)Math.Ceiling((double) totalBooksCount / pageSize);
+      if (page > totalPagesCount )
+      {
+        return BadRequest ($"Page {page} does not exist, the last page is {totalPagesCount}");
+      }  
+      var pagedBooks = books.ToPagedList(page, pageSize);
+      var pagedBooksResponse = from book in pagedBooks
                           select new BookDtoResponse
                           {
                             Book = book,
+                            TotalBooksCount = totalBooksCount,
+                            TotalPagesCount = totalPagesCount,
                             RequestedAt = DateTime.Now.ToString(dateTimeFormat)
                           };
-      return Ok(booksResponse);
+      return Ok(pagedBooksResponse);
     }
 
     [HttpGet("TopBooks")]
