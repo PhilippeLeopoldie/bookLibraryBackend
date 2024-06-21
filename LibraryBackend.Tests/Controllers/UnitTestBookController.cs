@@ -19,65 +19,20 @@ namespace LibraryBackend.Tests
     readonly Mock<IRepository<Book>> _mockBookRepository;
     readonly Mock<BookService> _mockBookService;
     readonly MyLibraryContext _mylibraryContext;
-    List<Book> mockBookData = new List<Book>
-    {
-      new Book
-      {
-        Id = 1,
-        Title = "title1",
-        Author = "author1",
-        Opinions = new List<Opinion>
-          {
-            new Opinion
-           {
-            View="View1",
-            BookId = 1,
-            Rate = 5
-           },
-           new Opinion
-           {
-            View="View2",
-            BookId = 1,
-            Rate = 3
-           },
-           new Opinion
-           {
-            View="View3",
-            BookId = 1,
-            Rate = 4
-           }
-          }
-      },
-      new Book
-      {
-        Id = 2,
-        Title ="title2",
-        Author ="author2"
-      },
-      new Book
-      {
-        Id = 3,
-        Title ="title3",
-        Author ="author3"
-      },
-      new Book
-      {
-        Id = 4,
-        Title ="title4",
-        Author ="author4"
-      }
-    };
-
+    readonly List<Book> mockBookData;
     public UnitTestBookController()
     {
       _mockBookRepository = new Mock<IRepository<Book>>();
       _mylibraryContext = new MyLibraryContext(new DbContextOptions<MyLibraryContext>());
       _mockBookService = new Mock<BookService>(_mockBookRepository.Object, _mylibraryContext);
       _bookController = new BookController(_mockBookRepository.Object, _mockBookService.Object);
+      mockBookData = MockData.GetMockData();
     }
 
-    [Fact]
-    public async Task Should_get_3_Books_in_GetBooks()
+    [Theory]
+    [InlineData(5,2)]
+    [InlineData(3,4)]
+    public async Task Should_get_1_Book_in_GetBooks(int page, int pageSize)
     {
       // arrange
       _mockBookService
@@ -85,21 +40,44 @@ namespace LibraryBackend.Tests
         .ReturnsAsync(mockBookData);
 
       // Act
-      var result = await _bookController.GetBooks();
+      var result = await _bookController.GetBooks(page, pageSize);
+
+      // Assert
+      var okResult = Assert.IsType<OkObjectResult>(result.Result);
+      var books = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
+      Assert.Equal(1, books?.Count());
+      Assert.Equal("title9", books?.ElementAt(0).Book?.Title);
+      Assert.Equal(9, books?.ElementAt(0).Book?.Id);
+      Assert.Equal("author9", books?.ElementAt(0).Book?.Author);
+      //Assert.Equal(2, books?.ElementAt(1).Book?.Id);
+      _mockBookService.Verify(mockBookService => mockBookService.ListOfBooksAsync(), Times.Once);
+    }
+
+     [Theory]
+    [InlineData(3,3)]
+    public async Task Should_get_3_Books_in_GetBooks(int page, int pageSize)
+    {
+      // arrange
+      _mockBookService
+        .Setup(mockBookService => mockBookService.ListOfBooksAsync())
+        .ReturnsAsync(mockBookData);
+
+      // Act
+      var result = await _bookController.GetBooks(page, pageSize);
 
       // Assert
       var okResult = Assert.IsType<OkObjectResult>(result.Result);
       var books = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
       Assert.Equal(3, books?.Count());
-      Assert.Equal("title1", books?.ElementAt(0).Book?.Title);
-      Assert.Equal(1, books?.ElementAt(0).Book?.Id);
-      Assert.Equal("author2", books?.ElementAt(1).Book?.Author);
-      Assert.Equal(2, books?.ElementAt(1).Book?.Id);
+      Assert.Equal("title7", books?.ElementAt(0).Book?.Title);
+      Assert.Equal(7, books?.ElementAt(0).Book?.Id);
+      Assert.Equal("author7", books?.ElementAt(0).Book?.Author);
+      //Assert.Equal(2, books?.ElementAt(1).Book?.Id);
       _mockBookService.Verify(mockBookService => mockBookService.ListOfBooksAsync(), Times.Once);
     }
 
-    [Fact]
-    public async Task Should_return_not_found_for_null_data_in_GetBooks()
+    [Theory] [InlineData(1,3)]
+    public async Task Should_return_not_found_for_null_data_in_GetBooks(int page = 1, int pageSize =3)
     {
       // arrange
       List<Book>? mockNullBookData = null;
@@ -110,7 +88,7 @@ namespace LibraryBackend.Tests
 #pragma warning restore CD8604
 
       // Act
-      var result = await _bookController.GetBooks();
+      var result = await _bookController.GetBooks(page, pageSize);
 
       // Assert
       var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
@@ -118,8 +96,8 @@ namespace LibraryBackend.Tests
       _mockBookService.Verify(mockBookService => mockBookService.ListOfBooksAsync(), Times.Once);
     }
 
-    [Fact]
-    public async Task Should_return_not_found_for_empty_data_in_GetBooks()
+    [Theory] [InlineData(1,3)]
+    public async Task Should_return_not_found_for_empty_data_in_GetBooks(int page, int pageSize)
     {
       // arrange
       List<Book>? mockEmptyBookData = new();
@@ -128,22 +106,60 @@ namespace LibraryBackend.Tests
       .ReturnsAsync(mockEmptyBookData!);
 
       // Act
-      var result = await _bookController.GetBooks();
+      var result = await _bookController.GetBooks(page, pageSize);
 
       // Assert
       var notfoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
       Assert.Equal("No books found!", notfoundResult.Value);
       _mockBookService.Verify(mockBookService => mockBookService.ListOfBooksAsync(), Times.Once);
     }
-    
+
+    [Fact]
+    public async Task Should_return_bad_request_when_page_is_negative_in_GetBooks()
+    {
+      // arrange
+      var page = -1;
+      var pageSize = 3;
+      _mockBookService
+        .Setup(mockBookService => mockBookService.ListOfBooksAsync())
+        .ReturnsAsync(mockBookData);
+
+      // act
+      var result = await _bookController.GetBooks(page, pageSize);
+
+      // Assert
+      var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+      Assert.Equal("Invalid page (0 < page) or pageSize parameters (0 < pageSize < 7)",badRequestObjectResult.Value);
+    }
+
+    [Theory]
+    [InlineData(5,3)]
+    [InlineData(5,5)]
+    public async Task Should_return_bad_request_when_page_overflow_in_GetBooks(int page, int pageSize)
+    {
+      // Arrange
+
+      //var page = 6;
+      //var pageSize = 3;
+      _mockBookService
+        .Setup(mockBookService => mockBookService.ListOfBooksAsync())
+        .ReturnsAsync(mockBookData);
+      // Act
+      var result = await _bookController.GetBooks(page, pageSize);
+
+      // Assert
+      var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+      //Assert.Equal($"Page {page} do not exist, the last page is 3", badRequestObjectResult.Value);
+
+    }
+
     [Fact]
     public async Task Should_get_HighestAverageRate_in_GetHighestAverageBook()
     {
-      // Arrange
-      var book = TestData.GetTestBooks();
+      // Arrange      
       _mockBookService
       .Setup(mockService => mockService.HighestAverageRate(1))
-      .ReturnsAsync(book.Take(1).ToList());
+      .ReturnsAsync(mockBookData.Take(1).ToList());
 
       // Act
       var bookResult = await _bookController.GetHighestAverageRate(1);
@@ -151,7 +167,7 @@ namespace LibraryBackend.Tests
       // Assert 
       var okResult = Assert.IsType<OkObjectResult>(bookResult.Result);
       var bookResponse = Assert.IsAssignableFrom<IEnumerable<TopBooksDtoResponse>>(okResult.Value);
-      Assert.Equal("Book 1", bookResponse?.First()?.Title);
+      Assert.Equal("title1", bookResponse?.First()?.Title);
     }
 
     [Fact]
