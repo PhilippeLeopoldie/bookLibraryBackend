@@ -38,7 +38,7 @@ namespace LibraryBackend.Controllers
       
        if (page <= 0 || pageSize <= 0 || pageSize > pageSizeLimit)
       {
-        return BadRequest($"Invalid, page must be > 0 and pageSize parameters must be between 0 and {pageSizeLimit+1}");
+        return BadRequest($"Invalid, page must be > 0 and pageSize must be between 0 and {pageSizeLimit+1}");
       }
       var totalBooksCount = books.Count();
       var totalPagesCount = (int)Math.Ceiling((double) totalBooksCount / pageSize);
