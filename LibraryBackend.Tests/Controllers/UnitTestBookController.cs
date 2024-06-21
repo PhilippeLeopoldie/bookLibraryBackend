@@ -115,7 +115,7 @@ namespace LibraryBackend.Tests
     }
 
     [Fact]
-    public async Task Should_return_bad_request_when_page_is_negative_in_GetBooks()
+    public async Task Should_return_bad_request_when_page_is_invalide_in_GetBooks()
     {
       // arrange
       var page = -1;
@@ -126,10 +126,29 @@ namespace LibraryBackend.Tests
 
       // act
       var result = await _bookController.GetBooks(page, pageSize);
+      
 
       // Assert
       var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-      Assert.Equal("Invalid page (0 < page) or pageSize parameters (0 < pageSize < 7)",badRequestObjectResult.Value);
+      Assert.Equal($"Invalid, page must be > 0 and pageSize parameters must be between 0 and {_bookController.pageSizeLimit+1}",badRequestObjectResult.Value);
+    }
+
+    [Fact]
+    public async Task Should_return_bad_request_when_pageSize_is_invalide_in_GetBooks()
+    {
+      // arrange
+      var page = 1;
+      var pageSize = 8;
+      _mockBookService
+        .Setup(mockBookService => mockBookService.ListOfBooksAsync())
+        .ReturnsAsync(mockBookData);
+
+      // act
+      var result = await _bookController.GetBooks(page, pageSize);
+
+      // Assert
+      var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+      Assert.Equal("Invalid, page must be > 0 and pageSize parameters must be between 0 and 7",badRequestObjectResult.Value);
     }
 
     [Theory]
