@@ -130,7 +130,7 @@ namespace LibraryBackend.Tests
 
       // Assert
       var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-      Assert.Equal($"Invalid, page must be > 0 and pageSize must be between 0 and {_bookController.pageSizeLimit+1}",badRequestObjectResult.Value);
+      Assert.Equal($"Invalid, 'page' must be > 0 and 'pageSize' must be between 0 and {_bookController.pageSizeLimit+1}",badRequestObjectResult.Value);
     }
 
     [Fact]
@@ -148,7 +148,7 @@ namespace LibraryBackend.Tests
 
       // Assert
       var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-      Assert.Equal($"Invalid, page must be > 0 and pageSize must be between 0 and {_bookController.pageSizeLimit+1}",badRequestObjectResult.Value);
+      Assert.Equal($"Invalid, 'page' must be > 0 and 'pageSize' must be between 0 and {_bookController.pageSizeLimit+1}",badRequestObjectResult.Value);
     }
 
     [Theory]
