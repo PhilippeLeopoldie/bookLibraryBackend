@@ -12,11 +12,13 @@ namespace LibraryBackend.Tests
     readonly IBookService _bookService;
     readonly Mock<IRepository<Book>> _mockBookRepository;
     readonly MyLibraryContext _myLibraryContext;
+    readonly List<Book> _mockBookData;
 
 
     public UnitTestBookService()
     {
       _mockBookRepository = new Mock<IRepository<Book>>();
+      _mockBookData = MockData.GetMockData();
 
       //in-memory DbContext
       var options = new DbContextOptionsBuilder<MyLibraryContext>()
@@ -32,10 +34,9 @@ namespace LibraryBackend.Tests
     public async Task Should_Get_All_books_async()
     {
       // Arrange
-      var testBookData = TestData.GetTestBooks();
       _mockBookRepository
         .Setup(mockBookRepository => mockBookRepository.GetAllAsync())
-        .ReturnsAsync(testBookData);
+        .ReturnsAsync(_mockBookData);
       
       // Act
       var listOfBooks = await _bookService.ListOfBooksAsync();
@@ -44,7 +45,7 @@ namespace LibraryBackend.Tests
       Assert.NotNull(listOfBooks);
       Assert.IsAssignableFrom<IEnumerable<Book>>(listOfBooks);
       _mockBookRepository.Verify(repo => repo.GetAllAsync(), Times.Once);
-      Assert.Equal(5, listOfBooks.Count());
+      Assert.Equal(9, listOfBooks.Count());
     }
 
     [Fact]
@@ -89,8 +90,7 @@ namespace LibraryBackend.Tests
     public async Task Should_Get_Highest_Rate_in_HighestAverageRate()
     {
         // Arrange
-        var testBookData = TestData.GetTestBooks();
-        await _myLibraryContext.AddRangeAsync(testBookData);
+        await _myLibraryContext.AddRangeAsync(_mockBookData);
         await _myLibraryContext.SaveChangesAsync();
 
         // Act
@@ -99,7 +99,7 @@ namespace LibraryBackend.Tests
         // Assert
         Assert.NotNull(highestRateBook);
         Assert.IsAssignableFrom<IEnumerable<Book>>(highestRateBook);
-        Assert.Equal("Book 5", highestRateBook.First().Title);
+        Assert.Equal("title1", highestRateBook.First().Title);
     }
   }
 }
