@@ -40,16 +40,16 @@ namespace LibraryBackend.Tests
         .ReturnsAsync(mockBookData);
 
       // Act
-      var result = await _bookController.GetBooks(page, pageSize);
+      var getBookResult = await _bookController.GetBooks(page, pageSize);
 
       // Assert
-      var okResult = Assert.IsType<OkObjectResult>(result.Result);
-      var books = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
-      Assert.Equal(1, books?.Count());
-      Assert.Equal("title9", books?.ElementAt(0).Book?.Title);
-      Assert.Equal(9, books?.ElementAt(0).Book?.Id);
-      Assert.Equal("author9", books?.ElementAt(0).Book?.Author);
-      //Assert.Equal(2, books?.ElementAt(1).Book?.Id);
+      var okResult = Assert.IsType<OkObjectResult>(getBookResult.Result);
+      var result = Assert.IsAssignableFrom<BooksListDtoResponse>(okResult.Value);
+      Assert.Equal(1, result.Books?.Count());
+      Assert.Equal("title9", result?.Books?.ElementAt(0)?.Title);
+      Assert.Equal(9, result?.Books?.ElementAt(0)?.Id);
+      Assert.Equal("author9", result?.Books?.ElementAt(0)?.Author);
+      
       _mockBookService.Verify(mockBookService => mockBookService.ListOfBooksAsync(), Times.Once);
     }
 
@@ -63,15 +63,15 @@ namespace LibraryBackend.Tests
         .ReturnsAsync(mockBookData);
 
       // Act
-      var result = await _bookController.GetBooks(page, pageSize);
+      var getBookResult = await _bookController.GetBooks(page, pageSize);
 
       // Assert
-      var okResult = Assert.IsType<OkObjectResult>(result.Result);
-      var books = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
-      Assert.Equal(3, books?.Count());
-      Assert.Equal("title7", books?.ElementAt(0).Book?.Title);
-      Assert.Equal(7, books?.ElementAt(0).Book?.Id);
-      Assert.Equal("author7", books?.ElementAt(0).Book?.Author);
+      var okResult = Assert.IsType<OkObjectResult>(getBookResult.Result);
+      var result = Assert.IsAssignableFrom<BooksListDtoResponse>(okResult.Value);
+      Assert.Equal(3, result.Books?.Count());
+      Assert.Equal("title7", result.Books?.ElementAt(0)?.Title);      
+      Assert.Equal(7, result.Books?.ElementAt(0)?.Id);
+      Assert.Equal("author7", result?.Books?.ElementAt(0)?.Author);
       //Assert.Equal(2, books?.ElementAt(1).Book?.Id);
       _mockBookService.Verify(mockBookService => mockBookService.ListOfBooksAsync(), Times.Once);
     }
