@@ -47,14 +47,16 @@ namespace LibraryBackend.Controllers
         return BadRequest ($"Page {page} does not exist, the last page is {totalPagesCount}");
       }  
       var pagedBooks = books.ToPagedList(page, pageSize);
-      var pagedBooksResponse = from book in pagedBooks
-                          select new BookDtoResponse
-                          {
-                            Book = book,
-                            TotalBooksCount = totalBooksCount,
-                            TotalPagesCount = totalPagesCount,
-                            RequestedAt = DateTime.Now.ToString(dateTimeFormat)
-                          };
+      var pagedBooksResponse = new BooksListDtoResponse
+        {
+          Books = pagedBooks
+            .Where( book => book != null)
+            .ToList(),
+            TotalBooksCount = totalBooksCount,
+            TotalPagesCount = totalPagesCount,
+            RequestedAt = DateTime.Now.ToString(dateTimeFormat)
+        };
+      
       return Ok(pagedBooksResponse);
     }
 
