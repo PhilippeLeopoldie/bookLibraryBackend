@@ -83,8 +83,5 @@ Test Driven Development: using Mock library and  xUnit framework for [UnitTest](
 
 ## Deploying link
 
-  -example of end points:  
-   - [getBooks](https://booklibrary-backend-20f7a19cecb2.herokuapp.com/api/books)  
-   - [getOpinions](https://booklibrary-backend-20f7a19cecb2.herokuapp.com/api/Opinions)  
-   - Swagger Documentation: [http://localhost:5281/swagger/index.html](http://localhost:5281/swagger/index.html)  
+[App URL](https://books-library-2023.vercel.app/)
 
