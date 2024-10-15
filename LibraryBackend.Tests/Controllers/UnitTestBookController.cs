@@ -138,7 +138,7 @@ namespace LibraryBackend.Tests
 
       // Assert 
       var okResult = Assert.IsType<OkObjectResult>(bookResult.Result);
-      var bookResponse = Assert.IsAssignableFrom<IEnumerable<TopBooksDtoResponse>>(okResult.Value);
+      var bookResponse = Assert.IsAssignableFrom<IEnumerable<Book>>(okResult.Value);
       Assert.Equal("Book 1", bookResponse?.First()?.Title);
     }
 
