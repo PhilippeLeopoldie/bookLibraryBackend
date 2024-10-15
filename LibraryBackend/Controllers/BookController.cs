@@ -73,7 +73,7 @@ namespace LibraryBackend.Controllers
       }
 
       var bookResponse =  from book in topBooks
-                          select new TopBooksDtoResponse
+                          select new Book
                           {
                             Id = book.Id,
                             Title = book.Title,
