@@ -3,3 +3,17 @@ LibraryBackend/bin
 LibraryBackend/obj
 LibraryBackend.Tests/bin
 
+LibraryBackend/LibraryBackend.sln
+LibraryBackend.Tests/LibraryBackend.Tests.sln
+
+LibraryBackend.Tests/.vs/LibraryBackend.Tests/v16/.suo
+LibraryBackend/.vs/LibraryBackend/v16/.suo
+.vs/bookLibraryBackend/v16/TestStore/0/testlog.manifest
+.vs/bookLibraryBackend/v16/TestStore/0/000.testlog
+.vs/bookLibraryBackend/v16/.suo
+
+/.vs/bookLibraryBackend/DesignTimeBuild
+/.vs/bookLibraryBackend/config
+/.vs/bookLibraryBackend/FileContentIndex
+/.vs/bookLibraryBackend/v17/TestStore/0
+/.vs/bookLibraryBackend/v17
