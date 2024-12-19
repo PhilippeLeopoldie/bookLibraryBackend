@@ -28,7 +28,7 @@ public BookController(IRepository<Book> bookRepository, IBookService bookService
 [ProducesResponseType(StatusCodes.Status200OK)]
 [ProducesResponseType(StatusCodes.Status404NotFound)]
 [ProducesResponseType(StatusCodes.Status400BadRequest)]
-public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetBooks([FromQuery]int page , int pageSize)
+public async Task<ActionResult<BooksListDtoResponse>> GetBooks([FromQuery]int page , int pageSize)
 {
   var books = await _bookService.ListOfBooksAsync();
   if (books == null || !books.Any())
@@ -63,7 +63,7 @@ public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetBooks([FromQuer
 [HttpGet("TopBooks")]
 [ProducesResponseType(StatusCodes.Status200OK)]
 [ProducesResponseType(StatusCodes.Status404NotFound)]
-public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetHighestAverageRate([FromQuery]int numberOfBooks)
+public async Task<ActionResult<BooksListDtoResponse>> GetHighestAverageRate([FromQuery]int numberOfBooks)
 {
   var topBooks = await _bookService.HighestAverageRate(numberOfBooks);
 
@@ -72,15 +72,11 @@ public async Task<ActionResult<IEnumerable<BookDtoResponse>>> GetHighestAverageR
     return NotFound("No Top Book found!");
   }
 
-  var bookResponse =  from book in topBooks
-                      select new Book
+  var bookResponse =  new BooksListDtoResponse
                       {
-                        Id = book.Id,
-                        Title = book.Title,
-                        Author = book.Author,
-                        ImageUrl = book.ImageUrl,
-                        AverageRate = book.AverageRate,
-                        Opinions = book.Opinions,
+                        Books = topBooks,
+                        TotalBooksCount = numberOfBooks,
+      RequestedAt = DateTime.Now.ToString(dateTimeFormat)
                       };
   return Ok(bookResponse);
 }

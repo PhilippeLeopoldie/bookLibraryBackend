@@ -187,9 +187,9 @@ public class UnitTestBookController
 
         // Assert 
         var okResult = Assert.IsType<OkObjectResult>(bookResult.Result);
-        var bookResponse = Assert.IsAssignableFrom<IEnumerable<Book>>(okResult.Value);
+        var bookResponse = Assert.IsAssignableFrom<BooksListDtoResponse>(okResult.Value);
 
-        Assert.Equal("title1", bookResponse?.First()?.Title);
+        Assert.Equal("title1", bookResponse.Books?.First()?.Title);
 
     }
 
