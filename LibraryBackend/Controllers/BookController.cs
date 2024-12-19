@@ -109,7 +109,7 @@ public async Task<ActionResult<BookDtoResponse>> GetBookById(int id)
 [ProducesResponseType(StatusCodes.Status200OK)]
 [ProducesResponseType(StatusCodes.Status404NotFound)]
 [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
-public async Task<ActionResult<BookDtoRequest>> GetBookByTitleOrAuthor([FromQuery]string titleOrAuthor)
+public async Task<ActionResult<BookDtoResponse>> GetBookByTitleOrAuthor([FromQuery]string titleOrAuthor)
 {
   if (string.IsNullOrWhiteSpace(titleOrAuthor))
   {
