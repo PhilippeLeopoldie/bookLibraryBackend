@@ -1,9 +1,8 @@
 using LibraryBackend.Models;
 
-namespace LibraryBackend.Services 
+namespace LibraryBackend.Services; 
+
+public interface IOpinionService 
 {
-  public interface IOpinionService 
-  {
-    Task <double> AverageOpinionRate(int bookId);
-  }
+Task <double> AverageOpinionRate(int bookId);
 }

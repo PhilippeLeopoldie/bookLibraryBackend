@@ -66,4 +66,10 @@ app.UseCors(MyAllowSpecificOrigins);
 
 app.MapControllers();
 
+// **Test Code Snippet**
+string rawString = """
+This is a raw string literal.
+""";
+Console.WriteLine(rawString);
+
 app.Run();

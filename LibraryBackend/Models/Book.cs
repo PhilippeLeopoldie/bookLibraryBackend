@@ -1,5 +1,4 @@
-namespace LibraryBackend.Models
-{
+namespace LibraryBackend.Models;
   public class Book : BaseEntity
   {
     public string? Title { get; set; }
@@ -8,4 +7,4 @@ namespace LibraryBackend.Models
     public double? AverageRate { get; set;}
     public List<Opinion>? Opinions { get; set; }
   }
-}
+

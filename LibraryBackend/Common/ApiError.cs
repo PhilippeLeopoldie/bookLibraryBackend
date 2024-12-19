@@ -1,8 +1,7 @@
-namespace LibraryBackend.Common
+namespace LibraryBackend.Common;
+
+public class ApiError
 {
-  public class ApiError
-  {
-    public string Message {get ; set;}= default!;
-    public string Detail { get; set;}= default!;
-  }
+public string Message {get ; set;}= default!;
+public string Detail { get; set;}= default!;
 }

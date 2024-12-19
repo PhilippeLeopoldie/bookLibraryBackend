@@ -1,9 +1,8 @@
-namespace LibraryBackend.Models
+namespace LibraryBackend.Models;
+
+public class BookDtoRequest 
 {
-  public class BookDtoRequest 
-  {
-    public string? Title {get; set;}
-    public string? Author {get; set;} 
-    public string? ImageUrl { get; set; }
-  }
+public string? Title {get; set;}
+public string? Author {get; set;} 
+public string? ImageUrl { get; set; }
 }
