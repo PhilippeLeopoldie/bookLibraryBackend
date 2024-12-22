@@ -6,5 +6,6 @@ namespace LibraryBackend.Models;
     public string? ImageUrl { get; set; }
     public double? AverageRate { get; set;}
     public List<Opinion>? Opinions { get; set; }
+    public Genre? Genre { get; set; }
   }
 
