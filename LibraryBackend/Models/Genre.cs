@@ -1,8 +1,7 @@
 ﻿namespace LibraryBackend.Models;
 
-public class Genre
+public class Genre : BaseEntity
 {
-    public int Id { get; set; }
     public required string Name { get; set; }
     public List<Book>? Books { get; set; }
 }
