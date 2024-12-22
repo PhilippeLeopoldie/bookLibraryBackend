@@ -4,5 +4,5 @@ namespace LibraryBackend.Services;
 
 public interface IGenreService
 {
-    Task<IEnumerable<Genre?>> ListOfGenreAsync();
+    Task<IEnumerable<Genre?>> ListOfGenresAsync();
 }

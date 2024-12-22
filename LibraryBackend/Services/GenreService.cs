@@ -15,7 +15,7 @@ public class GenreService : IGenreService
         _libraryContext = libraryContext;
     }
 
-    public Task<IEnumerable<Genre?>> ListOfGenreAsync()
+    public Task<IEnumerable<Genre?>> ListOfGenresAsync()
     {
         throw new NotImplementedException();
     }
