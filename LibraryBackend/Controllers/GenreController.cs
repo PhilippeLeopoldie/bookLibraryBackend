@@ -33,24 +33,27 @@ public class GenreController : ControllerBase
     [HttpGet("{id}")]
     public string Get(int id)
     {
-        return "value";
+        throw new NotImplementedException();
     }
 
     // POST api/<GenreController>
     [HttpPost]
     public void Post([FromBody] string value)
     {
+        throw new NotImplementedException();
     }
 
     // PUT api/<GenreController>/5
     [HttpPut("{id}")]
     public void Put(int id, [FromBody] string value)
     {
+        throw new NotImplementedException();
     }
 
     // DELETE api/<GenreController>/5
     [HttpDelete("{id}")]
     public void Delete(int id)
     {
+        throw new NotImplementedException();
     }
 }
