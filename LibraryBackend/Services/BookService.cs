@@ -50,14 +50,6 @@ public async Task<Book?> EditAverageRate(int bookId, double average)
 public virtual async Task<IEnumerable<Book?>> ListOfBooksAsync()
 {
   var books = await _bookRepository.GetAllAsync();
-  /* var books = await _dbContext.Book
-    .Select(book => new Book 
-    {
-      Id = book.Id,
-      Title = book.Title,
-      Author = book.Author,
-      AverageRate = book.AverageRate
-    }).ToListAsync(); */
     return books;
 }
 }
