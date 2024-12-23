@@ -1,4 +1,5 @@
 ﻿using LibraryBackend.Models;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace LibraryBackend.Services;
@@ -15,8 +16,11 @@ public class GenreService : IGenreService
         _libraryContext = libraryContext;
     }
 
-    public Task<IEnumerable<Genre?>> ListOfGenresAsync()
+    public virtual async Task<IEnumerable<Genre>?> ListOfGenresAsync()
     {
-        throw new NotImplementedException();
+        var genres = await _libraryContext.Genre
+            .Include(genre => genre.Books).ToListAsync();
+            
+        return genres;
     }
 }
