@@ -19,7 +19,7 @@ public class UnitTestGenreService
 
         //in-memory DbContext
         var option = new DbContextOptionsBuilder<MyLibraryContext>()
-            .UseInMemoryDatabase("TestDatabase")
+            .UseInMemoryDatabase("TestGenreDatabase")
             .Options;
         _myLibraryContext = new MyLibraryContext (option);
         _myLibraryContext.Genre.AddRange(_mockGenreData);

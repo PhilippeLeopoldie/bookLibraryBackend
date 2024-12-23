@@ -22,7 +22,7 @@ public class UnitTestBookService
 
         //in-memory DbContext
         var options = new DbContextOptionsBuilder<MyLibraryContext>()
-          .UseInMemoryDatabase("TestDatabase")
+          .UseInMemoryDatabase("TestBookDatabase")
           .Options;
 
         _myLibraryContext = new MyLibraryContext(options);

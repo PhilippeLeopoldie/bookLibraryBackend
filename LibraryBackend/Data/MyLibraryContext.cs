@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using LibraryBackend.Models;
 
@@ -18,11 +14,11 @@ using LibraryBackend.Models;
         public DbSet<Book> Book { get; set; }=default!;
         public DbSet<Genre> Genre { get; set; } =default!;
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
             optionsBuilder.UseInMemoryDatabase("TestDatabase");
         }
-    }
+    }*/
 }
