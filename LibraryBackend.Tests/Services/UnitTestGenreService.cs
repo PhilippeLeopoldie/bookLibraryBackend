@@ -19,10 +19,10 @@ public class UnitTestGenreService
 
         //in-memory DbContext
         var option = new DbContextOptionsBuilder<MyLibraryContext>()
-            .UseInMemoryDatabase("TestGenreDatabase")
+            .UseInMemoryDatabase("TestDatabase")
             .Options;
         _myLibraryContext = new MyLibraryContext (option);
-        _myLibraryContext.Genres.AddRange(_mockGenreData);
+        _myLibraryContext.Genre.AddRange(_mockGenreData);
         _myLibraryContext.SaveChangesAsync ();
 
         _genreService = new GenreService( _myLibraryContext);
@@ -32,11 +32,11 @@ public class UnitTestGenreService
     public async Task Should_GetAllGenres_async()
     {
         // Act
-        var listOfGenres = await _genreService.ListOfGenreAsync();
+        var listOfGenres = await _genreService.ListOfGenresAsync();
 
         // Assert
         Assert.NotNull(listOfGenres);
         Assert.IsAssignableFrom<IEnumerable<Genre>>(listOfGenres);
-        Assert.Equal(2,listOfGenres.Count());
+        Assert.Equal(3,listOfGenres.Count());
     }
 }
