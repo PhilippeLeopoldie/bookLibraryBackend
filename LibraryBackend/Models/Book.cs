@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace LibraryBackend.Models;
   public class Book : BaseEntity
   {
@@ -6,6 +8,7 @@ namespace LibraryBackend.Models;
     public string? ImageUrl { get; set; }
     public double? AverageRate { get; set;}
     public List<Opinion>? Opinions { get; set; }
+    public int ? GenreId { get; set; }
     public Genre? Genre { get; set; }
   }
 
