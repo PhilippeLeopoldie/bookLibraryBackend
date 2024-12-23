@@ -38,5 +38,8 @@ public class UnitTestGenreService
         Assert.NotNull(listOfGenres);
         Assert.IsAssignableFrom<IEnumerable<Genre>>(listOfGenres);
         Assert.Equal(3,listOfGenres.Count());
+        Assert.Equal("genre1", listOfGenres.First().Name);
+        Assert.Equal(2, listOfGenres.ElementAtOrDefault(1)?.Books?.Count);
+        Assert.Equal("title3Genre2", listOfGenres.ElementAtOrDefault(1)?.Books?.First().Title);
     }
 }
