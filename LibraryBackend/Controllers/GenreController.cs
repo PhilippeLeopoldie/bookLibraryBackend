@@ -12,7 +12,7 @@ namespace LibraryBackend.Controllers;
 public class GenreController : ControllerBase
 {
     private readonly IRepository<Genre> _genreRepository;
-    private readonly IGenreService _genreService;
+    private readonly IGenreService? _genreService;
 
     public GenreController (IRepository<Genre> genreRepository)
     {
@@ -24,7 +24,7 @@ public class GenreController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<IEnumerable<string>>> GetGenres()
+    public Task<ActionResult<IEnumerable<GenreDtoResponse>>> GetGenres()
     {
         throw new NotImplementedException();
     }
