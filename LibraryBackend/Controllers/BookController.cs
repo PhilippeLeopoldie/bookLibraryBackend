@@ -46,7 +46,7 @@ public async Task<ActionResult<BooksListDtoResponse>> GetBooks([FromQuery]int pa
   {
     return BadRequest ($"Page {page} does not exist, the last page is {totalPagesCount}");
   }  
-  var pagedBooks = await books.ToPagedList(page, pageSize);
+  var pagedBooks = books.ToPagedList(page, pageSize);
   var pagedBooksResponse = new BooksListDtoResponse
     {
       Books = pagedBooks
