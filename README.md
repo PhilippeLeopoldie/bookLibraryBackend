@@ -55,18 +55,18 @@ This backend is deployed on heroku platform using postgres as database on a Verc
     dotnet run
     ```
     - The backend should now be running at:
-        - HTTP: [http://localhost:5281](https://localhost:5281)  
+        - HTTP: [http://localhost:5281](http://localhost:5281)  
         - Swagger UI: [http://localhost:5281/swagger/index.html](http://localhost:5281/swagger/index.html)
 
 ## Technologies
 
-  - .Net 7.0.203
+  - .Net 9.0.0
 
   - ASP.NET Core Web APIs
   
-  - xUnit 2.4.2
+  - xUnit 2.9.2
   
-  - Moq 4.18.4
+  - Moq 4.20.72
 
   - API platform: Heroku
 
@@ -83,5 +83,5 @@ Test Driven Development: using Mock library and  xUnit framework for [UnitTest](
 
 ## Deploying link
 
-[App URL](https://books-library-2024.vercel.app/)
+[stories-n-books.vercel.app](https://stories-n-books.vercel.app/)
 
