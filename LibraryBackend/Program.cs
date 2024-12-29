@@ -30,7 +30,7 @@ builder.Services.AddCors(options =>
                      policy =>
                      {
                        policy.WithOrigins(
-                        "https://stories-n-books.vercel.app/","http://localhost:5173")
+                        "https://stories-n-books.vercel.app","http://localhost:5173")
                        .AllowAnyHeader()
                        .AllowAnyMethod()
                      .AllowCredentials();
