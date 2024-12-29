@@ -183,6 +183,7 @@ public async Task<ActionResult<Book>> UpdateBook(int id, BookDtoRequest bookToUp
   bookByIdToUpdate.Author = bookToUpdate.Author;
   bookByIdToUpdate.Title = bookToUpdate.Title;
   bookByIdToUpdate.ImageUrl= bookToUpdate.ImageUrl;
+  bookByIdToUpdate.GenreId = bookToUpdate.GenreId;
   var updatedBook = await _bookRepository.Update(bookByIdToUpdate);
   return Ok(updatedBook);
 }
