@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using LibraryBackend.Models;
 using LibraryBackend.Services;
+using LibraryBackend.Common;
 
 
 
@@ -12,11 +13,13 @@ namespace LibraryBackend.Controllers;
 public class GenreController : ControllerBase
 {
     private readonly IRepository<Genre> _genreRepository;
-    private readonly IGenreService? _genreService;
+    private readonly IGenreService _genreService;
 
-    public GenreController (IRepository<Genre> genreRepository)
+    public GenreController (IRepository<Genre> genreRepository, IGenreService genreService)
     {
         _genreRepository = genreRepository;
+        _genreService = genreService;
+        
     }
 
     // GET: api/<GenreController>
@@ -24,9 +27,14 @@ public class GenreController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<ActionResult<IEnumerable<GenreDtoResponse>>> GetGenres()
+    public async Task<ActionResult<IEnumerable<GenreDtoResponse>>> GetGenres()
     {
-        throw new NotImplementedException();
+        var genres = await _genreService.ListOfGenresAsync();
+        if(genres == null || !genres.Any())
+        {
+            return NotFound("No genre found!");
+        }
+        return Ok(genres);
     }
 
     // GET api/<GenreController>/5
@@ -38,9 +46,23 @@ public class GenreController : ControllerBase
 
     // POST api/<GenreController>
     [HttpPost]
-    public void Post([FromBody] string value)
+    public async Task<ActionResult<Genre>> CreateGenre(GenreDtoRequest genre)
     {
-        throw new NotImplementedException();
+        if (genre == null || string.IsNullOrWhiteSpace(genre.Name))
+        {
+            var error = new ApiError
+            {
+                Message = "Validation Error",
+                Detail = "Name cannot be empty"
+            };
+            return BadRequest(error);
+        }
+        var request = new Genre
+        { 
+            Name = genre.Name,
+        };
+        var createdGenre = await _genreRepository.Create(request);
+        return CreatedAtAction(nameof(GetGenres),new { id = createdGenre.Id} ,createdGenre);
     }
 
     // PUT api/<GenreController>/5
