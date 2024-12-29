@@ -30,10 +30,9 @@ builder.Services.AddCors(options =>
                      policy =>
                      {
                        policy.WithOrigins(
-                         "https://booklibrary-backend-20f7a19cecb2.herokuapp.com")
+                        "https://stories-n-books.vercel.app/","http://localhost:5173")
                        .AllowAnyHeader()
                        .AllowAnyMethod()
-                       .SetIsOriginAllowed((host) => true)
                      .AllowCredentials();
                      });
 });
