@@ -83,5 +83,5 @@ Test Driven Development: using Mock library and  xUnit framework for [UnitTest](
 
 ## Deploying link
 
-[stories-n-books.vercel.app](https://stories-n-books.vercel.app/)
+[readsphere.vercel.app](https://readsphere.vercel.app)
 
