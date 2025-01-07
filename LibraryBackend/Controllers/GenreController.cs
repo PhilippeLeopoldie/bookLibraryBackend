@@ -14,6 +14,7 @@ public class GenreController : ControllerBase
 {
     private readonly IRepository<Genre> _genreRepository;
     private readonly IGenreService _genreService;
+    private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
 
     public GenreController (IRepository<Genre> genreRepository, IGenreService genreService)
     {
@@ -27,14 +28,20 @@ public class GenreController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<IEnumerable<GenreDtoResponse>>> GetGenres()
+    public async Task<ActionResult<GenreListDtoResponse>> GetGenres()
     {
         var genres = await _genreService.ListOfGenresAsync();
         if(genres == null || !genres.Any())
         {
             return NotFound("No genre found!");
         }
-        return Ok(genres);
+        var genresResponse = new GenreListDtoResponse
+        {
+            Genres = genres,
+            TotalGenreCount = genres.Count(),
+            RequestedAt = DateTime.Now.ToString(dateTimeFormat),
+        };
+        return Ok(genresResponse);
     }
 
     // GET api/<GenreController>/5
