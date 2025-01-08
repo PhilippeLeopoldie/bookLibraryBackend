@@ -19,8 +19,9 @@ public class GenreService : IGenreService
     public virtual async Task<IEnumerable<Genre>?> ListOfGenresAsync()
     {
         var genres = await _libraryContext.Genre
-            .Include(genre => genre.Books).ToListAsync();
-            
+            .Include(genre => genre.Books)
+            .OrderBy(genre => genre.Name)
+            .ToListAsync();
         return genres;
     }
 }
