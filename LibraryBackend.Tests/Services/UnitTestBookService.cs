@@ -101,4 +101,22 @@ public class UnitTestBookService
         Assert.IsAssignableFrom<IEnumerable<Book>>(highestRateBook);
         Assert.Equal("title1", highestRateBook.First().Title);
     }
+
+    [Fact]
+    public async Task Should_Get_Books_By_GenreId()
+    {
+        // Arrange
+        await _myLibraryContext.AddRangeAsync(_mockBookData);
+        await _myLibraryContext.SaveChangesAsync();
+
+        // Act 
+        var booksByGenreId = await _bookService.GetBooksByGenreIdAsync(2);
+
+        // Assert
+        Assert.NotNull(booksByGenreId);
+        Assert.IsAssignableFrom<IEnumerable<Book>>(booksByGenreId);
+        Assert.Equal(2, booksByGenreId.First()?.GenreId);
+        Assert.Equal(new DateOnly(2025,01,10), booksByGenreId.First()?.CreationDate);
+        Assert.Equal(2, booksByGenreId?.Count());
+    }
 }
