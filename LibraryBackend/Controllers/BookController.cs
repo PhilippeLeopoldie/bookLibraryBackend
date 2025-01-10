@@ -24,6 +24,20 @@ public class BookController : ControllerBase
         _bookService = bookService;
     }
 
+    private ApiError? NullOrWhiteSpaceValidation ( string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            var error = new ApiError
+            {
+                Message = "Validation Error",
+                Detail = "Expression without argument"
+            };
+            return error;
+        }
+        return null;
+    }
+
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -107,15 +121,9 @@ public class BookController : ControllerBase
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<BookDtoResponse>> GetBookByTitleOrAuthor([FromQuery] string titleOrAuthor)
     {
-        if (string.IsNullOrWhiteSpace(titleOrAuthor))
-        {
-            var error = new ApiError
-            {
-                Message = "Validation Error",
-                Detail = "Author cannot be empty"
-            };
-            return BadRequest(error);
-        }
+        var error = NullOrWhiteSpaceValidation(titleOrAuthor);
+        if (error != null)  BadRequest(error);
+        
         titleOrAuthor = titleOrAuthor.ToLower();
         Expression<Func<Book, bool>> condition = book =>
           book.Title!.ToLower().Contains(titleOrAuthor)
