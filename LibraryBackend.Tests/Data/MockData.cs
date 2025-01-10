@@ -14,6 +14,8 @@ public static List<Book> GetMockData ()
     Id = 1,
     Title = "title1",
     Author = "author1",
+    CreationDate = new DateOnly(2025,01,8),
+    GenreId = 2,
     Opinions = new List<Opinion>
       {
         new Opinion
@@ -40,13 +42,17 @@ public static List<Book> GetMockData ()
   {
     Id = 2,
     Title ="title2",
-    Author ="author2"
+    Author ="author2",
+    CreationDate = new DateOnly(2025,01,10),
+    GenreId = 3,
   },
   new Book
   {
     Id = 3,
     Title ="title3",
-    Author ="author3"
+    Author ="author3",
+    CreationDate = new DateOnly(2025,01,10),
+    GenreId = 2,
   },
   new Book
   {
