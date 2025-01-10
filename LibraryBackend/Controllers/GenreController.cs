@@ -1,8 +1,8 @@
-﻿using LibraryBackend.Repositories;
-using Microsoft.AspNetCore.Mvc;
+﻿using LibraryBackend.Common;
 using LibraryBackend.Models;
+using LibraryBackend.Repositories;
 using LibraryBackend.Services;
-using LibraryBackend.Common;
+using Microsoft.AspNetCore.Mvc;
 
 
 
@@ -16,11 +16,11 @@ public class GenreController : ControllerBase
     private readonly IGenreService _genreService;
     private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
 
-    public GenreController (IRepository<Genre> genreRepository, IGenreService genreService)
+    public GenreController(IRepository<Genre> genreRepository, IGenreService genreService)
     {
         _genreRepository = genreRepository;
         _genreService = genreService;
-        
+
     }
 
     // GET: api/<GenreController>
@@ -31,7 +31,7 @@ public class GenreController : ControllerBase
     public async Task<ActionResult<GenreListDtoResponse>> GetGenres()
     {
         var genres = await _genreService.ListOfGenresAsync();
-        if(genres == null || !genres.Any())
+        if (genres == null || !genres.Any())
         {
             return NotFound("No genre found!");
         }
@@ -65,11 +65,11 @@ public class GenreController : ControllerBase
             return BadRequest(error);
         }
         var request = new Genre
-        { 
+        {
             Name = genre.Name,
         };
         var createdGenre = await _genreRepository.Create(request);
-        return CreatedAtAction(nameof(GetGenres),new { id = createdGenre.Id} ,createdGenre);
+        return CreatedAtAction(nameof(GetGenres), new { id = createdGenre.Id }, createdGenre);
     }
 
     // PUT api/<GenreController>/5
