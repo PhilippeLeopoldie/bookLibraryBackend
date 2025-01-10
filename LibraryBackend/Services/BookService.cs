@@ -15,7 +15,7 @@ public class BookService : IBookService
     }
 
     // Most popular books are those with the biggest number of reviews with a rate >=3
-    public IEnumerable<Book>? getMostPopularBooks(List<Book> books, int numberOfBooks)
+    public IEnumerable<Book>? GetMostPopularBooks(List<Book> books, int numberOfBooks)
     {
         var mostPopularBooks = books
             .Where(book => book.Opinions != null && book.Opinions.Any(opinion => opinion.Rate >= 3))
@@ -36,7 +36,7 @@ public class BookService : IBookService
         var books = await _dbContext.Book
             .Include(book => book.Opinions)
             .ToListAsync();
-        var mostPopularBooks = getMostPopularBooks(books, numberOfBooks);
+        var mostPopularBooks = GetMostPopularBooks(books, numberOfBooks);
 
         return mostPopularBooks;
     }
