@@ -7,6 +7,7 @@ namespace LibraryBackend.Models;
     public string? Author { get; set; }
     public string? ImageUrl { get; set; }
     public double? AverageRate { get; set;}
+    public DateOnly? CreationDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
     public List<Opinion>? Opinions { get; set; }
     public int ? GenreId { get; set; }
     public Genre? Genre { get; set; }
