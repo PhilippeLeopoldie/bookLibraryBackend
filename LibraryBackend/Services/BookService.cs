@@ -59,4 +59,13 @@ public class BookService : IBookService
         var books = await _bookRepository.GetAllAsync();
         return books;
     }
+
+    public virtual async Task<IEnumerable<Book?>> GetBooksByGenreIdAsync (int genreId)
+    {
+        var booksByGenreId = await _dbContext.Book
+            .Where(book => book.GenreId == genreId)
+            .OrderByDescending(book => book.CreationDate)
+            .ToListAsync();
+        return booksByGenreId;
+    }
 }
