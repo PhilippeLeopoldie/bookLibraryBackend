@@ -25,9 +25,19 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return await _entities.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public virtual async Task<IEnumerable<T?>> FindByConditionAsync(Expression<Func<T, bool>> predicate)
+    public virtual async Task<IEnumerable<T?>> FindByConditionAsync(
+        Expression<Func<T, bool>> condition,
+        params Expression<Func<T, bool>>[] includes )
     {
-        return await _entities.Where(predicate).ToListAsync();
+        IQueryable<T> query =  _entities.Where(condition);
+
+        // param is optional, Zero or more Expressions argument can be passed
+        foreach (var include in includes)
+        {
+            query =  query.Include(include);
+        }
+        return await query.ToListAsync();
+        //return await _entities.Where(predicate).ToListAsync();
     }
 
     public virtual async Task<T> Create(T entity)

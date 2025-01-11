@@ -9,7 +9,9 @@ public interface IRepository<T> where T : BaseEntity
 
     Task<T?> GetByIdAsync(int id);
 
-    Task<IEnumerable<T?>> FindByConditionAsync(Expression<Func<T, bool>> predicate);
+    Task<IEnumerable<T?>> FindByConditionAsync(
+        Expression<Func<T, bool>> condition,
+        params Expression<Func<T, bool>>[] includes);
 
     Task<T> Create(T newEntity);
 
