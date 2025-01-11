@@ -31,7 +31,6 @@ public class BookService : IBookService
         return mostPopularBooks;
     }
 
-   
     public virtual async Task<IEnumerable<Book>?> GetBooksWhithHighestAverageRate(int numberOfBooks)
     {
         var books = await GetListOfBooksAsync();
@@ -62,7 +61,9 @@ public class BookService : IBookService
         var books = await _bookRepository
             .FindByConditionWithIncludesAsync(book => book.GenreId == genreId);
 
-        return books.OrderByDescending(books => books?.CreationDate);
+        return books
+            .Where(Book => Book != null)
+            .OrderByDescending(books => books!.CreationDate);
     }
 
     public virtual async Task<IEnumerable<Book?>> GetBookByTitleOrAuthor (string titleOrAuthor)
