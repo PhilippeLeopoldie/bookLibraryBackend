@@ -57,8 +57,7 @@ public class BookService : IBookService
 
     public virtual async Task<IEnumerable<Book?>> ListOfBooksAsync()
     {
-        var books = await _bookRepository.GetAllAsync();
-        return books;
+        return await _bookRepository.GetAllAsync();
     }
 
     public virtual async Task<IEnumerable<Book?>> GetBooksByGenreIdAsync (int genreId)
