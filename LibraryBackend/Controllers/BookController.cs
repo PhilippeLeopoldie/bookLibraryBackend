@@ -4,7 +4,6 @@ using LibraryBackend.Repositories;
 using LibraryBackend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using System.Linq.Expressions;
 using X.PagedList.Extensions;
 
 namespace LibraryBackend.Controllers;
@@ -24,7 +23,7 @@ public class BookController : ControllerBase
         _bookService = bookService;
     }
 
-    private  ApiError? NullOrWhiteSpaceValidation ( string value)
+    private ApiError? NullOrWhiteSpaceValidation(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -44,16 +43,15 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<BooksListDtoResponse>> GetBooks([FromQuery] int page, int pageSize)
     {
-        var books = await _bookService.GetListOfBooksAsync();
-        if (books == null || !books.Any())
-        {
-            return NotFound("No books found!");
-        }
-
         if (page <= 0 || pageSize <= 0 || pageSize > pageSizeLimit)
         {
             return BadRequest($"Invalid, 'page' must be > 0 and 'pageSize' must be between 0 and {pageSizeLimit + 1}");
         }
+        var books = await _bookService.GetListOfBooksAsync();
+
+        if (books == null || !books.Any()) return NotFound("No books found!");
+       
+
         var totalBooksCount = books.Count();
         var totalPagesCount = (int)Math.Ceiling((double)totalBooksCount / pageSize);
         if (page > totalPagesCount)
@@ -61,7 +59,8 @@ public class BookController : ControllerBase
             return BadRequest($"Page {page} does not exist, the last page is {totalPagesCount}");
         }
         var pagedBooks = books.ToPagedList(page, pageSize);
-        var pagedBooksResponse = new BooksListDtoResponse
+
+        return Ok(new BooksListDtoResponse
         {
             Books = pagedBooks
               .Where(book => book != null)
@@ -69,9 +68,7 @@ public class BookController : ControllerBase
             TotalBooksCount = totalBooksCount,
             TotalPagesCount = totalPagesCount,
             RequestedAt = DateTime.Now.ToString(dateTimeFormat)
-        };
-
-        return Ok(pagedBooksResponse);
+        });
     }
 
     [HttpGet("TopBooks")]
@@ -122,12 +119,12 @@ public class BookController : ControllerBase
     public async Task<ActionResult<BookDtoResponse>> GetBookByTitleOrAuthor([FromQuery] string titleOrAuthor)
     {
         var error = NullOrWhiteSpaceValidation(titleOrAuthor);
-        if (error != null)  return BadRequest(error);
+        if (error != null) return BadRequest(error);
 
         var books = await _bookService.GetBookByTitleOrAuthor(titleOrAuthor);
-        
+
         titleOrAuthor = titleOrAuthor.ToLower();
-        
+
         if (books.IsNullOrEmpty())
         {
             return NotFound($"Book with Title or Author '{titleOrAuthor}' not found");
