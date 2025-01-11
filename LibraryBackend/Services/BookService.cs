@@ -32,7 +32,7 @@ public class BookService : IBookService
     }
 
    
-    public virtual async Task<IEnumerable<Book>?> HighestAverageRate(int numberOfBooks)
+    public virtual async Task<IEnumerable<Book>?> GetBooksWhithHighestAverageRate(int numberOfBooks)
     {
         var books = await _dbContext.Book
             .Include(book => book.Opinions)

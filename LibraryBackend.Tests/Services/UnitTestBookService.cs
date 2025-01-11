@@ -95,7 +95,7 @@ public class UnitTestBookService
         await _myLibraryContext.SaveChangesAsync();
 
         // Act
-        var highestRateBook = await _bookService.HighestAverageRate(1);
+        var highestRateBook = await _bookService.GetBooksWhithHighestAverageRate(1);
 
         // Assert
         Assert.NotNull(highestRateBook);
