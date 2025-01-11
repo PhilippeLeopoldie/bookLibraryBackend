@@ -1,6 +1,7 @@
 using LibraryBackend.Models;
 using LibraryBackend.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace LibraryBackend.Services;
 
@@ -15,7 +16,7 @@ public class BookService : IBookService
     }
 
     // Most popular books are those with the biggest number of reviews with a rate >=3
-    public IEnumerable<Book>? GetMostPopularBooks(List<Book> books, int numberOfBooks)
+    private IEnumerable<Book>? GetMostPopularBooks(List<Book> books, int numberOfBooks)
     {
         var mostPopularBooks = books
             .Where(book => book.Opinions != null && book.Opinions.Any(opinion => opinion.Rate >= 3))
@@ -62,10 +63,20 @@ public class BookService : IBookService
 
     public virtual async Task<IEnumerable<Book?>> GetBooksByGenreIdAsync (int genreId)
     {
-        var booksByGenreId = await _dbContext.Book
-            .Where(book => book.GenreId == genreId)
-            .OrderByDescending(book => book.CreationDate)
-            .ToListAsync();
-        return booksByGenreId;
+        var books = await _bookRepository
+            .FindByConditionAsync(book => book.GenreId == genreId);
+
+        return books.OrderByDescending(books => books?.CreationDate);
+    }
+
+    public virtual async Task<IEnumerable<Book?>> GetBookByTitleOrAuthor (string titleOrAuthor)
+    {
+        titleOrAuthor = titleOrAuthor.ToLower();
+        Expression<Func<Book, bool>> condition = book =>
+          book.Title!.ToLower().Contains(titleOrAuthor)
+          ||
+          book.Author!.ToLower().Contains(titleOrAuthor);
+        var books = await _bookRepository.FindByConditionAsync(condition);
+        return books;
     }
 }
