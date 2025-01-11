@@ -63,7 +63,7 @@ public class BookService : IBookService
     public virtual async Task<IEnumerable<Book?>> GetBooksByGenreIdAsync (int genreId)
     {
         var books = await _bookRepository
-            .FindByConditionAsync(book => book.GenreId == genreId);
+            .FindByConditionWithIncludesAsync(book => book.GenreId == genreId);
 
         return books.OrderByDescending(books => books?.CreationDate);
     }
@@ -75,7 +75,7 @@ public class BookService : IBookService
           book.Title!.ToLower().Contains(titleOrAuthor)
           ||
           book.Author!.ToLower().Contains(titleOrAuthor);
-        var books = await _bookRepository.FindByConditionAsync(condition);
+        var books = await _bookRepository.FindByConditionWithIncludesAsync(condition);
         return books;
     }
 }

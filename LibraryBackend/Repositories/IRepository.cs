@@ -9,7 +9,7 @@ public interface IRepository<T> where T : BaseEntity
 
     Task<T?> GetByIdAsync(int id);
 
-    Task<IEnumerable<T?>> FindByConditionAsync(
+    Task<IEnumerable<T?>> FindByConditionWithIncludesAsync(
         Expression<Func<T, bool>> condition,
         params Expression<Func<T, bool>>[] includes);
 

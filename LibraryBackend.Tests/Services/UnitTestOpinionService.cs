@@ -43,7 +43,7 @@ public class UnitTestOpinionService
         };
 
         _mockOpinionRepository
-          .Setup(mockOpinionRepository => mockOpinionRepository.FindByConditionAsync(
+          .Setup(mockOpinionRepository => mockOpinionRepository.FindByConditionWithIncludesAsync(
             It.IsAny<Expression<Func<Opinion, bool>>>()))
             .ReturnsAsync(book.Opinions);
         _mockBookService

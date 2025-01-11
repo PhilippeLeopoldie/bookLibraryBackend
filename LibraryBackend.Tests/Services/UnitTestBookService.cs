@@ -111,7 +111,7 @@ public class UnitTestBookService
         var expectedBooks = _mockBookData.Where(book => book.GenreId == genreId).ToList();
         _mockBookRepository
             .Setup(mockBookRepository => mockBookRepository
-            .FindByConditionAsync(book => book.GenreId == genreId))
+            .FindByConditionWithIncludesAsync(book => book.GenreId == genreId))
             .ReturnsAsync(expectedBooks);
 
         // Act 
@@ -124,6 +124,6 @@ public class UnitTestBookService
         Assert.Equal(new DateOnly(2025,01,10), booksByGenreId.First()?.CreationDate);
         Assert.Equal(2, booksByGenreId?.Count());
         _mockBookRepository.Verify(mockBookRepository => mockBookRepository
-        .FindByConditionAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
+        .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
     }
 }

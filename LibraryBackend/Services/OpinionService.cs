@@ -16,7 +16,7 @@ public OpinionService(IRepository<Opinion> opinionRepository,IBookService bookSe
 
 public virtual async Task<double> AverageOpinionRate(int bookId) 
 {
-  var opinions = await _opinionRepository.FindByConditionAsync(opinion => opinion.BookId == bookId);
+  var opinions = await _opinionRepository.FindByConditionWithIncludesAsync(opinion => opinion.BookId == bookId);
   var opinionAverageRate = opinions.Any() ? opinions.Average(opinion => opinion?.Rate ?? 0.0) : 0.0 ;
   var roundedAverage = Math.Round(opinionAverageRate,1);
   await _bookService.EditAverageRate(bookId, roundedAverage);

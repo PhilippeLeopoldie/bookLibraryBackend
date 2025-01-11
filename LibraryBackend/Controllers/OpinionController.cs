@@ -50,7 +50,7 @@ public async Task<ActionResult<IEnumerable<Opinion>>> GetOpinions()
 public async Task<ActionResult<IEnumerable<Opinion>>> GetOpinionsByBookId(int bookId)
 {
   Expression<Func<Opinion, bool>> condition = opinion => opinion.BookId == bookId;
-  var opinions = await _OpinionRepository.FindByConditionAsync(condition);
+  var opinions = await _OpinionRepository.FindByConditionWithIncludesAsync(condition);
   if (opinions == null || !opinions.Any())
   {
     return NotFound(notFoundErrorMessage);

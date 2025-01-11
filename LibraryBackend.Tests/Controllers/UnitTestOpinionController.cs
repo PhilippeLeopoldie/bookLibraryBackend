@@ -96,7 +96,7 @@ public class UnitTestOpinionController
         var ActualOpinions = from opinion in mockOpinionData
                              where opinion.BookId == bookIdToSearch
                              select opinion;
-        _mockOpinionRepository.Setup(mockRepository => mockRepository.FindByConditionAsync(
+        _mockOpinionRepository.Setup(mockRepository => mockRepository.FindByConditionWithIncludesAsync(
           It.IsAny<Expression<Func<Opinion, bool>>>()
         ))
         .ReturnsAsync(ActualOpinions);
@@ -107,7 +107,7 @@ public class UnitTestOpinionController
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
         var listOpinions = Assert.IsAssignableFrom<IEnumerable<Opinion>>(okResult.Value);
-        _mockOpinionRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
+        _mockOpinionRepository.Verify(mockRepository => mockRepository.FindByConditionWithIncludesAsync(
           It.IsAny<Expression<Func<Opinion, bool>>>()
           ), Times.Once);
         Assert.Equal(2, ActualOpinions.Count());
@@ -126,7 +126,7 @@ public class UnitTestOpinionController
         var nonExistingId = 99;
         var emptyList = new List<Opinion>();
         _mockOpinionRepository
-          .Setup(mockRepository => mockRepository.FindByConditionAsync(
+          .Setup(mockRepository => mockRepository.FindByConditionWithIncludesAsync(
             It.IsAny<Expression<Func<Opinion, bool>>>()
           ))
           .ReturnsAsync(emptyList);
@@ -137,7 +137,7 @@ public class UnitTestOpinionController
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(actionResult.Result);
         Assert.Equal(notFoundErrorMessage, notFoundResult.Value);
-        _mockOpinionRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
+        _mockOpinionRepository.Verify(mockRepository => mockRepository.FindByConditionWithIncludesAsync(
           It.IsAny<Expression<Func<Opinion, bool>>>()
         ), Times.Once);
     }

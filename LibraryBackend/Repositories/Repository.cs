@@ -25,7 +25,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return await _entities.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public virtual async Task<IEnumerable<T?>> FindByConditionAsync(
+    public virtual async Task<IEnumerable<T?>> FindByConditionWithIncludesAsync(
         Expression<Func<T, bool>> condition,
         params Expression<Func<T, bool>>[] includes )
     {
