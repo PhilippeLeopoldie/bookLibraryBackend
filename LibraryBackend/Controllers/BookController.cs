@@ -141,6 +141,16 @@ public class BookController : ControllerBase
         return Ok(booksResponse);
     }
 
+    [HttpGet("genre/{genreId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
+    public Task<ActionResult<BooksListDtoResponse>> GetBookByGenreIdAsync([FromQuery] string genreId)
+    {
+        throw new NotImplementedException();
+    }
+
+
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
