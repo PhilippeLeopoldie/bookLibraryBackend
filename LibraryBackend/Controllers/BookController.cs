@@ -24,7 +24,7 @@ public class BookController : ControllerBase
         _bookService = bookService;
     }
 
-    private ApiError? NullOrWhiteSpaceValidation ( string value)
+    private  ApiError? NullOrWhiteSpaceValidation ( string value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -122,14 +122,12 @@ public class BookController : ControllerBase
     public async Task<ActionResult<BookDtoResponse>> GetBookByTitleOrAuthor([FromQuery] string titleOrAuthor)
     {
         var error = NullOrWhiteSpaceValidation(titleOrAuthor);
-        if (error != null)  BadRequest(error);
+        if (error != null)  return BadRequest(error);
+
+        var books = await _bookService.GetBookByTitleOrAuthor(titleOrAuthor);
         
         titleOrAuthor = titleOrAuthor.ToLower();
-        Expression<Func<Book, bool>> condition = book =>
-          book.Title!.ToLower().Contains(titleOrAuthor)
-          ||
-          book.Author!.ToLower().Contains(titleOrAuthor);
-        var books = await _bookRepository.FindByConditionAsync(condition);
+        
         if (books.IsNullOrEmpty())
         {
             return NotFound($"Book with Title or Author '{titleOrAuthor}' not found");
