@@ -256,30 +256,29 @@ public class UnitTestBookController
     public async Task Should_get_books_by_title_or_author()
     {
         // Arrange
-        string titleOrAuthor = "title1";
+        string mockTitleOrAuthor = "title1";
         var expectedBooks = mockBookData
           .Where(book =>
-            book.Title!.ToLower().Contains(titleOrAuthor)
+            book.Title!.ToLower().Contains(mockTitleOrAuthor)
             ||
-            book.Author!.ToLower().Contains(titleOrAuthor)).ToList();
-        _mockBookRepository
-          .Setup(mockRepository => mockRepository.FindByConditionAsync(
-            It.IsAny<Expression<Func<Book, bool>>>()))
+            book.Author!.ToLower().Contains(mockTitleOrAuthor)).ToList();
+        _mockBookService
+            .Setup(mockService => mockService.GetBookByTitleOrAuthor(mockTitleOrAuthor))
             .ReturnsAsync(expectedBooks);
 
         // Act
-        var books = await _bookController.GetBookByTitleOrAuthor(titleOrAuthor);
+        var books = await _bookController.GetBookByTitleOrAuthor(mockTitleOrAuthor);
 
         // Assert
         Assert.Single(expectedBooks);
         var okResult = Assert.IsType<OkObjectResult>(books.Result);
         var bookDtoResponses = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
-        _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
-          It.IsAny<Expression<Func<Book, bool>>>()), Times.Once);
+        _mockBookService.Verify(mockService => mockService.GetBookByTitleOrAuthor(mockTitleOrAuthor),
+            Times.Once);
         foreach (var bookDtoResponse in bookDtoResponses!)
         {
-            Assert.Equal(titleOrAuthor, bookDtoResponse.Book?.Title);
-            Assert.NotEqual(titleOrAuthor, bookDtoResponse.Book?.Author);
+            Assert.Equal(mockTitleOrAuthor, bookDtoResponse.Book?.Title);
+            Assert.NotEqual(mockTitleOrAuthor, bookDtoResponse.Book?.Author);
         }
     }
 
@@ -287,44 +286,41 @@ public class UnitTestBookController
     public async Task Should_return_NotFound_for_non_existing_title_or_author_in_GetBookByTitleOrAuthor()
     {
         // Arrange
-        string nonExistingTitleOrAuthor = "nonExistingTitleOrAuthor";
-        var emptyBookAuthor = new List<Book>();
-        _mockBookRepository
-        .Setup(mockRepository => mockRepository.FindByConditionAsync(
-          It.IsAny<Expression<Func<Book, bool>>>()
-        ))
-        .ReturnsAsync(emptyBookAuthor);
+        string mockNonExistingTitleOrAuthor = "nonExistingTitleOrAuthor";
+        var mockEmptyBookAuthor = new List<Book>();
+        _mockBookService
+            .Setup(mockService => mockService.GetBookByTitleOrAuthor(mockNonExistingTitleOrAuthor))
+            .ReturnsAsync(mockEmptyBookAuthor);
 
         // Act
-        var emptyBookList = await _bookController.GetBookByTitleOrAuthor(nonExistingTitleOrAuthor);
+        var emptyBookList = await _bookController.GetBookByTitleOrAuthor(mockNonExistingTitleOrAuthor);
 
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(emptyBookList.Result);
-        _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
-          It.IsAny<Expression<Func<Book, bool>>>()), Times.Once);
-        Assert.Equal($"Book with Title or Author '{nonExistingTitleOrAuthor.ToLower()}' not found", notFoundResult.Value);
+        _mockBookService.Verify(mockService => mockService
+            .GetBookByTitleOrAuthor(mockNonExistingTitleOrAuthor),Times.Once);
+        Assert.Equal($"Book with Title or Author '{mockNonExistingTitleOrAuthor.ToLower()}' not found", notFoundResult.Value);
     }
 
     [Fact]
     public async Task Should_return_badRequest_when_empty_title_or_author_is_passed_to_GetBookByTitleOrAuthor()
     {
         // Arrange
-        var emptyAuthor = " ";
-        var emptyBookList = new List<Book>();
-        _mockBookRepository.Setup(mockRepository => mockRepository.FindByConditionAsync(
-          It.IsAny<Expression<Func<Book, bool>>>()
-        )).ReturnsAsync(emptyBookList);
+        var mockEmptyAuthor = " ";
+        var mockEmptyBookList = new List<Book>();
+        _mockBookService
+            .Setup(mockService => mockService.GetBookByTitleOrAuthor(mockEmptyAuthor))
+            .ReturnsAsync(mockEmptyBookList);
 
         // Act
-        var result = await _bookController.GetBookByTitleOrAuthor(emptyAuthor);
+        var result = await _bookController.GetBookByTitleOrAuthor(mockEmptyAuthor);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
         var errorResult = Assert.IsType<ApiError>(badRequestResult.Value);
-        Assert.Equal("Author cannot be empty", errorResult.Detail);
-        _mockBookRepository.Verify(mockRepository => mockRepository.FindByConditionAsync(
-          It.IsAny<Expression<Func<Book, bool>>>()
-        ), Times.Never);
+        Assert.Equal("Expression without argument", errorResult.Detail);
+        _mockBookService.Verify(mockService => mockService.GetBookByTitleOrAuthor(mockEmptyAuthor),
+            Times.Never);
     }
 
     [Fact]
