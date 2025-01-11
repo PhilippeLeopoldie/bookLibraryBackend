@@ -4,6 +4,7 @@ using LibraryBackend.Services;
 using LibraryBackend.Repositories;
 using LibraryBackend.Tests.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace LibraryBackend.Tests.Services;
 
@@ -106,11 +107,15 @@ public class UnitTestBookService
     public async Task Should_Get_Books_By_GenreId()
     {
         // Arrange
-        await _myLibraryContext.AddRangeAsync(_mockBookData);
-        await _myLibraryContext.SaveChangesAsync();
+        var genreId = 2;
+        var expectedBooks = _mockBookData.Where(book => book.GenreId == genreId).ToList();
+        _mockBookRepository
+            .Setup(mockBookRepository => mockBookRepository
+            .FindByConditionAsync(book => book.GenreId == genreId))
+            .ReturnsAsync(expectedBooks);
 
         // Act 
-        var booksByGenreId = await _bookService.GetBooksByGenreIdAsync(2);
+        var booksByGenreId = await _bookService.GetBooksByGenreIdAsync(genreId);
 
         // Assert
         Assert.NotNull(booksByGenreId);
@@ -118,5 +123,7 @@ public class UnitTestBookService
         Assert.Equal(2, booksByGenreId.First()?.GenreId);
         Assert.Equal(new DateOnly(2025,01,10), booksByGenreId.First()?.CreationDate);
         Assert.Equal(2, booksByGenreId?.Count());
+        _mockBookRepository.Verify(mockBookRepository => mockBookRepository
+        .FindByConditionAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
     }
 }
