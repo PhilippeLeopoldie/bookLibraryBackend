@@ -12,7 +12,6 @@ public class UnitTestBookService
 {
     readonly IBookService _bookService;
     readonly Mock<IRepository<Book>> _mockBookRepository;
-    readonly MyLibraryContext _myLibraryContext;
     readonly List<Book> _mockBookData;
 
 
@@ -26,8 +25,7 @@ public class UnitTestBookService
           .UseInMemoryDatabase("TestBookDatabase")
           .Options;
 
-        _myLibraryContext = new MyLibraryContext(options);
-        _bookService = new BookService(_mockBookRepository.Object, _myLibraryContext);
+        _bookService = new BookService(_mockBookRepository.Object);
     }
 
 
@@ -91,11 +89,13 @@ public class UnitTestBookService
     public async Task Should_Get_Highest_Rate_in_HighestAverageRate()
     {
         // Arrange
-        await _myLibraryContext.AddRangeAsync(_mockBookData);
-        await _myLibraryContext.SaveChangesAsync();
+        var numberOfBooks = 1;
+        _mockBookRepository
+            .Setup(mockRepository => mockRepository.GetAllAsync())
+            .ReturnsAsync(_mockBookData);
 
         // Act
-        var highestRateBook = await _bookService.GetBooksWhithHighestAverageRate(1);
+        var highestRateBook = await _bookService.GetBooksWhithHighestAverageRate(numberOfBooks);
 
         // Assert
         Assert.NotNull(highestRateBook);

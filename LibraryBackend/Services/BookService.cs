@@ -8,11 +8,11 @@ namespace LibraryBackend.Services;
 public class BookService : IBookService
 {
     private readonly IRepository<Book> _bookRepository;
-    private readonly MyLibraryContext _dbContext;
-    public BookService(IRepository<Book> bookRepository, MyLibraryContext dbContext)
+    
+    public BookService(IRepository<Book> bookRepository)
     {
         _bookRepository = bookRepository;
-        _dbContext = dbContext;
+        
     }
 
     // Most popular books are those with the biggest number of reviews with a rate >=3
@@ -34,12 +34,9 @@ public class BookService : IBookService
    
     public virtual async Task<IEnumerable<Book>?> GetBooksWhithHighestAverageRate(int numberOfBooks)
     {
-        var books = await _dbContext.Book
-            .Include(book => book.Opinions)
-            .ToListAsync();
-        var mostPopularBooks = GetMostPopularBooks(books, numberOfBooks);
-
-        return mostPopularBooks;
+        var books = await GetListOfBooksAsync();
+        if (books == null) return null;
+        return GetMostPopularBooks(books!, numberOfBooks);
     }
 
     public async Task<Book?> EditAverageRate(int bookId, double average)

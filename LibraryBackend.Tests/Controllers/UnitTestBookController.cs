@@ -18,13 +18,11 @@ public class UnitTestBookController
     readonly BookController _bookController;
     readonly Mock<IRepository<Book>> _mockBookRepository;
     readonly Mock<BookService> _mockBookService;
-    readonly MyLibraryContext _mylibraryContext;
     readonly List<Book> mockBookData;
     public UnitTestBookController()
     {
         _mockBookRepository = new Mock<IRepository<Book>>();
-        _mylibraryContext = new MyLibraryContext(new DbContextOptions<MyLibraryContext>());
-        _mockBookService = new Mock<BookService>(_mockBookRepository.Object, _mylibraryContext);
+        _mockBookService = new Mock<BookService>(_mockBookRepository.Object);
         _bookController = new BookController(_mockBookRepository.Object, _mockBookService.Object);
         mockBookData = MockData.GetMockData();
     }
