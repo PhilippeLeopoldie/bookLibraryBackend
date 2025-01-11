@@ -16,7 +16,7 @@ public class BookService : IBookService
     }
 
     // Most popular books are those with the biggest number of reviews with a rate >=3
-    private IEnumerable<Book>? GetMostPopularBooks(List<Book> books, int numberOfBooks)
+    private IEnumerable<Book>? GetMostPopularBooks(IEnumerable<Book> books, int numberOfBooks)
     {
         var mostPopularBooks = books
             .Where(book => book.Opinions != null && book.Opinions.Any(opinion => opinion.Rate >= 3))
