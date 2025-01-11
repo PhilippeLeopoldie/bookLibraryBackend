@@ -177,7 +177,7 @@ public class UnitTestBookController
     {
         // Arrange      
         _mockBookService
-        .Setup(mockService => mockService.GetBooksWhithHighestAverageRate(1))
+        .Setup(mockService => mockService.GetBooksWithHighestAverageRate(1))
         .ReturnsAsync(mockBookData.Take(1).ToList());
 
         // Act
@@ -197,7 +197,7 @@ public class UnitTestBookController
         // Arrange
 
         _mockBookService
-        .Setup(mockService => mockService.GetBooksWhithHighestAverageRate(1))
+        .Setup(mockService => mockService.GetBooksWithHighestAverageRate(1))
         .ReturnsAsync(null as List<Book>);
 
         // Act

@@ -95,7 +95,7 @@ public class UnitTestBookService
             .ReturnsAsync(_mockBookData);
 
         // Act
-        var highestRateBook = await _bookService.GetBooksWhithHighestAverageRate(numberOfBooks);
+        var highestRateBook = await _bookService.GetBooksWithHighestAverageRate(numberOfBooks);
 
         // Assert
         Assert.NotNull(highestRateBook);

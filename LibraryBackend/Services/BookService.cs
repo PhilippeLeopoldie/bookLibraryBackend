@@ -31,7 +31,7 @@ public class BookService : IBookService
         return mostPopularBooks;
     }
 
-    public virtual async Task<IEnumerable<Book>?> GetBooksWhithHighestAverageRate(int numberOfBooks)
+    public virtual async Task<IEnumerable<Book>?> GetBooksWithHighestAverageRate(int numberOfBooks)
     {
         var books = await GetListOfBooksAsync();
         if (books == null) return null;

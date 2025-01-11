@@ -76,7 +76,7 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<BooksListDtoResponse>> GetHighestAverageRate([FromQuery] int numberOfBooks)
     {
-        var topBooks = await _bookService.GetBooksWhithHighestAverageRate(numberOfBooks);
+        var topBooks = await _bookService.GetBooksWithHighestAverageRate(numberOfBooks);
 
         if (topBooks == null || !topBooks.Any())
         {
