@@ -40,7 +40,7 @@ public class UnitTestBookService
           .ReturnsAsync(_mockBookData);
 
         // Act
-        var listOfBooks = await _bookService.ListOfBooksAsync();
+        var listOfBooks = await _bookService.GetListOfBooksAsync();
 
         // Assert
         Assert.NotNull(listOfBooks);

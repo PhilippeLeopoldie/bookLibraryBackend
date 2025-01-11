@@ -55,7 +55,7 @@ public class BookService : IBookService
         return updatedBook;
     }
 
-    public virtual async Task<IEnumerable<Book?>> ListOfBooksAsync()
+    public virtual async Task<IEnumerable<Book?>> GetListOfBooksAsync()
     {
         return await _bookRepository.GetAllAsync();
     }

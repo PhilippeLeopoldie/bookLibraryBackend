@@ -44,7 +44,7 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<BooksListDtoResponse>> GetBooks([FromQuery] int page, int pageSize)
     {
-        var books = await _bookService.ListOfBooksAsync();
+        var books = await _bookService.GetListOfBooksAsync();
         if (books == null || !books.Any())
         {
             return NotFound("No books found!");
