@@ -15,9 +15,14 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         _entities = context.Set<T>();
     }
 
-    public virtual async Task<IEnumerable<T>> GetAllAsync()
+    public virtual async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
     {
-        return await _entities.OrderByDescending(entity => entity.Id).ToListAsync();
+        IQueryable<T> query = _entities;
+        foreach (var include in includes)
+        {
+            query = query.Include(include);
+        }
+        return await query.OrderByDescending(entity => entity.Id).ToListAsync();
     }
 
     public virtual async Task<T?> GetByIdAsync(int id)

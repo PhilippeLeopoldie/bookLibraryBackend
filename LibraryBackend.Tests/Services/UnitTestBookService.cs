@@ -91,7 +91,7 @@ public class UnitTestBookService
         // Arrange
         var numberOfBooks = 1;
         _mockBookRepository
-            .Setup(mockRepository => mockRepository.GetAllAsync())
+            .Setup(mockRepository => mockRepository.GetAllAsync(book => book.Opinions))
             .ReturnsAsync(_mockBookData);
 
         // Act

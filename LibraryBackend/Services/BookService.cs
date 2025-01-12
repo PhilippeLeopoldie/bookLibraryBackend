@@ -33,9 +33,9 @@ public class BookService : IBookService
 
     public virtual async Task<IEnumerable<Book>?> GetBooksWithHighestAverageRate(int numberOfBooks)
     {
-        var books = await GetListOfBooksAsync();
+        var books = await _bookRepository.GetAllAsync(book => book.Opinions);
         if (books == null) return null;
-        return GetMostPopularBooks(books!, numberOfBooks);
+        return GetMostPopularBooks(books, numberOfBooks);
     }
 
     public async Task<Book?> EditAverageRate(int bookId, double average)

@@ -5,7 +5,7 @@ namespace LibraryBackend.Repositories;
 
 public interface IRepository<T> where T : BaseEntity
 {
-    Task<IEnumerable<T>> GetAllAsync();
+    Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);
 
     Task<T?> GetByIdAsync(int id);
 
