@@ -15,6 +15,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         _entities = context.Set<T>();
     }
 
+    // params is optional, Zero or more Expressions argument can be passed
     public virtual async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
     {
         IQueryable<T> query = _entities;
@@ -33,19 +34,21 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return await _entities.FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    // params is optional, Zero or more Expressions argument can be passed
     public virtual async Task<IEnumerable<T?>> FindByConditionWithIncludesAsync(
         Expression<Func<T, bool>> condition,
-        params Expression<Func<T, object>>[] includes )
+        params Expression<Func<T, object>>[] includes)
     {
-        IQueryable<T> query =  _entities.Where(condition);
+        IQueryable<T> query = _entities.Where(condition);
 
-        // param is optional, Zero or more Expressions argument can be passed
-        foreach (var include in includes)
+        if (includes.Any())
         {
-            query =  query.Include(include);
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
         }
         return await query.ToListAsync();
-        //return await _entities.Where(predicate).ToListAsync();
     }
 
     public virtual async Task<T> Create(T entity)
