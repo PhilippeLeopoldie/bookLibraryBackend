@@ -34,7 +34,7 @@ public class UnitTestBookController
     {
         // arrange
         _mockBookService
-          .Setup(mockBookService => mockBookService.GetListOfBooksAsync())
+          .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync())
           .ReturnsAsync(mockBookData);
 
         // Act
@@ -48,7 +48,7 @@ public class UnitTestBookController
         Assert.Equal(9, result?.Books?.ElementAt(0)?.Id);
         Assert.Equal("author9", result?.Books?.ElementAt(0)?.Author);
 
-        _mockBookService.Verify(mockBookService => mockBookService.GetListOfBooksAsync(), Times.Once);
+        _mockBookService.Verify(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(), Times.Once);
     }
 
     [Theory]
@@ -57,7 +57,7 @@ public class UnitTestBookController
     {
         // arrange
         _mockBookService
-          .Setup(mockBookService => mockBookService.GetListOfBooksAsync())
+          .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync())
           .ReturnsAsync(mockBookData);
 
         // Act
@@ -71,7 +71,7 @@ public class UnitTestBookController
         Assert.Equal(7, result.Books?.ElementAt(0)?.Id);
         Assert.Equal("author7", result?.Books?.ElementAt(0)?.Author);
         //Assert.Equal(2, books?.ElementAt(1).Book?.Id);
-        _mockBookService.Verify(mockBookService => mockBookService.GetListOfBooksAsync(), Times.Once);
+        _mockBookService.Verify(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(), Times.Once);
     }
 
     [Theory]
@@ -82,7 +82,7 @@ public class UnitTestBookController
         List<Book>? mockNullBookData = null;
 #pragma warning disable CS8604
         _mockBookService
-        .Setup(mockBookService => mockBookService.GetListOfBooksAsync())
+        .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync())
         .ReturnsAsync(mockNullBookData);
 #pragma warning restore CD8604
 
@@ -92,7 +92,7 @@ public class UnitTestBookController
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
         Assert.Equal("No books found!", notFoundResult.Value);
-        _mockBookService.Verify(mockBookService => mockBookService.GetListOfBooksAsync(), Times.Once);
+        _mockBookService.Verify(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(), Times.Once);
     }
 
     [Theory]
@@ -102,7 +102,7 @@ public class UnitTestBookController
         // arrange
         List<Book>? mockEmptyBookData = new();
         _mockBookService
-        .Setup(mockBookService => mockBookService.GetListOfBooksAsync())
+        .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync())
         .ReturnsAsync(mockEmptyBookData!);
 
         // Act
@@ -111,7 +111,7 @@ public class UnitTestBookController
         // Assert
         var notfoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
         Assert.Equal("No books found!", notfoundResult.Value);
-        _mockBookService.Verify(mockBookService => mockBookService.GetListOfBooksAsync(), Times.Once);
+        _mockBookService.Verify(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(), Times.Once);
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class UnitTestBookController
         var page = -1;
         var pageSize = 3;
         _mockBookService
-          .Setup(mockBookService => mockBookService.GetListOfBooksAsync())
+          .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync())
           .ReturnsAsync(mockBookData);
 
         // act
@@ -140,7 +140,7 @@ public class UnitTestBookController
         var page = 1;
         var pageSize = 8;
         _mockBookService
-          .Setup(mockBookService => mockBookService.GetListOfBooksAsync())
+          .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync())
           .ReturnsAsync(mockBookData);
 
         // act
@@ -161,7 +161,7 @@ public class UnitTestBookController
         //var page = 6;
         //var pageSize = 3;
         _mockBookService
-          .Setup(mockBookService => mockBookService.GetListOfBooksAsync())
+          .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync())
           .ReturnsAsync(mockBookData);
         // Act
         var result = await _bookController.GetBooks(page, pageSize);

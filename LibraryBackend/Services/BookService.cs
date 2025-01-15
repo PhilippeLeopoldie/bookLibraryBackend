@@ -51,9 +51,9 @@ public class BookService : IBookService
         return updatedBook;
     }
 
-    public virtual async Task<IEnumerable<Book?>> GetListOfBooksAsync()
+    public virtual async Task<IEnumerable<Book?>> GetListOfBooksWithOpinionsAsync()
     {
-        return await _bookRepository.GetAllAsync();
+        return await _bookRepository.GetAllAsync(book => book.Opinions);
     }
 
     public virtual async Task<IEnumerable<Book?>> GetBooksByGenreIdAsync (int genreId)

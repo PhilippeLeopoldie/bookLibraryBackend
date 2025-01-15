@@ -47,7 +47,7 @@ public class BookController : ControllerBase
         {
             return BadRequest($"Invalid, 'page' must be > 0 and 'pageSize' must be between 0 and {pageSizeLimit + 1}");
         }
-        var books = await _bookService.GetListOfBooksAsync();
+        var books = await _bookService.GetListOfBooksWithOpinionsAsync();
 
         if (books == null || !books.Any()) return NotFound("No books found!");
        

@@ -34,16 +34,16 @@ public class UnitTestBookService
     {
         // Arrange
         _mockBookRepository
-          .Setup(mockBookRepository => mockBookRepository.GetAllAsync())
+          .Setup(mockBookRepository => mockBookRepository.GetAllAsync(It.IsAny<Expression<Func<Book, object>>>()))
           .ReturnsAsync(_mockBookData);
 
         // Act
-        var listOfBooks = await _bookService.GetListOfBooksAsync();
+        var listOfBooks = await _bookService.GetListOfBooksWithOpinionsAsync();
 
         // Assert
         Assert.NotNull(listOfBooks);
         Assert.IsAssignableFrom<IEnumerable<Book>>(listOfBooks);
-        _mockBookRepository.Verify(repo => repo.GetAllAsync(), Times.Once);
+        _mockBookRepository.Verify(repo => repo.GetAllAsync(It.IsAny<Expression<Func<Book, object>>>()), Times.Once);
         Assert.Equal(9, listOfBooks.Count());
     }
 
