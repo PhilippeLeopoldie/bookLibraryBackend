@@ -11,7 +11,7 @@ public interface IRepository<T> where T : BaseEntity
 
     Task<IEnumerable<T?>> FindByConditionWithIncludesAsync(
         Expression<Func<T, bool>> condition,
-        params Expression<Func<T, bool>>[] includes);
+        params Expression<Func<T, object>>[] includes);
 
     Task<T> Create(T newEntity);
 

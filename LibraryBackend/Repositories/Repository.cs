@@ -18,10 +18,10 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     public virtual async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
     {
         IQueryable<T> query = _entities;
-        foreach (var include in includes)
-        {
-            query = query.Include(include);
-        }
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
         return await query.OrderByDescending(entity => entity.Id).ToListAsync();
     }
 
@@ -32,7 +32,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
     public virtual async Task<IEnumerable<T?>> FindByConditionWithIncludesAsync(
         Expression<Func<T, bool>> condition,
-        params Expression<Func<T, bool>>[] includes )
+        params Expression<Func<T, object>>[] includes )
     {
         IQueryable<T> query =  _entities.Where(condition);
 
