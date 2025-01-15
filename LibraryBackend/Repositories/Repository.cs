@@ -18,10 +18,13 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     public virtual async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
     {
         IQueryable<T> query = _entities;
+        if (includes.Any())
+        {
             foreach (var include in includes)
             {
                 query = query.Include(include);
             }
+        }
         return await query.OrderByDescending(entity => entity.Id).ToListAsync();
     }
 
