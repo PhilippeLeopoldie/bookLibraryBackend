@@ -62,7 +62,7 @@ public class BookService : IBookService
         
         if (listOfGenreId != "All" && !validation.Any())
         {
-            throw new ArgumentException("Genre list contain invalid entries");
+            throw new FormatException("Genre list contain invalid entries");
         }
 
         Expression<Func<Book, bool>> condition;
