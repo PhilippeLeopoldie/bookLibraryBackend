@@ -43,7 +43,7 @@ public static List<Book> GetMockData ()
     Id = 2,
     Title ="title2",
     Author ="author2",
-    CreationDate = new DateOnly(2025,01,10),
+    CreationDate = new DateOnly(2025,01,9),
     GenreId = 3,
   },
   new Book
