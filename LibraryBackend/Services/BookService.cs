@@ -56,14 +56,33 @@ public class BookService : IBookService
         return await _bookRepository.GetAllAsync(book => book.Opinions);
     }
 
-    public virtual async Task<IEnumerable<Book?>> GetBooksByGenreIdAsync (int genreId)
+    public virtual async Task<IEnumerable<Book?>> GetBooksByGenreIdAsync (string listOfGenreId)
     {
-        var books = await _bookRepository
-            .FindByConditionWithIncludesAsync(book => book.GenreId == genreId);
+        var validation = listOfGenreId.Split(",").Where(genreId => int.TryParse(genreId, out int result));
+        
+        if (listOfGenreId != "All" && !validation.Any())
+        {
+            throw new ArgumentException("Genre list contain invalid entries");
+        }
 
-        return books
-            .Where(Book => Book != null)
-            .OrderByDescending(books => books!.CreationDate);
+        Expression<Func<Book, bool>> condition;
+        
+        if (listOfGenreId == "All") 
+        {
+            condition = book => book.GenreId.HasValue ;
+        }
+        else 
+        {
+            var genresId = listOfGenreId
+                .Split(",")
+                .Select(int.Parse)
+                .ToList();
+            condition = book => book.GenreId.HasValue 
+            && 
+            genresId.Contains(book.GenreId.Value);
+        };
+        var listOfBooks = await _bookRepository.FindByConditionWithIncludesAsync(condition);
+        return listOfBooks.OrderByDescending(books => books?.CreationDate);
     }
 
     public virtual async Task<IEnumerable<Book?>> GetBookByTitleOrAuthor (string titleOrAuthor)
