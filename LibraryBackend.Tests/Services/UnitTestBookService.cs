@@ -188,7 +188,7 @@ public class UnitTestBookService
     [InlineData("Alt")]
     [InlineData("")]
     [InlineData(" ")]
-    public async Task Should_ThrowArgumentException_When_Invalid_GenreId_At_Get_Books_By_GenreId(string listOfGenreId)
+    public async Task Should_FormatException_When_Invalid_GenreId_At_Get_Books_By_GenreId(string listOfGenreId)
     {
         // Arrange
         var expectedBooks = Enumerable.Empty<Book>();
@@ -197,11 +197,9 @@ public class UnitTestBookService
                 .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()))
             .ReturnsAsync(expectedBooks);
 
-        // Act 
-        var exception = await Assert.ThrowsAnyAsync<ArgumentException>( () =>
+        // Act Assert
+        var exception = await Assert.ThrowsAnyAsync<FormatException>( () =>
             _bookService.GetBooksByGenreIdAsync(listOfGenreId));
-        
-        // Assert
         Assert.NotNull(exception);
         Assert.Equal("Genre list contain invalid entries", exception.Message);
         _mockBookRepository.Verify(mockBookRepository => mockBookRepository
