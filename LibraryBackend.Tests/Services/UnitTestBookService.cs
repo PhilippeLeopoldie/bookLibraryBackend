@@ -103,27 +103,108 @@ public class UnitTestBookService
         Assert.Equal("title1", highestRateBook.First().Title);
     }
 
-    [Fact]
-    public async Task Should_Get_Books_By_GenreId()
+    
+    [Theory]
+    [InlineData("2",2)]
+    [InlineData("3,2",3)]
+    public async Task Should_Get_Books_By_GenreId(string listOfGenreId, int expectedCount)
     {
         // Arrange
-        var genreId = 2;
-        var expectedBooks = _mockBookData.Where(book => book.GenreId == genreId).ToList();
+        var genresId = listOfGenreId
+                .Split(",")
+                .Select(int.Parse)
+                .ToList(); 
+        var expectedBooks = _mockBookData
+            .Where(book  => book.GenreId.HasValue
+            &&
+            genresId.Contains(book.GenreId.Value));
         _mockBookRepository
             .Setup(mockBookRepository => mockBookRepository
-            .FindByConditionWithIncludesAsync(book => book.GenreId == genreId))
+                .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()))
             .ReturnsAsync(expectedBooks);
 
         // Act 
-        var booksByGenreId = await _bookService.GetBooksByGenreIdAsync(genreId);
+        var booksByGenreId = await _bookService.GetBooksByGenreIdAsync(listOfGenreId);
 
         // Assert
         Assert.NotNull(booksByGenreId);
         Assert.IsAssignableFrom<IEnumerable<Book>>(booksByGenreId);
         Assert.Equal(2, booksByGenreId.First()?.GenreId);
         Assert.Equal(new DateOnly(2025,01,10), booksByGenreId.First()?.CreationDate);
-        Assert.Equal(2, booksByGenreId?.Count());
+        Assert.Equal(expectedCount, booksByGenreId?.Count());
         _mockBookRepository.Verify(mockBookRepository => mockBookRepository
         .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
+    }
+
+    [Theory]
+    [InlineData("All", 3)]
+    public async Task Should_Get_AllBooks_By_GenreId_When_GenreId_Is_All(string listOfGenreId, int expectedCount)
+    {
+        // Arrange
+        
+        var expectedBooks = _mockBookData
+            .Where(book => book.GenreId.HasValue);
+        _mockBookRepository
+            .Setup(mockBookRepository => mockBookRepository
+                .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()))
+            .ReturnsAsync(expectedBooks);
+
+        // Act 
+        var booksByGenreId = await _bookService.GetBooksByGenreIdAsync(listOfGenreId);
+
+        // Assert
+        Assert.NotNull(booksByGenreId);
+        Assert.IsAssignableFrom<IEnumerable<Book>>(booksByGenreId);
+        Assert.Equal(2, booksByGenreId.First()?.GenreId);
+        Assert.Equal(new DateOnly(2025, 01, 10), booksByGenreId.First()?.CreationDate);
+        Assert.Equal(expectedCount, booksByGenreId?.Count());
+        _mockBookRepository.Verify(mockBookRepository => mockBookRepository
+        .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
+    }
+
+    [Theory]
+    [InlineData("999")]
+    public async Task Should_Return_EmptyList_When_Book_Mismatch_At_Get_Books_By_GenreId(string listOfGenreId)
+    {
+        // Arrange
+        var expectedBooks = Enumerable.Empty<Book>();
+        _mockBookRepository
+            .Setup(mockBookRepository => mockBookRepository
+                .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()))
+            .ReturnsAsync(expectedBooks);
+
+        // Act 
+        var result = await _bookService.GetBooksByGenreIdAsync(listOfGenreId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsAssignableFrom<IEnumerable<Book>>(result);
+        Assert.Empty(result);
+        _mockBookRepository.Verify(mockBookRepository => mockBookRepository
+        .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
+    }
+
+    [Theory]
+    [InlineData("Alt")]
+    [InlineData("")]
+    [InlineData(" ")]
+    public async Task Should_ThrowArgumentException_When_Invalid_GenreId_At_Get_Books_By_GenreId(string listOfGenreId)
+    {
+        // Arrange
+        var expectedBooks = Enumerable.Empty<Book>();
+        _mockBookRepository
+            .Setup(mockBookRepository => mockBookRepository
+                .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()))
+            .ReturnsAsync(expectedBooks);
+
+        // Act 
+        var exception = await Assert.ThrowsAnyAsync<ArgumentException>( () =>
+            _bookService.GetBooksByGenreIdAsync(listOfGenreId));
+        
+        // Assert
+        Assert.NotNull(exception);
+        Assert.Equal("Genre list contain invalid entries", exception.Message);
+        _mockBookRepository.Verify(mockBookRepository => mockBookRepository
+        .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Never());
     }
 }
