@@ -138,13 +138,29 @@ public class BookController : ControllerBase
         return Ok(booksResponse);
     }
 
-    [HttpGet("genre/{genreId}")]
+    [HttpGet("genre")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
-    public Task<ActionResult<BooksListDtoResponse>> GetBookByGenreIdAsync([FromQuery] string genreId)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<BooksListDtoResponse>> GetBookByGenreIdAsync([FromQuery] string genresId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var books = await _bookService.GetBooksByGenreIdAsync(genresId);
+            if (!books.Any())
+            {
+                return NotFound("No books found");
+            }
+            return Ok(new BooksListDtoResponse
+            {
+                Books = books,
+                RequestedAt = DateTime.Now.ToString(dateTimeFormat)
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
 
