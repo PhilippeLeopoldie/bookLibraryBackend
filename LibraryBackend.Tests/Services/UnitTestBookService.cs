@@ -107,6 +107,9 @@ public class UnitTestBookService
     [Theory]
     [InlineData("2",2)]
     [InlineData("3,2",3)]
+    [InlineData("3,3,2", 3)]
+    [InlineData("2,3,2,2", 3)]
+    [InlineData("2,2,3,2", 3)]
     public async Task Should_Get_Books_By_GenreId(string listOfGenreId, int expectedCount)
     {
         // Arrange
