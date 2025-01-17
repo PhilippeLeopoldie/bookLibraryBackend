@@ -154,7 +154,8 @@ public class BookController : ControllerBase
             return Ok(new BooksListDtoResponse
             {
                 Books = books,
-                RequestedAt = DateTime.Now.ToString(dateTimeFormat)
+                TotalBooksCount = books.Count(),
+                RequestedAt = DateTime.Now.ToString(dateTimeFormat),
             });
         }
         catch (Exception ex)
