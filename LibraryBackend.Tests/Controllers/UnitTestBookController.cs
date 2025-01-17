@@ -115,7 +115,7 @@ public class UnitTestBookController
     }
 
     [Fact]
-    public async Task Should_return_bad_request_when_page_is_invalide_in_GetBooks()
+    public async Task Should_return_bad_request_when_page_is_invalid_in_GetBooks()
     {
         // arrange
         var page = -1;
@@ -134,7 +134,7 @@ public class UnitTestBookController
     }
 
     [Fact]
-    public async Task Should_return_bad_request_when_pageSize_is_invalide_in_GetBooks()
+    public async Task Should_return_bad_request_when_pageSize_is_invalid_in_GetBooks()
     {
         // arrange
         var page = 1;
