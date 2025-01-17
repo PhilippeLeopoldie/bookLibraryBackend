@@ -321,6 +321,32 @@ public class UnitTestBookController
             Times.Never);
     }
 
+    [Theory]
+    [InlineData("2,3",3)]
+    [InlineData("2,2,3,2",3)]
+    public async Task Should_Get_Book_By_GenreIdAsync(string listOfGenreId, int expectedCount) 
+    {
+        // Arrange
+        var genresId = listOfGenreId
+                .Split(",")
+                .Select(int.Parse)
+                .ToList();
+        var expectedBooks = mockBookData
+            .Where(book => book.GenreId.HasValue
+            &&
+            genresId.Contains(book.GenreId.Value));
+        _mockBookService
+            .Setup(mockService => mockService.GetBooksByGenreIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(expectedBooks);
+        // Act
+        var booksByGenreId = await _bookController.GetBookByGenreIdAsync(listOfGenreId);
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(booksByGenreId.Result);
+        Assert.Equal(200, okResult.StatusCode);
+        var listOfBooksResponse = Assert.IsType<BooksListDtoResponse>(okResult.Value);
+        Assert.Equal(expectedCount, listOfBooksResponse.Books.Count());
+    }
+
     [Fact]
     public async Task Should_create_one_book_in_CreateBook()
     {
