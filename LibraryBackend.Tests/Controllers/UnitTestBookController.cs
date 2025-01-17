@@ -348,6 +348,25 @@ public class UnitTestBookController
     }
 
     [Fact]
+    public async Task Should_return_Not_Found_When_MissMatch_At_GetBookByGenreIdAsync()
+    {
+        // Arrange
+        var missMatchGenreId = "999";
+        var expectedBooks = Enumerable.Empty<Book>();
+        _mockBookService
+            .Setup(mockService => mockService.GetBooksByGenreIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(expectedBooks);
+        // Act
+        var booksByGenreId = await _bookController.GetBookByGenreIdAsync(missMatchGenreId);
+        // Assert
+        var notFoundResult = Assert.IsType<NotFoundObjectResult>(booksByGenreId.Result);
+        Assert.Equal("No books found", notFoundResult.Value);
+        _mockBookService.Verify(mockService => mockService.GetBooksByGenreIdAsync(missMatchGenreId), Times.Once());
+    }
+
+
+
+    [Fact]
     public async Task Should_create_one_book_in_CreateBook()
     {
         // Arrange
