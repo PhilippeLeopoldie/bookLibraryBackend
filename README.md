@@ -32,22 +32,22 @@ This backend is deployed on heroku platform using postgres as database on a Verc
 
 5. **Add Entity Framework Tools:**
     ```bash
-    dotnet add package Microsoft.EntityFrameworkCore.Tools
+    dotnet add package Microsoft.EntityFrameworkCore.Tools -version 9.0.0
     ```
 
 6. **Add Entity Framework Design:**
     ```bash
-    dotnet add package Microsoft.EntityFrameworkCore.Design
+    dotnet add package Microsoft.EntityFrameworkCore.Design -version 9.0.0
     ```
 
 7. **Add CodeGeneration.Design (if needed):**
     ```bash
-    dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design -version 6
+    dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design -version 9.0.0
     ```
 
 8. **Add Database Provider (Choose one):**
     ```bash
-    dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
+    dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL -version 9.0.2
     ```
 
 9. **Run the Backend Locally:**
@@ -61,6 +61,8 @@ This backend is deployed on heroku platform using postgres as database on a Verc
 ## Technologies
 
   - .Net 9.0.0
+
+  - C# 13
 
   - ASP.NET Core Web APIs
   
