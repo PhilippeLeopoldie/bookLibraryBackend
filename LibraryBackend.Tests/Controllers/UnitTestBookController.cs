@@ -450,7 +450,7 @@ public class UnitTestBookController
     }
 
     [Fact]
-    public async Task Should_return_badrequest_when_empty_Title_and_Author_in_UpdateBook()
+    public async Task Should_return_badRequest_when_empty_Title_and_Author_in_UpdateBook()
     {
         // Arrange
         var id = 2;
@@ -480,7 +480,7 @@ public class UnitTestBookController
     }
 
     [Fact]
-    public async Task Should_return_badrequest_when_empty_Title_in_UpdateBook_()
+    public async Task Should_return_badRequest_when_empty_Title_in_UpdateBook_()
     {
         // Arrange
         var id = 2;
