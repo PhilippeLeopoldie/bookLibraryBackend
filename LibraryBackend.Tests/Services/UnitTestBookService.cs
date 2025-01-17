@@ -204,7 +204,7 @@ public class UnitTestBookService
         var exception = await Assert.ThrowsAnyAsync<FormatException>( () =>
             _bookService.GetBooksByGenreIdAsync(listOfGenreId));
         Assert.NotNull(exception);
-        Assert.Equal("Genre list contain invalid entries", exception.Message);
+        Assert.Equal("Genre list contains invalid entries", exception.Message);
         _mockBookRepository.Verify(mockBookRepository => mockBookRepository
         .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Never());
     }
