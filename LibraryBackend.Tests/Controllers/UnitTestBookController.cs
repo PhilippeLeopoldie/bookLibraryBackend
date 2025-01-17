@@ -364,7 +364,23 @@ public class UnitTestBookController
         _mockBookService.Verify(mockService => mockService.GetBooksByGenreIdAsync(missMatchGenreId), Times.Once());
     }
 
+    [Fact]
+    public async Task Should_return_BadRequest_When_NonValid_Entries_At_GetBookByGenreIdAsync()
+    {
+        // Arrange
+        var exception = new FormatException("Genre list contains invalid entries");
 
+        _mockBookService
+            .Setup(mockService => mockService.GetBooksByGenreIdAsync(It.IsAny<string>()))
+            .ThrowsAsync(exception);
+            
+        // Act
+        var response = await _bookController.GetBookByGenreIdAsync(It.IsAny<string>());
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
+        Assert.Equal("Genre list contains invalid entries", badRequestResult.Value);
+        _mockBookService.Verify(mockService => mockService.GetBooksByGenreIdAsync(It.IsAny<string>()), Times.Once());
+    }
 
     [Fact]
     public async Task Should_create_one_book_in_CreateBook()
