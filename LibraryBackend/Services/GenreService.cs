@@ -1,27 +1,18 @@
 ﻿using LibraryBackend.Models;
-using Microsoft.EntityFrameworkCore;
-
-
+using LibraryBackend.Repositories;
 namespace LibraryBackend.Services;
 
 public class GenreService : IGenreService
 {
-    
-   
-    private readonly MyLibraryContext _libraryContext;
-
-    public GenreService( MyLibraryContext libraryContext)
+    private readonly IRepository<Genre> _genreRepository;
+    public GenreService( IRepository<Genre> genreRepository)
     {
-        
-        _libraryContext = libraryContext;
+        _genreRepository = genreRepository;
     }
 
     public virtual async Task<IEnumerable<Genre>?> ListOfGenresAsync()
     {
-        var genres = await _libraryContext.Genre
-            .Include(genre => genre.Books)
-            .OrderBy(genre => genre.Name)
-            .ToListAsync();
+        var genres = await _genreRepository.GetAllAsync();
         return genres;
     }
 }
