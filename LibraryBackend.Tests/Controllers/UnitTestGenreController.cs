@@ -4,9 +4,7 @@ using LibraryBackend.Repositories;
 using LibraryBackend.Services;
 using LibraryBackend.Tests.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Moq;
-
 namespace LibraryBackend.Tests.Controllers;
 
 public class UnitTestGenreController
@@ -14,14 +12,12 @@ public class UnitTestGenreController
     readonly GenreController _genreController;
     readonly Mock<IRepository<Genre>> _mockGenreRepository;
     readonly Mock<GenreService> _mockGenreService;
-    readonly MyLibraryContext _mylibraryContext;
     readonly List<Genre> mockGenreData;
 
     public UnitTestGenreController() 
     {
         _mockGenreRepository = new Mock<IRepository<Genre>>();
-        _mylibraryContext = new MyLibraryContext(new DbContextOptions<MyLibraryContext>());
-        _mockGenreService = new Mock<GenreService>( _mylibraryContext);
+        _mockGenreService = new Mock<GenreService>( _mockGenreRepository.Object);
         _genreController = new GenreController(_mockGenreRepository.Object, _mockGenreService.Object);
         mockGenreData = MockData.GetGenreMockData();
     }
@@ -40,5 +36,4 @@ public class UnitTestGenreController
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(getGenreResult.Result);
     }
-
 }
