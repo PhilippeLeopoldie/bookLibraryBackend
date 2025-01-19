@@ -1,36 +1,31 @@
 ﻿using LibraryBackend.Models;
+using LibraryBackend.Repositories;
 using LibraryBackend.Services;
 using LibraryBackend.Tests.Data;
-using Microsoft.EntityFrameworkCore;
-
-
+using Moq;
 namespace LibraryBackend.Tests.Services;
 
 public class UnitTestGenreService
 {
     readonly IGenreService _genreService;
     readonly List<Genre> _mockGenreData;
-    readonly MyLibraryContext _myLibraryContext;
+    readonly Mock<IRepository<Genre>> _mockGenreRepository;
 
     public UnitTestGenreService ()
     {
-        
         _mockGenreData = MockData.GetGenreMockData ();
-
-        //in-memory DbContext
-        var option = new DbContextOptionsBuilder<MyLibraryContext>()
-            .UseInMemoryDatabase("TestGenreDatabase")
-            .Options;
-        _myLibraryContext = new MyLibraryContext (option);
-        _myLibraryContext.Genre.AddRange(_mockGenreData);
-        _myLibraryContext.SaveChangesAsync ();
-
-        _genreService = new GenreService( _myLibraryContext);
+        _mockGenreRepository = new Mock<IRepository<Genre>>();
+        _genreService = new GenreService( _mockGenreRepository!.Object);
     }
 
     [Fact]
     public async Task Should_GetAllGenres_async()
     {
+        // arrange
+        _mockGenreRepository
+            .Setup(mockGenreRepository => mockGenreRepository.GetAllAsync())
+            .ReturnsAsync(_mockGenreData);
+
         // Act
         var listOfGenres = await _genreService.ListOfGenresAsync();
 
