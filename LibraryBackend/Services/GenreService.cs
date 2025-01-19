@@ -13,6 +13,6 @@ public class GenreService : IGenreService
     public virtual async Task<IEnumerable<Genre>?> ListOfGenresAsync()
     {
         var genres = await _genreRepository.GetAllAsync();
-        return genres;
+        return genres.OrderBy(genres => genres.Name).ToList();
     }
 }
