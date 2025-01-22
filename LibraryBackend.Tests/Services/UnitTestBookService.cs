@@ -12,12 +12,14 @@ public class UnitTestBookService
 {
     readonly IBookService _bookService;
     readonly Mock<IRepository<Book>> _mockBookRepository;
+    readonly Mock<PaginationUtility<Book>> _mockPaginationUtility;
     readonly List<Book> _mockBookData;
 
 
     public UnitTestBookService()
     {
         _mockBookRepository = new Mock<IRepository<Book>>();
+        _mockPaginationUtility = new Mock<PaginationUtility<Book>>();
         _mockBookData = MockData.GetMockData();
 
         //in-memory DbContext
@@ -25,26 +27,49 @@ public class UnitTestBookService
           .UseInMemoryDatabase("TestBookDatabase")
           .Options;
 
-        _bookService = new BookService(_mockBookRepository.Object);
+        _bookService = new BookService(_mockBookRepository.Object, _mockPaginationUtility.Object);
     }
 
 
-    [Fact]
-    public async Task Should_Get_All_books_async()
+    [Theory]
+    [InlineData(3, 3)]
+    [InlineData(2, 2)]
+    [InlineData(1, 9)]
+    [InlineData(9, 1)]
+    public async Task Should_Return_PaginatedBooks_When_InputIsValid_async(int page, int numberOfItemsPerPage)
     {
         // Arrange
+        var totalItems = _mockBookData.Count;
+        var totalPages = (int)Math.Ceiling((double)totalItems / numberOfItemsPerPage);
+        var expectedPaginatedItems = _mockBookData
+          .Skip((page - 1) * numberOfItemsPerPage)
+          .Take(numberOfItemsPerPage)
+          .ToList();
         _mockBookRepository
-          .Setup(mockBookRepository => mockBookRepository.GetAllAsync(It.IsAny<Expression<Func<Book, object>>>()))
-          .ReturnsAsync(_mockBookData);
+          .Setup(mockBookRepository => mockBookRepository.GetPaginatedItemsAsync(page, numberOfItemsPerPage))
+          .ReturnsAsync(expectedPaginatedItems);
+        _mockBookRepository
+            .Setup(mockBookRepository => mockBookRepository.GetCountAsync())
+            .ReturnsAsync(totalItems);
+        _mockPaginationUtility
+            .Setup(mockPaginationUtility => mockPaginationUtility.PaginationValidation(page, numberOfItemsPerPage))
+            .Verifiable();
+        _mockPaginationUtility
+            .Setup(mockUtilityPagination => mockUtilityPagination.GetPaginationResult(expectedPaginatedItems, totalItems, page, numberOfItemsPerPage ))
+            .Returns(new PaginationResult<Book>(expectedPaginatedItems, totalItems, page,totalPages,""));
 
         // Act
-        var listOfBooks = await _bookService.GetListOfBooksWithOpinionsAsync();
+        var paginationResult = await _bookService.GetListOfBooksWithOpinionsAsync(page, numberOfItemsPerPage);
 
         // Assert
-        Assert.NotNull(listOfBooks);
-        Assert.IsAssignableFrom<IEnumerable<Book>>(listOfBooks);
-        _mockBookRepository.Verify(repo => repo.GetAllAsync(It.IsAny<Expression<Func<Book, object>>>()), Times.Once);
-        Assert.Equal(9, listOfBooks.Count());
+        Assert.NotNull(paginationResult);
+        Assert.IsAssignableFrom<PaginationResult<Book>>(paginationResult);
+        Assert.Equal(expectedPaginatedItems.Count, paginationResult.PaginatedItems.Count());
+        Assert.Equal(totalItems, paginationResult.TotalItems);
+        Assert.Equal(totalPages, paginationResult.TotalPages);
+        _mockBookRepository.Verify(repo => repo.GetPaginatedItemsAsync(page, numberOfItemsPerPage), Times.Once);
+        _mockPaginationUtility.Verify(repo => repo.PaginationValidation(page, numberOfItemsPerPage), Times.Once);
+        _mockPaginationUtility.Verify(repo => repo.GetPaginationResult(expectedPaginatedItems, totalItems, page, numberOfItemsPerPage), Times.Once);
     }
 
     [Fact]
