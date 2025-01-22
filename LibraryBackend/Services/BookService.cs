@@ -8,11 +8,12 @@ namespace LibraryBackend.Services;
 public class BookService : IBookService
 {
     private readonly IRepository<Book> _bookRepository;
-    
-    public BookService(IRepository<Book> bookRepository)
+    private readonly PaginationUtility<Book> _paginationUtility;
+
+    public BookService(IRepository<Book> bookRepository, PaginationUtility<Book> paginationUtility)
     {
         _bookRepository = bookRepository;
-        
+        _paginationUtility = paginationUtility;
     }
 
     // Most popular books are those with the biggest number of reviews with a rate >=3
@@ -51,9 +52,15 @@ public class BookService : IBookService
         return updatedBook;
     }
 
-    public virtual async Task<IEnumerable<Book?>> GetListOfBooksWithOpinionsAsync()
+    public virtual async Task<PaginationResult<Book>> GetListOfBooksWithOpinionsAsync(int page, int ItemsPerPage )
     {
-        return await _bookRepository.GetAllAsync(book => book.Opinions);
+        _paginationUtility.PaginationValidation(page, ItemsPerPage);
+        var paginatedItems = await _bookRepository.GetPaginatedItemsAsync(page, ItemsPerPage);
+        var totalItems = await _bookRepository.GetCountAsync();
+
+        if (totalItems == 0 || !paginatedItems.Any()) return _paginationUtility.GetEmptyResult();
+        var result = _paginationUtility.GetPaginationResult(paginatedItems, totalItems, page, ItemsPerPage);
+        return result;
     }
 
     public virtual async Task<IEnumerable<Book?>> GetBooksByGenreIdAsync (string listOfGenreId)

@@ -29,6 +29,15 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return await query.OrderByDescending(entity => entity.Id).ToListAsync();
     }
 
+    public virtual async Task<IEnumerable<T>> GetPaginatedItemsAsync(int page, int numberOfItemsPerPage)
+    {
+        return await _entities
+            .OrderByDescending(item => item.Id)
+            .Skip((page - 1) * numberOfItemsPerPage)
+            .Take(numberOfItemsPerPage)
+            .ToListAsync();
+    }
+
     public virtual async Task<T?> GetByIdAsync(int id)
     {
         return await _entities.FirstOrDefaultAsync(x => x.Id == id);
@@ -69,5 +78,10 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         _context.Update(entity);
         await _context.SaveChangesAsync();
         return entity!;
+    }
+
+    public virtual async Task<int> GetCountAsync()
+    {
+        return await _entities.CountAsync();
     }
 }

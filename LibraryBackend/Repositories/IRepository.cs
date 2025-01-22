@@ -1,11 +1,16 @@
 using LibraryBackend.Models;
 using System.Linq.Expressions;
+using LibraryBackend.Services;
 
 namespace LibraryBackend.Repositories;
 
 public interface IRepository<T> where T : BaseEntity
 {
     Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);
+
+    Task<int> GetCountAsync();
+
+    Task<IEnumerable<T>> GetPaginatedItemsAsync (int page, int numberOfItemsPerPage);
 
     Task<T?> GetByIdAsync(int id);
 

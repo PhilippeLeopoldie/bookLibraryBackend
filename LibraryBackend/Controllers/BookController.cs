@@ -41,34 +41,22 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BooksListDtoResponse>> GetBooks([FromQuery] int page, int pageSize)
+    public async Task<ActionResult<PaginationResult<Book>>> GetPaginatedBooks([FromQuery] int page, int pageSize)
     {
-        if (page <= 0 || pageSize <= 0 || pageSize > pageSizeLimit)
+       try
         {
-            return BadRequest($"Invalid, 'page' must be > 0 and 'pageSize' must be between 0 and {pageSizeLimit + 1}");
-        }
-        var books = await _bookService.GetListOfBooksWithOpinionsAsync();
+            var paginatedListOfBooks = await _bookService.GetListOfBooksWithOpinionsAsync(page, pageSize);
 
-        if (books == null || !books.Any()) return NotFound("No books found!");
+            if (paginatedListOfBooks.PaginatedItems == null || !paginatedListOfBooks.PaginatedItems.Any())
+                return NotFound("No books found!");
+
+            return Ok(paginatedListOfBooks);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
        
-
-        var totalBooksCount = books.Count();
-        var totalPagesCount = (int)Math.Ceiling((double)totalBooksCount / pageSize);
-        if (page > totalPagesCount)
-        {
-            return BadRequest($"Page {page} does not exist, the last page is {totalPagesCount}");
-        }
-        var pagedBooks = books.ToPagedList(page, pageSize);
-
-        return Ok(new BooksListDtoResponse
-        {
-            Books = pagedBooks
-              .Where(book => book != null)
-              .ToList(),
-            TotalBooksCount = totalBooksCount,
-            TotalPagesCount = totalPagesCount,
-            RequestedAt = DateTime.Now.ToString(dateTimeFormat)
-        });
     }
 
     [HttpGet("TopBooks")]
@@ -186,7 +174,7 @@ public class BookController : ControllerBase
             ImageUrl = bookDto.ImageUrl
         };
         var newBook = await _bookRepository.Create(bookToCreate);
-        return CreatedAtAction(nameof(GetBooks), new { id = newBook.Id }, newBook);
+        return CreatedAtAction(nameof(GetPaginatedBooks), new { id = newBook.Id }, newBook);
     }
 
     [HttpPut("{id}")]
