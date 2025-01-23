@@ -16,60 +16,7 @@ public class BookService : IBookService
         _paginationUtility = paginationUtility;
     }
 
-    // Most popular books are those with the biggest number of reviews with a rate >=3
-    private IEnumerable<Book>? GetMostPopularBooks(IEnumerable<Book> books, int numberOfBooks)
-    {
-        var mostPopularBooks = books
-            .Where(book => book.Opinions != null && book.Opinions.Any(opinion => opinion.Rate >= 3))
-            .OrderByDescending(book => book.Opinions != null ?
-                book.Opinions.Count(opinion => opinion.Rate >= 3)
-                : 0)
-            .ThenByDescending(book => book.Opinions != null ?
-                book.Opinions.Where(opinion => opinion.Rate >= 3).Average(opinion => opinion.Rate)
-                : null)
-            .Take(numberOfBooks).ToList();
-
-        return mostPopularBooks;
-    }
-
-    private void GenresIdValidation (string listOfGenreId)
-    {
-        var listOfStringValidation = listOfGenreId.Split(",").Where(genreId => int.TryParse(genreId, out int result));
-
-        if (listOfGenreId != "All" && !listOfStringValidation.Any())
-        {
-            throw new FormatException("Genre list contains invalid entries");
-        }       
-    }
-
-    private Expression<Func<Book, bool>> GenreIdCondition (string listOfGenreId)
-    {
-        Expression<Func<Book, bool>> condition;
-        if (listOfGenreId == "All")
-        {
-            condition = book => book.GenreId.HasValue;
-        }
-        else
-        {
-            var genresId = listOfGenreId
-                .Split(",")
-                .Select(int.Parse)
-                .ToList();
-            condition = book => book.GenreId.HasValue
-            &&
-            genresId.Contains(book.GenreId.Value);
-        };
-        return condition;
-    }
-
-    private async Task<PaginationResult<Book>> GetBookPaginationResultAsync (int page, int itemsPerPage, IEnumerable<Book> paginatedItems)
-    {
-        var totalItems = await _bookRepository.GetCountAsync();
-
-        if (totalItems == 0 || !paginatedItems.Any()) return _paginationUtility.GetEmptyResult();
-        var result = _paginationUtility.GetPaginationResult(paginatedItems, totalItems, page, itemsPerPage);
-        return result;
-    }
+    
 
     public virtual async Task<IEnumerable<Book>?> GetBooksWithHighestAverageRate(int numberOfBooks)
     {
@@ -115,5 +62,60 @@ public class BookService : IBookService
           book.Author!.ToLower().Contains(titleOrAuthor);
         var books = await _bookRepository.FindByConditionWithIncludesAsync(condition);
         return books;
+    }
+
+    // Most popular books are those with the biggest number of reviews with a rate >=3
+    private IEnumerable<Book>? GetMostPopularBooks(IEnumerable<Book> books, int numberOfBooks)
+    {
+        var mostPopularBooks = books
+            .Where(book => book.Opinions != null && book.Opinions.Any(opinion => opinion.Rate >= 3))
+            .OrderByDescending(book => book.Opinions != null ?
+                book.Opinions.Count(opinion => opinion.Rate >= 3)
+                : 0)
+            .ThenByDescending(book => book.Opinions != null ?
+                book.Opinions.Where(opinion => opinion.Rate >= 3).Average(opinion => opinion.Rate)
+                : null)
+            .Take(numberOfBooks).ToList();
+
+        return mostPopularBooks;
+    }
+
+    private void GenresIdValidation(string listOfGenreId)
+    {
+        var listOfStringValidation = listOfGenreId.Split(",").Where(genreId => int.TryParse(genreId, out int result));
+
+        if (listOfGenreId != "All" && !listOfStringValidation.Any())
+        {
+            throw new FormatException("Genre list contains invalid entries");
+        }
+    }
+
+    private Expression<Func<Book, bool>> GenreIdCondition(string listOfGenreId)
+    {
+        Expression<Func<Book, bool>> condition;
+        if (listOfGenreId == "All")
+        {
+            condition = book => book.GenreId.HasValue;
+        }
+        else
+        {
+            var genresId = listOfGenreId
+                .Split(",")
+                .Select(int.Parse)
+                .ToList();
+            condition = book => book.GenreId.HasValue
+            &&
+            genresId.Contains(book.GenreId.Value);
+        };
+        return condition;
+    }
+
+    private async Task<PaginationResult<Book>> GetBookPaginationResultAsync(int page, int itemsPerPage, IEnumerable<Book> paginatedItems)
+    {
+        var totalItems = await _bookRepository.GetCountAsync();
+
+        if (totalItems == 0 || !paginatedItems.Any()) return _paginationUtility.GetEmptyResult();
+        var result = _paginationUtility.GetPaginationResult(paginatedItems, totalItems, page, itemsPerPage);
+        return result;
     }
 }
