@@ -10,7 +10,7 @@ public interface IRepository<T> where T : BaseEntity
 
     Task<int> GetCountAsync();
 
-    Task<IEnumerable<T>> GetPaginatedItemsAsync (int page, int numberOfItemsPerPage);
+    Task<IEnumerable<T>> GetPaginatedItemsAsync (int page, int numberOfItemsPerPage, Expression<Func<T, bool>>? condition = null);
 
     Task<T?> GetByIdAsync(int id);
 

@@ -29,9 +29,12 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return await query.OrderByDescending(entity => entity.Id).ToListAsync();
     }
 
-    public virtual async Task<IEnumerable<T>> GetPaginatedItemsAsync(int page, int numberOfItemsPerPage)
+    public virtual async Task<IEnumerable<T>> GetPaginatedItemsAsync(int page, int numberOfItemsPerPage, Expression<Func<T, bool>>? condition = null)
     {
-        return await _entities
+        IQueryable<T> query = _entities; ;
+        if (condition != null) query = _entities.Where(condition);
+  
+        return await query
             .OrderByDescending(item => item.Id)
             .Skip((page - 1) * numberOfItemsPerPage)
             .Take(numberOfItemsPerPage)
