@@ -93,12 +93,11 @@ public class BookService : IBookService
         return result;
     }
 
-    public virtual async Task<IEnumerable<Book?>> GetPaginatedBooksByGenreIdAsync (string listOfGenreId, int page, int ItemsPerPage)
+    public virtual async Task<IEnumerable<Book?>> GetPaginatedBooksByGenreIdAsync (string listOfGenreId, int page, int itemsPerPage)
     {
         GenresIdValidation(listOfGenreId);
-        
-        var listOfBooks = await _bookRepository.FindByConditionWithIncludesAsync(GenreIdCondition(listOfGenreId));
-        return listOfBooks.OrderByDescending(books => books?.CreationDate);
+        _paginationUtility.PaginationValidation(page, itemsPerPage);
+        return await _bookRepository.GetPaginatedItemsAsync(page, itemsPerPage,GenreIdCondition(listOfGenreId));
     }
 
     public virtual async Task<IEnumerable<Book?>> GetBookByTitleOrAuthor (string titleOrAuthor)
