@@ -130,21 +130,16 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BooksListDtoResponse>> GetBookByGenreIdAsync([FromQuery] string genresId)
+    public async Task<ActionResult<PaginationResult<Book>>> GetPaginatedBookByGenreIdAsync([FromQuery] string genresId, int page, int itemsPerPage)
     {
         try
         {
-            var books = await _bookService.GetPaginatedBooksByGenreIdAsync(genresId);
-            if (!books.Any())
+            var paginatedBooksByGenreId = await _bookService.GetPaginatedBooksByGenreIdAsync(genresId, page, itemsPerPage);
+            if (!paginatedBooksByGenreId.PaginatedItems.Any())
             {
                 return NotFound("No books found");
             }
-            return Ok(new BooksListDtoResponse
-            {
-                Books = books,
-                TotalBooksCount = books.Count(),
-                RequestedAt = DateTime.Now.ToString(dateTimeFormat),
-            });
+            return Ok(paginatedBooksByGenreId);
         }
         catch (Exception ex)
         {
