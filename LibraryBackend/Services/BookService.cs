@@ -32,6 +32,36 @@ public class BookService : IBookService
         return mostPopularBooks;
     }
 
+    private void GenresIdValidation (string listOfGenreId)
+    {
+        var listOfStringValidation = listOfGenreId.Split(",").Where(genreId => int.TryParse(genreId, out int result));
+
+        if (listOfGenreId != "All" && !listOfStringValidation.Any())
+        {
+            throw new FormatException("Genre list contains invalid entries");
+        }       
+    }
+
+    private Expression<Func<Book, bool>> GenreIdCondition (string listOfGenreId)
+    {
+        Expression<Func<Book, bool>> condition;
+        if (listOfGenreId == "All")
+        {
+            condition = book => book.GenreId.HasValue;
+        }
+        else
+        {
+            var genresId = listOfGenreId
+                .Split(",")
+                .Select(int.Parse)
+                .ToList();
+            condition = book => book.GenreId.HasValue
+            &&
+            genresId.Contains(book.GenreId.Value);
+        };
+        return condition;
+    }
+
     public virtual async Task<IEnumerable<Book>?> GetBooksWithHighestAverageRate(int numberOfBooks)
     {
         var books = await _bookRepository.GetAllAsync(book => book.Opinions);
@@ -63,32 +93,11 @@ public class BookService : IBookService
         return result;
     }
 
-    public virtual async Task<IEnumerable<Book?>> GetPaginatedBooksByGenreIdAsync (string listOfGenreId)
+    public virtual async Task<IEnumerable<Book?>> GetPaginatedBooksByGenreIdAsync (string listOfGenreId, int page, int ItemsPerPage)
     {
-        var validation = listOfGenreId.Split(",").Where(genreId => int.TryParse(genreId, out int result));
+        GenresIdValidation(listOfGenreId);
         
-        if (listOfGenreId != "All" && !validation.Any())
-        {
-            throw new FormatException("Genre list contains invalid entries");
-        }
-
-        Expression<Func<Book, bool>> condition;
-        
-        if (listOfGenreId == "All") 
-        {
-            condition = book => book.GenreId.HasValue ;
-        }
-        else 
-        {
-            var genresId = listOfGenreId
-                .Split(",")
-                .Select(int.Parse)
-                .ToList();
-            condition = book => book.GenreId.HasValue 
-            && 
-            genresId.Contains(book.GenreId.Value);
-        };
-        var listOfBooks = await _bookRepository.FindByConditionWithIncludesAsync(condition);
+        var listOfBooks = await _bookRepository.FindByConditionWithIncludesAsync(GenreIdCondition(listOfGenreId));
         return listOfBooks.OrderByDescending(books => books?.CreationDate);
     }
 
