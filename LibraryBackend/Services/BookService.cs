@@ -62,6 +62,15 @@ public class BookService : IBookService
         return condition;
     }
 
+    private async Task<PaginationResult<Book>> GetBookPaginationResultAsync (int page, int itemsPerPage, IEnumerable<Book> paginatedItems)
+    {
+        var totalItems = await _bookRepository.GetCountAsync();
+
+        if (totalItems == 0 || !paginatedItems.Any()) return _paginationUtility.GetEmptyResult();
+        var result = _paginationUtility.GetPaginationResult(paginatedItems, totalItems, page, itemsPerPage);
+        return result;
+    }
+
     public virtual async Task<IEnumerable<Book>?> GetBooksWithHighestAverageRate(int numberOfBooks)
     {
         var books = await _bookRepository.GetAllAsync(book => book.Opinions);
@@ -82,22 +91,19 @@ public class BookService : IBookService
         return updatedBook;
     }
 
-    public virtual async Task<PaginationResult<Book>> GetListOfBooksWithOpinionsAsync(int page, int ItemsPerPage )
+    public virtual async Task<PaginationResult<Book>> GetListOfBooksWithOpinionsAsync(int page, int itemsPerPage )
     {
-        _paginationUtility.PaginationValidation(page, ItemsPerPage);
-        var paginatedItems = await _bookRepository.GetPaginatedItemsAsync(page, ItemsPerPage);
-        var totalItems = await _bookRepository.GetCountAsync();
-
-        if (totalItems == 0 || !paginatedItems.Any()) return _paginationUtility.GetEmptyResult();
-        var result = _paginationUtility.GetPaginationResult(paginatedItems, totalItems, page, ItemsPerPage);
-        return result;
+        _paginationUtility.PaginationValidation(page, itemsPerPage);
+        var paginatedItems = await _bookRepository.GetPaginatedItemsAsync(page, itemsPerPage);
+        return await GetBookPaginationResultAsync(page,itemsPerPage, paginatedItems);
     }
 
-    public virtual async Task<IEnumerable<Book?>> GetPaginatedBooksByGenreIdAsync (string listOfGenreId, int page, int itemsPerPage)
+    public virtual async Task<PaginationResult<Book>> GetPaginatedBooksByGenreIdAsync (string listOfGenreId, int page, int itemsPerPage)
     {
         GenresIdValidation(listOfGenreId);
         _paginationUtility.PaginationValidation(page, itemsPerPage);
-        return await _bookRepository.GetPaginatedItemsAsync(page, itemsPerPage,GenreIdCondition(listOfGenreId));
+        var paginatedItems = await _bookRepository.GetPaginatedItemsAsync(page, itemsPerPage, GenreIdCondition(listOfGenreId));
+        return await GetBookPaginationResultAsync(page, itemsPerPage, paginatedItems);
     }
 
     public virtual async Task<IEnumerable<Book?>> GetBookByTitleOrAuthor (string titleOrAuthor)
