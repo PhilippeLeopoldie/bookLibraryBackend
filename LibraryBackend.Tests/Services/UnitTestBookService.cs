@@ -152,7 +152,7 @@ public class UnitTestBookService
             .ReturnsAsync(expectedBooks);
 
         // Act 
-        var booksByGenreId = await _bookService.GetBooksByGenreIdAsync(listOfGenreId);
+        var booksByGenreId = await _bookService.GetPaginatedBooksByGenreIdAsync(listOfGenreId);
 
         // Assert
         Assert.NotNull(booksByGenreId);
@@ -178,7 +178,7 @@ public class UnitTestBookService
             .ReturnsAsync(expectedBooks);
 
         // Act 
-        var booksByGenreId = await _bookService.GetBooksByGenreIdAsync(listOfGenreId);
+        var booksByGenreId = await _bookService.GetPaginatedBooksByGenreIdAsync(listOfGenreId);
 
         // Assert
         Assert.NotNull(booksByGenreId);
@@ -202,7 +202,7 @@ public class UnitTestBookService
             .ReturnsAsync(expectedBooks);
 
         // Act 
-        var result = await _bookService.GetBooksByGenreIdAsync(listOfGenreId);
+        var result = await _bookService.GetPaginatedBooksByGenreIdAsync(listOfGenreId);
 
         // Assert
         Assert.NotNull(result);
@@ -227,7 +227,7 @@ public class UnitTestBookService
 
         // Act Assert
         var exception = await Assert.ThrowsAnyAsync<FormatException>( () =>
-            _bookService.GetBooksByGenreIdAsync(listOfGenreId));
+            _bookService.GetPaginatedBooksByGenreIdAsync(listOfGenreId));
         Assert.NotNull(exception);
         Assert.Equal("Genre list contains invalid entries", exception.Message);
         _mockBookRepository.Verify(mockBookRepository => mockBookRepository

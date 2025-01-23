@@ -63,7 +63,7 @@ public class BookService : IBookService
         return result;
     }
 
-    public virtual async Task<IEnumerable<Book?>> GetBooksByGenreIdAsync (string listOfGenreId)
+    public virtual async Task<IEnumerable<Book?>> GetPaginatedBooksByGenreIdAsync (string listOfGenreId)
     {
         var validation = listOfGenreId.Split(",").Where(genreId => int.TryParse(genreId, out int result));
         

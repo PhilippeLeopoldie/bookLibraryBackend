@@ -134,7 +134,7 @@ public class BookController : ControllerBase
     {
         try
         {
-            var books = await _bookService.GetBooksByGenreIdAsync(genresId);
+            var books = await _bookService.GetPaginatedBooksByGenreIdAsync(genresId);
             if (!books.Any())
             {
                 return NotFound("No books found");

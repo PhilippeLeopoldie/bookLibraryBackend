@@ -374,7 +374,7 @@ public class UnitTestBookController
             &&
             genresId.Contains(book.GenreId.Value));
         _mockBookService
-            .Setup(mockService => mockService.GetBooksByGenreIdAsync(It.IsAny<string>()))
+            .Setup(mockService => mockService.GetPaginatedBooksByGenreIdAsync(It.IsAny<string>()))
             .ReturnsAsync(expectedBooks);
         // Act
         var booksByGenreId = await _bookController.GetBookByGenreIdAsync(listOfGenreId);
@@ -392,14 +392,14 @@ public class UnitTestBookController
         var missMatchGenreId = "999";
         var expectedBooks = Enumerable.Empty<Book>();
         _mockBookService
-            .Setup(mockService => mockService.GetBooksByGenreIdAsync(It.IsAny<string>()))
+            .Setup(mockService => mockService.GetPaginatedBooksByGenreIdAsync(It.IsAny<string>()))
             .ReturnsAsync(expectedBooks);
         // Act
         var booksByGenreId = await _bookController.GetBookByGenreIdAsync(missMatchGenreId);
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(booksByGenreId.Result);
         Assert.Equal("No books found", notFoundResult.Value);
-        _mockBookService.Verify(mockService => mockService.GetBooksByGenreIdAsync(missMatchGenreId), Times.Once());
+        _mockBookService.Verify(mockService => mockService.GetPaginatedBooksByGenreIdAsync(missMatchGenreId), Times.Once());
     }
 
     [Fact]
@@ -409,7 +409,7 @@ public class UnitTestBookController
         var exception = new FormatException("Genre list contains invalid entries");
 
         _mockBookService
-            .Setup(mockService => mockService.GetBooksByGenreIdAsync(It.IsAny<string>()))
+            .Setup(mockService => mockService.GetPaginatedBooksByGenreIdAsync(It.IsAny<string>()))
             .ThrowsAsync(exception);
             
         // Act
@@ -417,7 +417,7 @@ public class UnitTestBookController
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
         Assert.Equal("Genre list contains invalid entries", badRequestResult.Value);
-        _mockBookService.Verify(mockService => mockService.GetBooksByGenreIdAsync(It.IsAny<string>()), Times.Once());
+        _mockBookService.Verify(mockService => mockService.GetPaginatedBooksByGenreIdAsync(It.IsAny<string>()), Times.Once());
     }
 
     [Fact]
