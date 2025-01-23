@@ -46,7 +46,7 @@ public class UnitTestBookService
           .Take(numberOfItemsPerPage)
           .ToList();
         _mockBookRepository
-          .Setup(mockBookRepository => mockBookRepository.GetPaginatedItemsAsync(page, numberOfItemsPerPage))
+          .Setup(mockBookRepository => mockBookRepository.GetPaginatedItemsAsync(page, numberOfItemsPerPage,null))
           .ReturnsAsync(expectedPaginatedItems);
         _mockBookRepository
             .Setup(mockBookRepository => mockBookRepository.GetCountAsync())
@@ -67,7 +67,7 @@ public class UnitTestBookService
         Assert.Equal(expectedPaginatedItems.Count, paginationResult.PaginatedItems.Count());
         Assert.Equal(totalItems, paginationResult.TotalItems);
         Assert.Equal(totalPages, paginationResult.TotalPages);
-        _mockBookRepository.Verify(repo => repo.GetPaginatedItemsAsync(page, numberOfItemsPerPage), Times.Once);
+        _mockBookRepository.Verify(repo => repo.GetPaginatedItemsAsync(page, numberOfItemsPerPage, null), Times.Once);
         _mockPaginationUtility.Verify(repo => repo.PaginationValidation(page, numberOfItemsPerPage), Times.Once);
         _mockPaginationUtility.Verify(repo => repo.GetPaginationResult(expectedPaginatedItems, totalItems, page, numberOfItemsPerPage), Times.Once);
     }
