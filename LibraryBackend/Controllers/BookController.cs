@@ -22,7 +22,7 @@ public class BookController : ControllerBase
         _bookRepository = bookRepository;
         _bookService = bookService;
     }
-
+    
     private ApiError? NullOrWhiteSpaceValidation(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -41,11 +41,11 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<PaginationResult<Book>>> GetPaginatedBooks([FromQuery] int page, int pageSize)
+    public async Task<ActionResult<PaginationResult<Book>>> GetPaginatedBooks([FromQuery] PaginationUtility<Book> parameters)
     {
        try
         {
-            var paginatedListOfBooks = await _bookService.GetListOfBooksWithOpinionsAsync(page, pageSize);
+            var paginatedListOfBooks = await _bookService.GetListOfBooksWithOpinionsAsync(parameters.Page, parameters.ItemsPerPage);
 
             if (paginatedListOfBooks.PaginatedItems == null || !paginatedListOfBooks.PaginatedItems.Any())
                 return NotFound("No books found!");
@@ -130,11 +130,11 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<PaginationResult<Book>>> GetPaginatedBookByGenreIdAsync([FromQuery] string genresId, int page, int itemsPerPage)
+    public async Task<ActionResult<PaginationResult<Book>>> GetPaginatedBookByGenreIdAsync([FromQuery] string genresId, [FromQuery] PaginationUtility<Book> parameters)
     {
         try
         {
-            var paginatedBooksByGenreId = await _bookService.GetPaginatedBooksByGenreIdAsync(genresId, page, itemsPerPage);
+            var paginatedBooksByGenreId = await _bookService.GetPaginatedBooksByGenreIdAsync(genresId, parameters.Page, parameters.ItemsPerPage);
             if (!paginatedBooksByGenreId.PaginatedItems.Any())
             {
                 return NotFound("No books found");
