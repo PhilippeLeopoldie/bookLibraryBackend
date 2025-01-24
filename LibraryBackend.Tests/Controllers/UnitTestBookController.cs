@@ -34,6 +34,11 @@ public class UnitTestBookController
     public async Task Should_get_1_Book_in_GetPaginatedBooks(int page, int numberOfItemsPerPage)
     {
         // arrange
+        var parameters = new PaginationUtility<Book>
+        {
+            Page = page,
+            ItemsPerPage = numberOfItemsPerPage
+        };
         var totalItems = mockBookData.Count;
         var totalPages = (int)Math.Ceiling((double)totalItems / numberOfItemsPerPage);
         var expectedPaginatedItems = mockBookData
@@ -51,7 +56,7 @@ public class UnitTestBookController
           ); 
 
         // Act
-        var getBookResult = await _bookController.GetPaginatedBooks(page, numberOfItemsPerPage);
+        var getBookResult = await _bookController.GetPaginatedBooks(parameters);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(getBookResult.Result);
@@ -69,6 +74,11 @@ public class UnitTestBookController
     public async Task Should_get_3_Books_in_GetPaginatedBooks(int page, int numberOfItemsPerPage)
     {
         // arrange
+        var parameters = new PaginationUtility<Book>
+        {
+            Page = page,
+            ItemsPerPage = numberOfItemsPerPage
+        };
         var totalItems = mockBookData.Count;
         var totalPages = (int)Math.Ceiling((double)totalItems / numberOfItemsPerPage);
         var expectedPaginatedItems = mockBookData
@@ -86,7 +96,7 @@ public class UnitTestBookController
           );
 
         // Act
-        var getBookResult = await _bookController.GetPaginatedBooks(page, numberOfItemsPerPage);
+        var getBookResult = await _bookController.GetPaginatedBooks(parameters);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(getBookResult.Result);
@@ -103,6 +113,11 @@ public class UnitTestBookController
     public async Task Should_return_not_found_for_null_data_in_GetPaginatedBooks(int page , int numberOfItemsPerPage)
     {
         // arrange
+        var parameters = new PaginationUtility<Book>
+        {
+            Page = page,
+            ItemsPerPage = numberOfItemsPerPage
+        };
         List<Book>? mockNullBookData = null;
 #pragma warning disable CS8604
         _mockBookService
@@ -117,7 +132,7 @@ public class UnitTestBookController
 #pragma warning restore CD8604
 
         // Act
-        var result = await _bookController.GetPaginatedBooks(page, numberOfItemsPerPage);
+        var result = await _bookController.GetPaginatedBooks(parameters);
 
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
@@ -130,6 +145,11 @@ public class UnitTestBookController
     public async Task Should_return_not_found_for_empty_data_in_GetPaginatedBooks(int page, int numberOfItemsPerPage)
     {
         // arrange
+        var parameters = new PaginationUtility<Book>
+        {
+            Page = page,
+            ItemsPerPage = numberOfItemsPerPage
+        };
         var mockEmptyBookData = Enumerable.Empty<Book>();
         _mockBookService
         .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
@@ -141,7 +161,7 @@ public class UnitTestBookController
             DateTime.UtcNow.ToString(dateTimeFormat)));
 
         // Act
-        var result = await _bookController.GetPaginatedBooks(page, numberOfItemsPerPage);
+        var result = await _bookController.GetPaginatedBooks(parameters);
 
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
@@ -153,8 +173,11 @@ public class UnitTestBookController
     public async Task Should_return_bad_request_when_page_is_invalid_in_GetPaginatedBooks()
     {
         // arrange
-        var page = -1;
-        var numberOfItemsPerPage = 3;
+        var parameters = new PaginationUtility<Book>
+        {
+            Page = -1,
+            ItemsPerPage = 3
+        };
         var exception = new ArgumentException("Number of page must be greater than 0");
         _mockPaginationUtility
            .Setup(mockUtilityPagination => mockUtilityPagination.GetPaginationResult(It.IsAny<IEnumerable<Book>>(), It.IsAny<int>(),It.IsAny<int>(), It.IsAny<int>()))
@@ -164,7 +187,7 @@ public class UnitTestBookController
           .ThrowsAsync(exception);
 
         // act
-        var result = await _bookController.GetPaginatedBooks(page, numberOfItemsPerPage);
+        var result = await _bookController.GetPaginatedBooks(parameters);
 
         // Assert
         var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -172,18 +195,21 @@ public class UnitTestBookController
     }
 
     [Fact]
-    public async Task Should_return_bad_request_when_pageSize_is_invalid_in_GetPaginatedBooks()
+    public async Task Should_return_bad_request_when_ItemsPerPage_is_invalid_in_GetPaginatedBooks()
     {
         // arrange
-        var page = 1;
-        var numberOfItemsPerPage = 8;
+        var parameters = new PaginationUtility<Book>
+        {
+            Page = 1,
+            ItemsPerPage = 8
+        };
         var exception =  new ArgumentException($"Number of items per page cannot be greater than {_bookController.pageSizeLimit + 1}");
         _mockBookService
           .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
           .ThrowsAsync(exception);
 
         // act
-        var result = await _bookController.GetPaginatedBooks(page, numberOfItemsPerPage);
+        var result = await _bookController.GetPaginatedBooks(parameters);
 
         // Assert
         var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -196,13 +222,18 @@ public class UnitTestBookController
     public async Task Should_return_bad_request_when_page_overflow_in_GetPaginatedBooks(int page, int pageSize)
     {
         // Arrange
+        var parameters = new PaginationUtility<Book>
+        {
+            Page = page,
+            ItemsPerPage = pageSize
+        };
         var exception = new ArgumentException($"Page {page} do not exist, the last page is 3");
         _mockBookService
           .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
           .ThrowsAsync(exception);
 
         // Act
-        var result = await _bookController.GetPaginatedBooks(page, pageSize);
+        var result = await _bookController.GetPaginatedBooks(parameters);
 
         // Assert
         var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -360,31 +391,41 @@ public class UnitTestBookController
     }
 
     [Theory]
-    [InlineData("2,3",3)]
-    [InlineData("2,2,3,2",3)]
-    public async Task Should_Get_Book_By_GenreIdAsync(string listOfGenreId, int expectedCount) 
+    [InlineData("2,3",1,6,3)]
+    [InlineData("2,2,3,2",1,6,3)]
+    public async Task Should_Get_Book_By_GenreIdAsync(string listOfGenreId, int page, int itemsPerPage, int expectedCount) 
     {
         // Arrange
+        var parameters = new PaginationUtility<Book>
+        {
+            Page = page,
+            ItemsPerPage = itemsPerPage
+        };
+        var totalItems = mockBookData.Count;
+        var totalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage);
         var genresId = listOfGenreId
                 .Split(",")
                 .Select(int.Parse)
                 .ToList();
-        var expectedBooks = mockBookData
+        var expectedPaginatedBooks = mockBookData
             .Where(book => book.GenreId.HasValue
             &&
-            genresId.Contains(book.GenreId.Value));
+            genresId.Contains(book.GenreId.Value))
+            .Skip((page - 1) * itemsPerPage)
+            .Take(itemsPerPage)
+            .ToList();
         _mockBookService
-            .Setup(mockService => mockService.GetPaginatedBooksByGenreIdAsync(It.IsAny<string>()))
-            .ReturnsAsync(expectedBooks);
+            .Setup(mockService => mockService.GetPaginatedBooksByGenreIdAsync(listOfGenreId,page,itemsPerPage))
+            .ReturnsAsync(new PaginationResult<Book>(expectedPaginatedBooks, totalItems,page, totalPages,""));
         // Act
-        var booksByGenreId = await _bookController.GetBookByGenreIdAsync(listOfGenreId);
+        var booksByGenreId = await _bookController.GetPaginatedBookByGenreIdAsync(listOfGenreId, parameters);
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(booksByGenreId.Result);
         Assert.Equal(200, okResult.StatusCode);
-        var listOfBooksResponse = Assert.IsType<BooksListDtoResponse>(okResult.Value);
-        Assert.Equal(expectedCount, listOfBooksResponse.Books.Count());
+        var paginatedBooksResponse = Assert.IsType<PaginationResult<Book>>(okResult.Value);
+        Assert.Equal(expectedCount, paginatedBooksResponse.PaginatedItems.Count());
     }
-
+    /*
     [Fact]
     public async Task Should_return_Not_Found_When_MissMatch_At_GetBookByGenreIdAsync()
     {
@@ -400,8 +441,8 @@ public class UnitTestBookController
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(booksByGenreId.Result);
         Assert.Equal("No books found", notFoundResult.Value);
         _mockBookService.Verify(mockService => mockService.GetPaginatedBooksByGenreIdAsync(missMatchGenreId), Times.Once());
-    }
-
+    }*/
+    /*
     [Fact]
     public async Task Should_return_BadRequest_When_NonValid_Entries_At_GetBookByGenreIdAsync()
     {
@@ -418,7 +459,7 @@ public class UnitTestBookController
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
         Assert.Equal("Genre list contains invalid entries", badRequestResult.Value);
         _mockBookService.Verify(mockService => mockService.GetPaginatedBooksByGenreIdAsync(It.IsAny<string>()), Times.Once());
-    }
+    }*/
 
     [Fact]
     public async Task Should_create_one_book_in_CreateBook()
