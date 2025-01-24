@@ -14,6 +14,7 @@ public class UnitTestBookService
     readonly Mock<IRepository<Book>> _mockBookRepository;
     readonly Mock<PaginationUtility<Book>> _mockPaginationUtility;
     readonly List<Book> _mockBookData;
+    readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
 
 
     public UnitTestBookService()
@@ -49,11 +50,8 @@ public class UnitTestBookService
           .Setup(mockBookRepository => mockBookRepository.GetPaginatedItemsAsync(page, numberOfItemsPerPage,null))
           .ReturnsAsync(expectedPaginatedItems);
         _mockBookRepository
-            .Setup(mockBookRepository => mockBookRepository.GetCountAsync())
+            .Setup(mockBookRepository => mockBookRepository.GetCountAsync(null))
             .ReturnsAsync(totalItems);
-        _mockPaginationUtility
-            .Setup(mockPaginationUtility => mockPaginationUtility.PaginationValidation(page, numberOfItemsPerPage))
-            .Verifiable();
         _mockPaginationUtility
             .Setup(mockUtilityPagination => mockUtilityPagination.GetPaginationResult(expectedPaginatedItems, totalItems, page, numberOfItemsPerPage ))
             .Returns(new PaginationResult<Book>(expectedPaginatedItems, totalItems, page,totalPages,""));
@@ -68,7 +66,6 @@ public class UnitTestBookService
         Assert.Equal(totalItems, paginationResult.TotalItems);
         Assert.Equal(totalPages, paginationResult.TotalPages);
         _mockBookRepository.Verify(repo => repo.GetPaginatedItemsAsync(page, numberOfItemsPerPage, null), Times.Once);
-        _mockPaginationUtility.Verify(repo => repo.PaginationValidation(page, numberOfItemsPerPage), Times.Once);
         _mockPaginationUtility.Verify(repo => repo.GetPaginationResult(expectedPaginatedItems, totalItems, page, numberOfItemsPerPage), Times.Once);
     }
 
@@ -130,107 +127,246 @@ public class UnitTestBookService
 
     
     [Theory]
-    [InlineData("2",2)]
-    [InlineData("3,2",3)]
-    [InlineData("3,3,2", 3)]
-    [InlineData("2,3,2,2", 3)]
-    [InlineData("2,2,3,2", 3)]
-    public async Task Should_Get_Books_By_GenreId(string listOfGenreId, int expectedCount)
+    [InlineData("2",1,6,2)]
+    [InlineData("3,2",1,6,3)]
+    [InlineData("3,3,2",1,6,3)]
+    [InlineData("2,3,2,2",1,6,3)]
+    [InlineData("2,2,3,2",1,6,3)]
+    public async Task Should_Get_PaginatedBooksByGenreId(string listOfGenreId, int page, int itemsPerPage, int expectedCount)
     {
         // Arrange
+        var totalItems = _mockBookData.Count;
+        var totalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage);
         var genresId = listOfGenreId
                 .Split(",")
                 .Select(int.Parse)
-                .ToList(); 
-        var expectedBooks = _mockBookData
+                .ToList();
+        var expectedPaginatedBooks = _mockBookData
             .Where(book  => book.GenreId.HasValue
             &&
-            genresId.Contains(book.GenreId.Value));
+            genresId.Contains(book.GenreId.Value))
+            .Skip((page - 1) * itemsPerPage)
+            .Take(itemsPerPage)
+            .ToList();
+        _mockPaginationUtility
+            .Setup(mockPaginationUtility => mockPaginationUtility
+            .PaginatedItemsValidation(expectedPaginatedBooks,page))
+            .Verifiable();
         _mockBookRepository
             .Setup(mockBookRepository => mockBookRepository
-                .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()))
-            .ReturnsAsync(expectedBooks);
+            .GetPaginatedItemsAsync(It.IsAny<int>(), It.IsAny<int>(),It.IsAny<Expression<Func<Book, bool>>>()))
+            .ReturnsAsync(expectedPaginatedBooks);
+        _mockBookRepository
+            .Setup(mockBookRepository => mockBookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
+            .ReturnsAsync(totalItems);
+        _mockPaginationUtility
+            .Setup(mockPaginationUtility => mockPaginationUtility
+            .GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage))
+            .Returns(new PaginationResult<Book>(expectedPaginatedBooks, totalItems, page, totalPages, DateTime.UtcNow.ToString(dateTimeFormat)));
+
 
         // Act 
-        var booksByGenreId = await _bookService.GetPaginatedBooksByGenreIdAsync(listOfGenreId);
+        var paginationResult = await _bookService.GetPaginatedBooksByGenreIdAsync(listOfGenreId, page, itemsPerPage);
 
         // Assert
-        Assert.NotNull(booksByGenreId);
-        Assert.IsAssignableFrom<IEnumerable<Book>>(booksByGenreId);
-        Assert.Equal(2, booksByGenreId.First()?.GenreId);
-        Assert.Equal(new DateOnly(2025,01,10), booksByGenreId.First()?.CreationDate);
-        Assert.Equal(expectedCount, booksByGenreId?.Count());
+        Assert.NotNull(paginationResult);
+        Assert.IsAssignableFrom<PaginationResult<Book>>(paginationResult);
+        Assert.Equal(2, paginationResult.PaginatedItems.First()?.GenreId);
+        Assert.Equal(new DateOnly(2025,01,08), paginationResult.PaginatedItems.First()?.CreationDate);
+        Assert.Equal(expectedCount, paginationResult.PaginatedItems.Count());
+        _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility.
+        GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage), Times.Once());
+        _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility
+        .PaginatedItemsValidation(expectedPaginatedBooks,page), Times.Once());
         _mockBookRepository.Verify(mockBookRepository => mockBookRepository
-        .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
+        .GetPaginatedItemsAsync(page,itemsPerPage, It.IsAny<Expression<Func<Book, bool>>>()),Times.Once());
+        _mockBookRepository.Verify(mockRepository => mockRepository
+        .GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
     }
 
     [Theory]
-    [InlineData("All", 3)]
-    public async Task Should_Get_AllBooks_By_GenreId_When_GenreId_Is_All(string listOfGenreId, int expectedCount)
+    [InlineData("All", 1, 6, 3)]
+    public async Task Should_Get_AllBooks_PaginatedByGenreId(
+        string listOfGenreId, int page, int itemsPerPage, int expectedCount
+        )
     {
         // Arrange
-        
-        var expectedBooks = _mockBookData
-            .Where(book => book.GenreId.HasValue);
+        var totalItems = _mockBookData.Count;
+        var totalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage);
+        var expectedPaginatedBooks = _mockBookData.Where(book => book.GenreId.HasValue);
+        _mockPaginationUtility
+            .Setup(mockPaginationUtility => mockPaginationUtility
+            .PaginatedItemsValidation(expectedPaginatedBooks, page))
+            .Verifiable();
         _mockBookRepository
             .Setup(mockBookRepository => mockBookRepository
-                .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()))
-            .ReturnsAsync(expectedBooks);
+            .GetPaginatedItemsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Expression<Func<Book, bool>>>()))
+            .ReturnsAsync(expectedPaginatedBooks);
+        _mockBookRepository
+            .Setup(mockBookRepository => mockBookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
+            .ReturnsAsync(totalItems);
+        _mockPaginationUtility
+            .Setup(mockPaginationUtility => mockPaginationUtility
+            .GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage))
+            .Returns(new PaginationResult<Book>(expectedPaginatedBooks, totalItems, page, totalPages, DateTime.UtcNow.ToString(dateTimeFormat)));
+
 
         // Act 
-        var booksByGenreId = await _bookService.GetPaginatedBooksByGenreIdAsync(listOfGenreId);
+        var paginationResult = await _bookService.GetPaginatedBooksByGenreIdAsync(listOfGenreId, page, itemsPerPage);
 
         // Assert
-        Assert.NotNull(booksByGenreId);
-        Assert.IsAssignableFrom<IEnumerable<Book>>(booksByGenreId);
-        Assert.Equal(2, booksByGenreId.First()?.GenreId);
-        Assert.Equal(new DateOnly(2025, 01, 10), booksByGenreId.First()?.CreationDate);
-        Assert.Equal(expectedCount, booksByGenreId?.Count());
+        Assert.NotNull(paginationResult);
+        Assert.IsAssignableFrom<PaginationResult<Book>>(paginationResult);
+        Assert.Equal(2, paginationResult.PaginatedItems.First()?.GenreId);
+        Assert.Equal(new DateOnly(2025, 01, 08), paginationResult.PaginatedItems.First()?.CreationDate);
+        Assert.Equal(expectedCount, paginationResult.PaginatedItems.Count());
+        _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility.
+        GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage), Times.Once());
+        _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility
+        .PaginatedItemsValidation(expectedPaginatedBooks, page), Times.Once());
         _mockBookRepository.Verify(mockBookRepository => mockBookRepository
-        .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
+        .GetPaginatedItemsAsync(page, itemsPerPage, It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
+        _mockBookRepository.Verify(mockRepository => mockRepository
+        .GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
     }
-
+   
+    
     [Theory]
-    [InlineData("999")]
-    public async Task Should_Return_EmptyList_When_Book_Mismatch_At_Get_Books_By_GenreId(string listOfGenreId)
+    [InlineData("Alt",1,6, "Genre list contains invalid entries")]
+    [InlineData("", 1, 6, "Genre list contains invalid entries")]
+    [InlineData(" ", 1, 6, "Genre list contains invalid entries")]
+    public async Task Should_ThrowFormatException_When_Invalid_GenreIdEntrie_At_Get_Books_By_GenreId(
+        string listOfGenreId, int page, int itemsPerPage, string expectedMessage
+        )
     {
         // Arrange
-        var expectedBooks = Enumerable.Empty<Book>();
+        var totalItems = _mockBookData.Count;
+        var totalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage);
+        var expectedPaginatedBooks = _mockBookData.Where(book => book.GenreId.HasValue);
+        _mockPaginationUtility
+            .Setup(mockPaginationUtility => mockPaginationUtility
+            .PaginatedItemsValidation(expectedPaginatedBooks, page))
+            .Verifiable();
         _mockBookRepository
             .Setup(mockBookRepository => mockBookRepository
-                .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()))
-            .ReturnsAsync(expectedBooks);
+            .GetPaginatedItemsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Expression<Func<Book, bool>>>()))
+            .ReturnsAsync(expectedPaginatedBooks);
+        _mockBookRepository
+            .Setup(mockBookRepository => mockBookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
+            .ReturnsAsync(totalItems);
+        _mockPaginationUtility
+            .Setup(mockPaginationUtility => mockPaginationUtility
+            .GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage))
+            .Returns(new PaginationResult<Book>(expectedPaginatedBooks, totalItems, page, totalPages, DateTime.UtcNow.ToString(dateTimeFormat)));
 
-        // Act 
-        var result = await _bookService.GetPaginatedBooksByGenreIdAsync(listOfGenreId);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAnyAsync<FormatException>(() =>
+            _bookService.GetPaginatedBooksByGenreIdAsync(listOfGenreId, page, itemsPerPage));
 
         // Assert
-        Assert.NotNull(result);
-        Assert.IsAssignableFrom<IEnumerable<Book>>(result);
-        Assert.Empty(result);
-        _mockBookRepository.Verify(mockBookRepository => mockBookRepository
-        .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
-    }
-
-    [Theory]
-    [InlineData("Alt")]
-    [InlineData("")]
-    [InlineData(" ")]
-    public async Task Should_FormatException_When_Invalid_GenreId_At_Get_Books_By_GenreId(string listOfGenreId)
-    {
-        // Arrange
-        var expectedBooks = Enumerable.Empty<Book>();
-        _mockBookRepository
-            .Setup(mockBookRepository => mockBookRepository
-                .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()))
-            .ReturnsAsync(expectedBooks);
-
-        // Act Assert
-        var exception = await Assert.ThrowsAnyAsync<FormatException>( () =>
-            _bookService.GetPaginatedBooksByGenreIdAsync(listOfGenreId));
         Assert.NotNull(exception);
-        Assert.Equal("Genre list contains invalid entries", exception.Message);
+        Assert.Equal(expectedMessage, exception.Message);
+        Assert.IsNotAssignableFrom<PaginationResult<Book>>(exception);
+        _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility.
+        GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage), Times.Never);
+        _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility
+        .PaginatedItemsValidation(expectedPaginatedBooks, page), Times.Never);
         _mockBookRepository.Verify(mockBookRepository => mockBookRepository
-        .FindByConditionWithIncludesAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Never());
+        .GetPaginatedItemsAsync(page, itemsPerPage, It.IsAny<Expression<Func<Book, bool>>>()), Times.Never);
+        _mockBookRepository.Verify(mockRepository => mockRepository
+        .GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Never);
+    }
+
+
+    [Theory]
+    [InlineData("999", 1, 6, "GenreId 999 does not exist")]
+    public async Task Should_ThrowArgumentException_For_NonExistingGenreId_At_Get_PaginatedBooksByGenreIdAsync(
+        string listOfGenreId, int page, int itemsPerPage, string expectedMessage
+        )
+    {
+        // Arrange
+        var totalItems = _mockBookData.Count;
+        var totalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage);
+        var expectedPaginatedBooks = Enumerable.Empty<Book>();
+        _mockPaginationUtility
+            .Setup(mockPaginationUtility => mockPaginationUtility
+            .PaginatedItemsValidation(expectedPaginatedBooks, page))
+            .Verifiable();
+        _mockBookRepository
+            .Setup(mockBookRepository => mockBookRepository
+            .GetPaginatedItemsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Expression<Func<Book, bool>>>()))
+            .ReturnsAsync(expectedPaginatedBooks);
+        _mockBookRepository
+            .Setup(mockBookRepository => mockBookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
+            .ReturnsAsync(totalItems);
+        _mockPaginationUtility
+            .Setup(mockPaginationUtility => mockPaginationUtility
+            .GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage))
+            .Returns(new PaginationResult<Book>(expectedPaginatedBooks, totalItems, page, totalPages, DateTime.UtcNow.ToString(dateTimeFormat)));
+
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAnyAsync<ArgumentException>(() =>
+            _bookService.GetPaginatedBooksByGenreIdAsync(listOfGenreId, page, itemsPerPage));
+
+        // Assert
+        Assert.NotNull(exception);
+        Assert.Equal(expectedMessage, exception.Message);
+        Assert.IsNotAssignableFrom<PaginationResult<Book>>(exception);
+        _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility.
+        GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage), Times.Never);
+        _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility
+        .PaginatedItemsValidation(expectedPaginatedBooks, page), Times.Never);
+        _mockBookRepository.Verify(mockBookRepository => mockBookRepository
+        .GetPaginatedItemsAsync(page, itemsPerPage, It.IsAny<Expression<Func<Book, bool>>>()), Times.Never);
+        _mockBookRepository.Verify(mockRepository => mockRepository
+        .GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Never);
+    }
+
+    [Theory]
+    [InlineData("2", 999, 6, "Page 999 does not exist")]
+    public async Task Should_ThrowArgumentException_For_NonExistingPage_At_Get_PaginatedBooksByGenreIdAsync(
+       string listOfGenreId, int page, int itemsPerPage, string expectedMessage
+       )
+    {
+        // Arrange
+        var totalItems = _mockBookData.Count;
+        var totalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage);
+        var expectedPaginatedBooks = Enumerable.Empty<Book>();
+        _mockPaginationUtility
+            .Setup(mockPaginationUtility => mockPaginationUtility
+            .PaginatedItemsValidation(expectedPaginatedBooks, page))
+            .Verifiable();
+        _mockBookRepository
+            .Setup(mockBookRepository => mockBookRepository
+            .GetPaginatedItemsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Expression<Func<Book, bool>>>()))
+            .ReturnsAsync(expectedPaginatedBooks);
+        _mockBookRepository
+            .Setup(mockBookRepository => mockBookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
+            .ReturnsAsync(totalItems);
+        _mockPaginationUtility
+            .Setup(mockPaginationUtility => mockPaginationUtility
+            .GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage))
+            .Returns(new PaginationResult<Book>(expectedPaginatedBooks, totalItems, page, totalPages, DateTime.UtcNow.ToString(dateTimeFormat)));
+
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAnyAsync<ArgumentException>(() =>
+            _bookService.GetPaginatedBooksByGenreIdAsync(listOfGenreId, page, itemsPerPage));
+
+        // Assert
+        Assert.NotNull(exception);
+        Assert.Equal(expectedMessage, exception.Message);
+        Assert.IsNotAssignableFrom<PaginationResult<Book>>(exception);
+        //Assert.Empty(paginationResult.PaginatedItems);
+        _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility.
+        GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage), Times.Never);
+        _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility
+        .PaginatedItemsValidation(expectedPaginatedBooks, page), Times.Never);
+        _mockBookRepository.Verify(mockBookRepository => mockBookRepository
+        .GetPaginatedItemsAsync(page, itemsPerPage, It.IsAny<Expression<Func<Book, bool>>>()), Times.Never);
+        _mockBookRepository.Verify(mockRepository => mockRepository
+        .GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Never);
     }
 }
