@@ -40,17 +40,20 @@ public class BookService : IBookService
 
     public virtual async Task<PaginationResult<Book>> GetListOfBooksWithOpinionsAsync(int page, int itemsPerPage )
     {
-        _paginationUtility.PaginationValidation(page, itemsPerPage);
+        /*_paginationUtility.PaginationValidation(page, itemsPerPage);*/
         var paginatedItems = await _bookRepository.GetPaginatedItemsAsync(page, itemsPerPage);
+        _paginationUtility.PaginatedItemsValidation(paginatedItems, page);
         return await GetBookPaginationResultAsync(page,itemsPerPage, paginatedItems);
     }
 
     public virtual async Task<PaginationResult<Book>> GetPaginatedBooksByGenreIdAsync (string listOfGenreId, int page, int itemsPerPage)
     {
         GenresIdValidation(listOfGenreId);
-        _paginationUtility.PaginationValidation(page, itemsPerPage);
-        var paginatedItems = await _bookRepository.GetPaginatedItemsAsync(page, itemsPerPage, GenreIdCondition(listOfGenreId));
-        return await GetBookPaginationResultAsync(page, itemsPerPage, paginatedItems);
+        var genreIdCondition = GetGenreIdCondition(listOfGenreId);
+        /*_paginationUtility.PaginationValidation(page, itemsPerPage);*/
+        var paginatedItems = await _bookRepository.GetPaginatedItemsAsync(page, itemsPerPage, genreIdCondition );
+        _paginationUtility.PaginatedItemsValidation(paginatedItems, page);
+        return await GetBookPaginationResultAsync(page, itemsPerPage, paginatedItems, genreIdCondition);
     }
 
     public virtual async Task<IEnumerable<Book?>> GetBookByTitleOrAuthor (string titleOrAuthor)
@@ -90,7 +93,7 @@ public class BookService : IBookService
         }
     }
 
-    private Expression<Func<Book, bool>> GenreIdCondition(string listOfGenreId)
+    private Expression<Func<Book, bool>> GetGenreIdCondition(string listOfGenreId)
     {
         Expression<Func<Book, bool>> condition;
         if (listOfGenreId == "All")
@@ -110,11 +113,23 @@ public class BookService : IBookService
         return condition;
     }
 
-    private async Task<PaginationResult<Book>> GetBookPaginationResultAsync(int page, int itemsPerPage, IEnumerable<Book> paginatedItems)
+    private async Task<PaginationResult<Book>> GetBookPaginationResultAsync(
+        int page,
+        int itemsPerPage,
+        IEnumerable<Book> paginatedItems,
+        Expression<Func<Book, bool>>? condition = null
+        )
     {
-        var totalItems = await _bookRepository.GetCountAsync();
+        int totalItems;
+        if(condition == null)
+        {
+            totalItems = await _bookRepository.GetCountAsync();
+        } else
+        {
+            totalItems= await _bookRepository.GetCountAsync(condition);
+        }
 
-        if (totalItems == 0 || !paginatedItems.Any()) return _paginationUtility.GetEmptyResult();
+        if (totalItems == 0 ) return _paginationUtility.GetEmptyResult();
         var result = _paginationUtility.GetPaginationResult(paginatedItems, totalItems, page, itemsPerPage);
         return result;
     }
