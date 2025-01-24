@@ -83,8 +83,10 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return entity!;
     }
 
-    public virtual async Task<int> GetCountAsync()
+    public virtual async Task<int> GetCountAsync(Expression<Func<T, bool>>? condition = null)
     {
-        return await _entities.CountAsync();
+        IQueryable<T> query = _entities;
+        if (condition != null) query = _entities.Where(condition);
+        return await query.CountAsync();
     }
 }
