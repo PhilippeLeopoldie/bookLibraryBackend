@@ -235,7 +235,7 @@ public class UnitTestBookService
     [InlineData("Alt",1,6, "Genre list contains invalid entries")]
     [InlineData("", 1, 6, "Genre list contains invalid entries")]
     [InlineData(" ", 1, 6, "Genre list contains invalid entries")]
-    public async Task Should_ThrowFormatException_When_Invalid_GenreIdEntrie_At_Get_Books_By_GenreId(
+    public async Task Should_ThrowFormatException_When_Invalid_GenreIdEntry_At_Get_Books_By_GenreId(
         string listOfGenreId, int page, int itemsPerPage, string expectedMessage
         )
     {
