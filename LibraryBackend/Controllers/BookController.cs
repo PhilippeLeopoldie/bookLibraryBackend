@@ -23,20 +23,6 @@ public class BookController : ControllerBase
         _bookService = bookService;
     }
     
-    private ApiError? NullOrWhiteSpaceValidation(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            var error = new ApiError
-            {
-                Message = "Validation Error",
-                Detail = "Expression without argument"
-            };
-            return error;
-        }
-        return null;
-    }
-
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -213,5 +199,20 @@ public class BookController : ControllerBase
         }
         await _bookRepository.Delete(bookToDelete);
         return NoContent();
+    }
+
+
+    private ApiError? NullOrWhiteSpaceValidation(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            var error = new ApiError
+            {
+                Message = "Validation Error",
+                Detail = "Expression without argument"
+            };
+            return error;
+        }
+        return null;
     }
 }
