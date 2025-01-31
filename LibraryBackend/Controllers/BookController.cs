@@ -31,7 +31,7 @@ public class BookController : ControllerBase
     {
        try
         {
-            var paginatedListOfBooks = await _bookService.GetListOfBooksWithOpinionsAsync(parameters.Page, parameters.ItemsPerPage);
+            var paginatedListOfBooks = await _bookService.GetListOfBooksWithOpinionsAsync(parameters.Page, parameters.PageSize);
 
             if (paginatedListOfBooks.PaginatedItems == null || !paginatedListOfBooks.PaginatedItems.Any())
                 return NotFound("No books found!");
@@ -120,7 +120,7 @@ public class BookController : ControllerBase
     {
         try
         {
-            var paginatedBooksByGenreId = await _bookService.GetPaginatedBooksByGenreIdAsync(genresId, parameters.Page, parameters.ItemsPerPage);
+            var paginatedBooksByGenreId = await _bookService.GetPaginatedBooksByGenreIdAsync(genresId, parameters.Page, parameters.PageSize);
             if (!paginatedBooksByGenreId.PaginatedItems.Any())
             {
                 return NotFound("No books found");

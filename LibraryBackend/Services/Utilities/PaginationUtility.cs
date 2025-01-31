@@ -8,7 +8,7 @@ public class PaginationUtility<T> where T : BaseEntity
     public int Page { get; set; }
 
     [Range(1, 6, ErrorMessage = "Number of items per page must be between 1 and 6")]
-    public int ItemsPerPage { get; set; }
+    public int PageSize { get; set; }
 
     public readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
 
@@ -20,9 +20,9 @@ public class PaginationUtility<T> where T : BaseEntity
             );
     }
 
-    public virtual  PaginationResult<T> GetPaginationResult(IEnumerable<T> listOfPaginatedItems, int totalItems, int page, int ItemsPerPage)
+    public virtual  PaginationResult<T> GetPaginationResult(IEnumerable<T> listOfPaginatedItems, int totalItems, int page, int pageSize)
     {
-        var totalPages = (int)Math.Ceiling((double)totalItems / ItemsPerPage);
+        var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
         return new PaginationResult<T>(
             listOfPaginatedItems,
             totalItems,

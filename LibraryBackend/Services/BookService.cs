@@ -38,22 +38,21 @@ public class BookService : IBookService
         return updatedBook;
     }
 
-    public virtual async Task<PaginationResult<Book>> GetListOfBooksWithOpinionsAsync(int page, int itemsPerPage )
+    public virtual async Task<PaginationResult<Book>> GetListOfBooksWithOpinionsAsync(int page, int pageSize )
     {
         /*_paginationUtility.PaginationValidation(page, itemsPerPage);*/
-        var paginatedItems = await _bookRepository.GetPaginatedItemsAsync(page, itemsPerPage);
+        var paginatedItems = await _bookRepository.GetPaginatedItemsAsync(page, pageSize);
         _paginationUtility.PaginatedItemsValidation(paginatedItems, page);
-        return await GetBookPaginationResultAsync(page,itemsPerPage, paginatedItems);
+        return await GetBookPaginationResultAsync(page,pageSize, paginatedItems);
     }
 
-    public virtual async Task<PaginationResult<Book>> GetPaginatedBooksByGenreIdAsync (string listOfGenreId, int page, int itemsPerPage)
+    public virtual async Task<PaginationResult<Book>> GetPaginatedBooksByGenreIdAsync (string listOfGenreId, int page, int pageSize)
     {
         GenresIdValidation(listOfGenreId);
         var genreIdCondition = GetGenreIdCondition(listOfGenreId);
-        /*_paginationUtility.PaginationValidation(page, itemsPerPage);*/
-        var paginatedItems = await _bookRepository.GetPaginatedItemsAsync(page, itemsPerPage, genreIdCondition );
+        var paginatedItems = await _bookRepository.GetPaginatedItemsAsync(page, pageSize, genreIdCondition );
         _paginationUtility.PaginatedItemsValidation(paginatedItems, page);
-        return await GetBookPaginationResultAsync(page, itemsPerPage, paginatedItems, genreIdCondition);
+        return await GetBookPaginationResultAsync(page, pageSize, paginatedItems, genreIdCondition);
     }
 
     public virtual async Task<IEnumerable<Book?>> GetBookByTitleOrAuthor (string titleOrAuthor)
@@ -115,7 +114,7 @@ public class BookService : IBookService
 
     private async Task<PaginationResult<Book>> GetBookPaginationResultAsync(
         int page,
-        int itemsPerPage,
+        int pageSize,
         IEnumerable<Book> paginatedItems,
         Expression<Func<Book, bool>>? condition = null
         )
@@ -130,7 +129,7 @@ public class BookService : IBookService
         }
 
         if (totalItems == 0 ) return _paginationUtility.GetEmptyResult();
-        var result = _paginationUtility.GetPaginationResult(paginatedItems, totalItems, page, itemsPerPage);
+        var result = _paginationUtility.GetPaginationResult(paginatedItems, totalItems, page, pageSize);
         return result;
     }
 }

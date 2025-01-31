@@ -37,7 +37,7 @@ public class UnitTestBookController
         var parameters = new PaginationUtility<Book>
         {
             Page = page,
-            ItemsPerPage = numberOfItemsPerPage
+            PageSize = numberOfItemsPerPage
         };
         var totalItems = mockBookData.Count;
         var totalPages = (int)Math.Ceiling((double)totalItems / numberOfItemsPerPage);
@@ -77,7 +77,7 @@ public class UnitTestBookController
         var parameters = new PaginationUtility<Book>
         {
             Page = page,
-            ItemsPerPage = numberOfItemsPerPage
+            PageSize = numberOfItemsPerPage
         };
         var totalItems = mockBookData.Count;
         var totalPages = (int)Math.Ceiling((double)totalItems / numberOfItemsPerPage);
@@ -116,7 +116,7 @@ public class UnitTestBookController
         var parameters = new PaginationUtility<Book>
         {
             Page = page,
-            ItemsPerPage = numberOfItemsPerPage
+            PageSize = numberOfItemsPerPage
         };
         List<Book>? mockNullBookData = null;
 #pragma warning disable CS8604
@@ -148,7 +148,7 @@ public class UnitTestBookController
         var parameters = new PaginationUtility<Book>
         {
             Page = page,
-            ItemsPerPage = numberOfItemsPerPage
+            PageSize = numberOfItemsPerPage
         };
         var mockEmptyBookData = Enumerable.Empty<Book>();
         _mockBookService
@@ -176,7 +176,7 @@ public class UnitTestBookController
         var parameters = new PaginationUtility<Book>
         {
             Page = -1,
-            ItemsPerPage = 3
+            PageSize = 3
         };
         var exception = new ArgumentException("Number of page must be greater than 0");
         _mockPaginationUtility
@@ -201,7 +201,7 @@ public class UnitTestBookController
         var parameters = new PaginationUtility<Book>
         {
             Page = 1,
-            ItemsPerPage = 8
+            PageSize = 8
         };
         var exception =  new ArgumentException($"Number of items per page cannot be greater than {_bookController.pageSizeLimit + 1}");
         _mockBookService
@@ -225,7 +225,7 @@ public class UnitTestBookController
         var parameters = new PaginationUtility<Book>
         {
             Page = page,
-            ItemsPerPage = pageSize
+            PageSize = pageSize
         };
         var exception = new ArgumentException($"Page {page} do not exist, the last page is 3");
         _mockBookService
@@ -399,7 +399,7 @@ public class UnitTestBookController
         var parameters = new PaginationUtility<Book>
         {
             Page = page,
-            ItemsPerPage = itemsPerPage
+            PageSize = itemsPerPage
         };
         var totalItems = mockBookData.Count;
         var totalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage);
