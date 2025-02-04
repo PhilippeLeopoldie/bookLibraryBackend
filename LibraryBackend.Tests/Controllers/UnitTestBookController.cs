@@ -466,10 +466,13 @@ public class UnitTestBookController
     {
         // Arrange
         var bookDtoRequest = new BookDtoRequest
-        {
-            Title = "New title",
-            Author = "New author"
-        };
+        (
+            "New title",
+           "New author",
+           "Url",
+           2
+
+        );
         var bookToCreate = new Book
         {
             Title = bookDtoRequest.Title,
@@ -495,29 +498,24 @@ public class UnitTestBookController
     {
         // Arrange
         var bookDtoRequest = new BookDtoRequest
-        {
-            Title = "",
-            Author = "New author"
-        };
-        var bookToCreate = new Book
-        {
-            Title = bookDtoRequest.Title,
-            Author = bookDtoRequest.Author
-        };
+        (
+            "",
+            "New author",
+            "url",
+            1
+        );
+    
         _mockBookRepository
           .Setup(MockRepository => MockRepository.Create(It.IsAny<Book>()))
-          .ReturnsAsync(bookToCreate);
+          .ThrowsAsync(new Exception("Title is required"));
 
         // Act
         var result = await _bookController.CreateBook(bookDtoRequest);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-        var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
-        Assert.Equal("Validation Error", apiError.Message);
-        Assert.Equal("Title or Author cannot be empty", apiError.Detail);
         Assert.Equal(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
-
+        Assert.Equal("Title is required", badRequestResult.Value);
     }
 
     [Fact]
@@ -565,10 +563,12 @@ public class UnitTestBookController
         // Arrange
         var id = 2;
         var bookDtoRequest = new BookDtoRequest
-        {
-            Title = "titleToModify",
-            Author = "authorToModify"
-        };
+        (
+            "titleToModify",
+            "authorToModify",
+            "url",
+            1
+        );
         var bookById = mockBookData.FirstOrDefault(book => book.Id == id);
         _mockBookRepository
           .Setup(mockRepository => mockRepository.GetByIdAsync(id))
@@ -596,10 +596,12 @@ public class UnitTestBookController
         var id = 2;
         var bookById = mockBookData.FirstOrDefault(book => book.Id == id);
         var bookToUpdate = new BookDtoRequest
-        {
-            Title = "",
-            Author = ""
-        };
+        (
+            "",
+            "",
+            "url",
+            6
+        );
         _mockBookRepository
           .Setup(mockRepository => mockRepository.GetByIdAsync(id))
           .ReturnsAsync(bookById);
@@ -626,10 +628,12 @@ public class UnitTestBookController
         var id = 2;
         var bookById = mockBookData.FirstOrDefault(book => book.Id == id);
         var bookToUpdate = new BookDtoRequest
-        {
-            Title = "",
-            Author = "AuthorToUpdate"
-        };
+        (
+            "",
+            "AuthorToUpdate",
+            "url",
+            3
+        );
 
         _mockBookRepository
           .Setup(mockRepository => mockRepository.GetByIdAsync(id))
@@ -662,10 +666,12 @@ public class UnitTestBookController
             Author = "updatedAuthor"
         };
         var bookDtoRequest = new BookDtoRequest
-        {
-            Title = "title",
-            Author = "author"
-        };
+        (
+            "title",
+            "author",
+            "url",
+            5
+        );
         _mockBookRepository
           .Setup(mockRepository => mockRepository.GetByIdAsync(id))
           .ReturnsAsync(nullBook);

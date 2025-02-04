@@ -139,23 +139,22 @@ public class BookController : ControllerBase
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Book>> CreateBook(BookDtoRequest bookDto)
     {
-        if (bookDto == null || string.IsNullOrWhiteSpace(bookDto.Title) || string.IsNullOrWhiteSpace(bookDto.Author))
+        try 
         {
-            var error = new ApiError
+            var bookToCreate = new Book
             {
-                Message = "Validation Error",
-                Detail = "Title or Author cannot be empty"
+                Title = bookDto.Title,
+                Author = bookDto.Author,
+                ImageUrl = bookDto.ImageUrl,
+                GenreId = bookDto.GenreId,
             };
-            return BadRequest(error);
+            var newBook = await _bookRepository.Create(bookToCreate);
+            return CreatedAtAction(nameof(GetPaginatedBooks), new { id = newBook.Id }, newBook);
         }
-        var bookToCreate = new Book
+        catch(Exception ex)
         {
-            Title = bookDto.Title,
-            Author = bookDto.Author,
-            ImageUrl = bookDto.ImageUrl
-        };
-        var newBook = await _bookRepository.Create(bookToCreate);
-        return CreatedAtAction(nameof(GetPaginatedBooks), new { id = newBook.Id }, newBook);
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPut("{id}")]

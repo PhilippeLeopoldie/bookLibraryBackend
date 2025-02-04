@@ -1,9 +1,15 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace LibraryBackend.Models;
 
-public class BookDtoRequest 
-{
-public string? Title {get; set;}
-public string? Author {get; set;} 
-public string? ImageUrl { get; set; }
-public int? GenreId { get; set; }
-}
+public record BookDtoRequest 
+(
+[Required(ErrorMessage = "Title is required")]
+string Title,
+[Required(ErrorMessage = "Author is required")]
+string Author ,
+[Required, Url]
+string ImageUrl,
+[Required, Range(1, int.MaxValue, ErrorMessage = "GenreId must be greater than 0")]
+int GenreId 
+);
