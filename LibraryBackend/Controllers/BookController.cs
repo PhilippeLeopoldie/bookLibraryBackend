@@ -146,7 +146,7 @@ public class BookController : ControllerBase
                 Title = bookDto.Title,
                 Author = bookDto.Author,
                 ImageUrl = bookDto.ImageUrl,
-                GenreId = bookDto.GenreId,
+                /*GenreId = bookDto.GenreId,*/
             };
             var newBook = await _bookRepository.Create(bookToCreate);
             return CreatedAtAction(nameof(GetPaginatedBooks), new { id = newBook.Id }, newBook);
@@ -180,6 +180,7 @@ public class BookController : ControllerBase
         }
         bookByIdToUpdate.Author = bookToUpdate.Author;
         bookByIdToUpdate.Title = bookToUpdate.Title;
+        bookByIdToUpdate.Description = bookToUpdate.Description;
         bookByIdToUpdate.ImageUrl = bookToUpdate.ImageUrl;
         bookByIdToUpdate.GenreId = bookToUpdate.GenreId;
         var updatedBook = await _bookRepository.Update(bookByIdToUpdate);
