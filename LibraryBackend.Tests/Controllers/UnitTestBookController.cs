@@ -469,6 +469,7 @@ public class UnitTestBookController
         (
             "New title",
            "New author",
+           "Description",
            "Url",
            2
 
@@ -501,6 +502,7 @@ public class UnitTestBookController
         (
             "",
             "New author",
+            "Description",
             "url",
             1
         );
@@ -566,6 +568,7 @@ public class UnitTestBookController
         (
             "titleToModify",
             "authorToModify",
+            "Description",
             "url",
             1
         );
@@ -599,6 +602,7 @@ public class UnitTestBookController
         (
             "",
             "",
+            "Description",
             "url",
             6
         );
@@ -631,6 +635,7 @@ public class UnitTestBookController
         (
             "",
             "AuthorToUpdate",
+            "Description",
             "url",
             3
         );
@@ -669,6 +674,7 @@ public class UnitTestBookController
         (
             "title",
             "author",
+            "Description",
             "url",
             5
         );
