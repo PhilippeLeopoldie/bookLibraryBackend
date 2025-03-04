@@ -4,7 +4,7 @@ using LibraryBackend.Models;
 
 namespace LibraryBackend.Controllers;
 
-[Route("api/[controller]s")]
+[Route("api/[controller]")]
 [ApiController]
 public class StoryController : ControllerBase
 {
@@ -15,7 +15,7 @@ public class StoryController : ControllerBase
         _storyService = storyService;
     }
 
-    [HttpPost]
+    [HttpPost("AI")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<string>> GenerateAIStory([FromBody] StoryDtoRequest prompt)
