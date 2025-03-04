@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LibraryBackend.Services;
+using LibraryBackend.Models;
 
 namespace LibraryBackend.Controllers;
 
@@ -17,7 +18,7 @@ public class StoryController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<string>> GenerateAIStory([FromBody] string prompt)
+    public async Task<ActionResult<string>> GenerateAIStory([FromBody] StoryDtoRequest prompt)
     {
         try
         {

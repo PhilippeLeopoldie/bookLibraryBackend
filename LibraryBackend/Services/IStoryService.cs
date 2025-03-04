@@ -1,6 +1,7 @@
-﻿namespace LibraryBackend.Services;
+﻿using LibraryBackend.Models;
+namespace LibraryBackend.Services;
 
 public interface IStoryService
 {
-    Task<string> GenerateAIStoryAsync(string prompt);
+    Task<string> GenerateAIStoryAsync(StoryDtoRequest promt);
 }

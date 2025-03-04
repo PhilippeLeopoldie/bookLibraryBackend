@@ -1,4 +1,5 @@
 ﻿using OpenAI.Chat;
+using LibraryBackend.Models;
 
 namespace LibraryBackend.Services;
 
@@ -12,13 +13,16 @@ public class StoryService : IStoryService
         _apiKey = configuration["OPENAI_API_KEY"] ??
             Environment.GetEnvironmentVariable("OPENAI_API_KEY") ??
             throw new ArgumentNullException(nameof(configuration));
-        _modelNames = "gpt-3.5-turbo";
+        _modelNames = "gpt-4o-mini";
     }
 
-    public async Task<string> GenerateAIStoryAsync(string prompt)
+    public async Task<string> GenerateAIStoryAsync(StoryDtoRequest prompt)
     {
+        var systemMessage = ChatMessage.CreateSystemMessage("create a story base on the information provided: ReadingTime in minutes, Genre");
+        var userMessage = ChatMessage.CreateUserMessage($"ReadingTime:{prompt.ReadingTime},Genre:{prompt.Genre}");
+        var messages = new ChatMessage[] { systemMessage, userMessage };
         var client = new ChatClient(_modelNames, _apiKey);
-        var response = await client.CompleteChatAsync(prompt);
+        var response = await client.CompleteChatAsync(messages, null, CancellationToken.None);
         return response.Value.Content[0].Text;
     }
 }
