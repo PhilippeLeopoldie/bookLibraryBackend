@@ -16,14 +16,14 @@ public class StoryController : ControllerBase
     }
 
     [HttpPost("AI")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<string>> GenerateAIStory([FromBody] StoryDtoRequest prompt)
     {
         try
         {
             var story = await _storyService.GenerateAIStoryAsync(prompt);
-            return Ok(new { story });
+            return CreatedAtAction("GenerateAIStory" ,new { story });
         }
         catch (Exception ex)
         {
