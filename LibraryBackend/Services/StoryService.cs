@@ -1,6 +1,5 @@
 ﻿using OpenAI.Chat;
 using LibraryBackend.Models;
-using System.Text;
 
 namespace LibraryBackend.Services;
 
@@ -19,21 +18,11 @@ public class StoryService : IStoryService
 
     public async Task<string> GenerateAIStoryAsync(StoryDtoRequest prompt)
     {
-        var systemMessage = ChatMessage.CreateSystemMessage("create a story based on the information provided: ReadingTime in minutes, Genre");
+        var systemMessage = ChatMessage.CreateSystemMessage("create a story base on the information provided: ReadingTime in minutes, Genre");
         var userMessage = ChatMessage.CreateUserMessage($"ReadingTime:{prompt.ReadingTime},Genre:{prompt.Genre}");
         var messages = new ChatMessage[] { systemMessage, userMessage };
         var client = new ChatClient(_modelNames, _apiKey);
-
-        var AiStreamResponse =  client.CompleteChatStreamingAsync(messages, null, CancellationToken.None);
-
-        var story = new StringBuilder();
-        await foreach (var update in AiStreamResponse)
-        {
-            foreach  (var content in update.ContentUpdate)
-            {
-                story.Append(content.Text);
-            }
-        }
-        return story.ToString();
+        var response = await client.CompleteChatAsync(messages, null, CancellationToken.None);
+        return response.Value.Content[0].Text;
     }
 }
