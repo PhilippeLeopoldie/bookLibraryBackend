@@ -1,4 +1,4 @@
 ﻿namespace LibraryBackend.Models;
 
-public record StoryDtoRequest (string ReadingTime, string Genre);
+public record StoryDtoRequest (string language, string ReadingTime, string Genre);
 
