@@ -18,8 +18,8 @@ public class StoryService : IStoryService
 
     public async Task<string> GenerateAIStoryAsync(StoryDtoRequest prompt)
     {
-        var systemMessage = ChatMessage.CreateSystemMessage("create a story base on the information provided: ReadingTime in minutes, Genre");
-        var userMessage = ChatMessage.CreateUserMessage($"ReadingTime:{prompt.ReadingTime},Genre:{prompt.Genre}");
+        var systemMessage = ChatMessage.CreateSystemMessage("create a story base on the information provided: Language, ReadingTime in minutes, Genre. Write: 'Title:' and 'Story:' and end with 'Author: AI'");
+        var userMessage = ChatMessage.CreateUserMessage($"language:{prompt.language}, ReadingTime:{prompt.ReadingTime}, Genre:{prompt.Genre}");
         var messages = new ChatMessage[] { systemMessage, userMessage };
         var client = new ChatClient(_modelNames, _apiKey);
         var response = await client.CompleteChatAsync(messages, null, CancellationToken.None);
