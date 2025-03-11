@@ -124,6 +124,7 @@ public static List<Genre> GetGenreMockData()
             {
                 Id = 1,
                 Name= "genre1",
+                IsForStoryGeneration = true,
                 Books = new List<Book>
                 {
                     new Book
@@ -144,6 +145,7 @@ public static List<Genre> GetGenreMockData()
             {
                 Id = 2,
                 Name= "genre2",
+                IsForStoryGeneration = true,
                 Books = new List<Book>
                 {
                     new Book
@@ -165,6 +167,7 @@ public static List<Genre> GetGenreMockData()
             {
                 Id = 3,
                 Name= "genre3",
+                IsForStoryGeneration = true,
                 Books = new List<Book>
                 {
                     new Book

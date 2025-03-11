@@ -67,6 +67,7 @@ public class GenreController : ControllerBase
         var request = new Genre
         {
             Name = genre.Name,
+            IsForStoryGeneration = genre.IsForStoryGeneration
         };
         var createdGenre = await _genreRepository.Create(request);
         return CreatedAtAction(nameof(GetGenres), new { id = createdGenre.Id }, createdGenre);
