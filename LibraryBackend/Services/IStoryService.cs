@@ -3,5 +3,5 @@ namespace LibraryBackend.Services;
 
 public interface IStoryService
 {
-    Task<string> GenerateAIStoryAsync(StoryDtoRequest promt);
+    Task<string> GenerateAIStoryAsync(StoryDtoRequest prompt);
 }
