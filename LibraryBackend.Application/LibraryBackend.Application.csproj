@@ -11,11 +11,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\" />
-    <Folder Include="Interfaces\Repositories\" />
-    <Folder Include="Interfaces\Services\" />
+    <Folder Include="Books\DTOs\" />
+    <Folder Include="Books\Interfaces\Repositories\" />
+    <Folder Include="Books\Interfaces\Services\" />
+    <Folder Include="Books\Services\" />
+    <Folder Include="Genres\DTOs\" />
+    <Folder Include="Genres\Interfaces\Repositories\" />
+    <Folder Include="Genres\Interfaces\Services\" />
+    <Folder Include="Genres\Services\" />
+    <Folder Include="Opinions\DTOs\" />
+    <Folder Include="Opinions\Interfaces\Repositories\" />
+    <Folder Include="Opinions\Interfaces\Services\" />
+    <Folder Include="Opinions\Services\" />
+    <Folder Include="Stories\DTOs\" />
+    <Folder Include="Stories\Interfaces\Repositories\" />
+    <Folder Include="Stories\Interfaces\Services\" />
+    <Folder Include="Stories\Services\" />
     <Folder Include="Utilities\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
