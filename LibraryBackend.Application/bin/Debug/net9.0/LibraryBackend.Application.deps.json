@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "LibraryBackend.Application/1.0.0": {
+        "dependencies": {
+          "LibraryBackend.Domain": "1.0.0"
+        },
+        "runtime": {
+          "LibraryBackend.Application.dll": {}
+        }
+      },
+      "LibraryBackend.Domain/1.0.0": {
+        "runtime": {
+          "LibraryBackend.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "LibraryBackend.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "LibraryBackend.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

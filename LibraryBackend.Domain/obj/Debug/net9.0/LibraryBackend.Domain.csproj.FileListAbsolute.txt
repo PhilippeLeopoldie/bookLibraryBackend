@@ -1,0 +1,12 @@
+C:\Users\phili\OneDrive\Documents\doc\Programming\Repo\bookLibraryBackend\LibraryBackend.Domain\bin\Debug\net9.0\LibraryBackend.Domain.deps.json
+C:\Users\phili\OneDrive\Documents\doc\Programming\Repo\bookLibraryBackend\LibraryBackend.Domain\bin\Debug\net9.0\LibraryBackend.Domain.dll
+C:\Users\phili\OneDrive\Documents\doc\Programming\Repo\bookLibraryBackend\LibraryBackend.Domain\bin\Debug\net9.0\LibraryBackend.Domain.pdb
+C:\Users\phili\OneDrive\Documents\doc\Programming\Repo\bookLibraryBackend\LibraryBackend.Domain\obj\Debug\net9.0\LibraryBackend.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\phili\OneDrive\Documents\doc\Programming\Repo\bookLibraryBackend\LibraryBackend.Domain\obj\Debug\net9.0\LibraryBackend.Domain.AssemblyInfoInputs.cache
+C:\Users\phili\OneDrive\Documents\doc\Programming\Repo\bookLibraryBackend\LibraryBackend.Domain\obj\Debug\net9.0\LibraryBackend.Domain.AssemblyInfo.cs
+C:\Users\phili\OneDrive\Documents\doc\Programming\Repo\bookLibraryBackend\LibraryBackend.Domain\obj\Debug\net9.0\LibraryBackend.Domain.csproj.CoreCompileInputs.cache
+C:\Users\phili\OneDrive\Documents\doc\Programming\Repo\bookLibraryBackend\LibraryBackend.Domain\obj\Debug\net9.0\LibraryBackend.Domain.sourcelink.json
+C:\Users\phili\OneDrive\Documents\doc\Programming\Repo\bookLibraryBackend\LibraryBackend.Domain\obj\Debug\net9.0\LibraryBackend.Domain.dll
+C:\Users\phili\OneDrive\Documents\doc\Programming\Repo\bookLibraryBackend\LibraryBackend.Domain\obj\Debug\net9.0\refint\LibraryBackend.Domain.dll
+C:\Users\phili\OneDrive\Documents\doc\Programming\Repo\bookLibraryBackend\LibraryBackend.Domain\obj\Debug\net9.0\LibraryBackend.Domain.pdb
+C:\Users\phili\OneDrive\Documents\doc\Programming\Repo\bookLibraryBackend\LibraryBackend.Domain\obj\Debug\net9.0\ref\LibraryBackend.Domain.dll

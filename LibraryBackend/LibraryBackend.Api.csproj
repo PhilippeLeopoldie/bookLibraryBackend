@@ -35,4 +35,8 @@
     <PackageReference Include="X.PagedList" Version="10.5.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LibraryBackend.Infrastructure\LibraryBackend.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

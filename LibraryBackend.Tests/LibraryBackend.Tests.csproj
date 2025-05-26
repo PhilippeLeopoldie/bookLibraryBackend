@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LibraryBackend\LibraryBackend.csproj" />
+    <ProjectReference Include="..\LibraryBackend\LibraryBackend.Api.csproj" />
   </ItemGroup>
 
 </Project>
