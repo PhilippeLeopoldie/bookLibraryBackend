@@ -1,13 +1,11 @@
 using System.Linq.Expressions;
 using LibraryBackend.Common;
-using LibraryBackend.Controllers;
-using LibraryBackend.Services;
-using LibraryBackend.Models;
-using LibraryBackend.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Moq;
+using LibraryBackend.Api.Controllers;
+using LibraryBackend.Application;
+using LibraryBackend.Domain.Entities;
 
 namespace LibraryBackend.Tests.Controllers;
 

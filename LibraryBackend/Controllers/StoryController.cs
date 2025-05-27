@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using LibraryBackend.Services;
-using LibraryBackend.Models;
+using LibraryBackend.Application;
 
-namespace LibraryBackend.Controllers;
+namespace LibraryBackend.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

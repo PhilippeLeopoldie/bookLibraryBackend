@@ -1,12 +1,11 @@
-﻿using LibraryBackend.Common;
-using LibraryBackend.Models;
-using LibraryBackend.Repositories;
-using LibraryBackend.Services;
+﻿using LibraryBackend.Application;
+using LibraryBackend.Common;
+using LibraryBackend.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 
 
-namespace LibraryBackend.Controllers;
+namespace LibraryBackend.Api.Controllers;
 
 [Route("api/[controller]s")]
 [ApiController]

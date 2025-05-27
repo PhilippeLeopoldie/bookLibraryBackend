@@ -1,6 +1,5 @@
-﻿using LibraryBackend.Models;
-using LibraryBackend.Repositories;
-using LibraryBackend.Services;
+﻿using LibraryBackend.Application;
+using LibraryBackend.Domain.Entities;
 using LibraryBackend.Tests.Data;
 using Moq;
 namespace LibraryBackend.Tests.Services;

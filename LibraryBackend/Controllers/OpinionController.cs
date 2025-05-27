@@ -1,19 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using LibraryBackend.Models;
-using LibraryBackend.Services;
-using LibraryBackend.Repositories;
 using System.Linq.Expressions;
 using LibraryBackend.Common;
-using Microsoft.IdentityModel.Tokens;
+using LibraryBackend.Domain.Entities;
+using LibraryBackend.Application;
 
 
-namespace LibraryBackend.Controllers;
+namespace LibraryBackend.Api.Controllers;
 
 [Route("api/[controller]s")]
 [ApiController]

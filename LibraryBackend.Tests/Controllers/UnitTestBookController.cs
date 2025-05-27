@@ -1,12 +1,12 @@
 using LibraryBackend.Common;
-using LibraryBackend.Controllers;
-using LibraryBackend.Services;
-using LibraryBackend.Models;
-using LibraryBackend.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using LibraryBackend.Tests.Data;
 using Moq;
+using LibraryBackend.Api.Controllers;
+using LibraryBackend.Application;
+using LibraryBackend.Domain.Entities;
+using LibraryBackend.Application.Utilities;
 
 namespace LibraryBackend.Tests.Controllers;
 

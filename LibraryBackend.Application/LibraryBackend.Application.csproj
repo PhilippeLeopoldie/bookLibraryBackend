@@ -7,27 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LibraryBackend.Domain\LibraryBackend.Domain.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
+    <PackageReference Include="OpenAI" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Books\DTOs\" />
-    <Folder Include="Books\Interfaces\Repositories\" />
-    <Folder Include="Books\Interfaces\Services\" />
-    <Folder Include="Books\Services\" />
-    <Folder Include="Genres\DTOs\" />
-    <Folder Include="Genres\Interfaces\Repositories\" />
-    <Folder Include="Genres\Interfaces\Services\" />
-    <Folder Include="Genres\Services\" />
-    <Folder Include="Opinions\DTOs\" />
-    <Folder Include="Opinions\Interfaces\Repositories\" />
-    <Folder Include="Opinions\Interfaces\Services\" />
-    <Folder Include="Opinions\Services\" />
-    <Folder Include="Stories\DTOs\" />
-    <Folder Include="Stories\Interfaces\Repositories\" />
-    <Folder Include="Stories\Interfaces\Services\" />
-    <Folder Include="Stories\Services\" />
-    <Folder Include="Utilities\" />
+    <ProjectReference Include="..\LibraryBackend.Domain\LibraryBackend.Domain.csproj" />
   </ItemGroup>
 
 </Project>
