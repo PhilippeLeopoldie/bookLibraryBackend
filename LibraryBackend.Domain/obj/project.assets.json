@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\phili\\OneDrive\\Documents\\doc\\Programming\\Repo\\bookLibraryBackend\\LibraryBackend.Domain\\LibraryBackend.Domain.csproj",
+      "projectUniqueName": "C:\\Users\\phili\\OneDrive\\salt\\saltLab\\projet\\BooklibraryBackend\\bookLibraryBackend\\LibraryBackend.Domain\\LibraryBackend.Domain.csproj",
       "projectName": "LibraryBackend.Domain",
-      "projectPath": "C:\\Users\\phili\\OneDrive\\Documents\\doc\\Programming\\Repo\\bookLibraryBackend\\LibraryBackend.Domain\\LibraryBackend.Domain.csproj",
+      "projectPath": "C:\\Users\\phili\\OneDrive\\salt\\saltLab\\projet\\BooklibraryBackend\\bookLibraryBackend\\LibraryBackend.Domain\\LibraryBackend.Domain.csproj",
       "packagesPath": "C:\\Users\\phili\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\phili\\OneDrive\\Documents\\doc\\Programming\\Repo\\bookLibraryBackend\\LibraryBackend.Domain\\obj\\",
+      "outputPath": "C:\\Users\\phili\\OneDrive\\salt\\saltLab\\projet\\BooklibraryBackend\\bookLibraryBackend\\LibraryBackend.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -52,7 +52,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "9.0.200"
     },
     "frameworks": {
       "net9.0": {
@@ -73,7 +73,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
