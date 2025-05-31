@@ -21,3 +21,6 @@ LibraryBackend/.vs/LibraryBackend/v16/.suo
 /LibraryBackend.Application/obj/
 /LibraryBackend.Infrastructure/obj/
 /LibraryBackend.Domain/obj/
+/LibraryBackend.Application/bin/
+/LibraryBackend.Infrastructure/bin/
+/LibraryBackend.Domain/bin/
