@@ -137,18 +137,19 @@ public class BookController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Book>> CreateBook(BookDtoRequest bookDto)
+    public async Task<ActionResult<Book>> CreateBook([FromQuery]BookDtoRequest bookDto)
     {
         try 
         {
-            var bookToCreate = new Book
-            {
-                Title = bookDto.Title,
-                Author = bookDto.Author,
-                ImageUrl = bookDto.ImageUrl,
-                /*GenreId = bookDto.GenreId,*/
-            };
-            var newBook = await _bookRepository.Create(bookToCreate);
+            var newBook = await _bookService.CreateAsync(
+                new Book()
+                    {
+                        Title = bookDto.Title,
+                        Author = bookDto.Author,
+                        Description = bookDto.Description,
+                        ImageUrl = bookDto.ImageUrl,
+                        GenreId = bookDto.GenreId,
+                    });
             return CreatedAtAction(nameof(GetPaginatedBooks), new { id = newBook.Id }, newBook);
         }
         catch(Exception ex)

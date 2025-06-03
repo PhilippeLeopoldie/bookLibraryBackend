@@ -58,6 +58,11 @@ public class BookService(
         return books;
     }
 
+    public virtual async Task<Book> CreateAsync(Book book)
+    {
+        return await bookRepository.Create(book);
+    }
+
     // Most popular books are those with the biggest number of reviews with a rate >=3
     private IEnumerable<Book>? GetMostPopularBooks(IEnumerable<Book> books, int numberOfBooks)
     {

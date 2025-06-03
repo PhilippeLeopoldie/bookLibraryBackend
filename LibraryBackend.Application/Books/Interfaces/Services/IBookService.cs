@@ -12,4 +12,5 @@ public interface IBookService
     Task<PaginationResult<Book>> GetListOfBooksWithOpinionsAsync(int page, int numberOfItemsPerPage);
     Task<PaginationResult<Book>> GetPaginatedBooksByGenreIdAsync(string listOfGenreId, int page, int itemsPerPage);
     Task<IEnumerable<Book?>> GetBookByTitleOrAuthor(string titleOrAuthor);
+    Task<Book> CreateAsync(Book book);
 }

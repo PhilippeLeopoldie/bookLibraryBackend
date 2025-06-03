@@ -482,6 +482,9 @@ public class UnitTestBookController
         _mockBookRepository
           .Setup(MockRepository => MockRepository.Create(It.IsAny<Book>()))
           .ReturnsAsync(bookToCreate);
+        _mockBookService
+            .Setup(mockService => mockService.CreateAsync(It.IsAny<Book>()))
+            .ReturnsAsync(bookToCreate);
 
         // Act
         var result = await _bookController.CreateBook(bookDtoRequest);
@@ -508,8 +511,12 @@ public class UnitTestBookController
         );
     
         _mockBookRepository
-          .Setup(MockRepository => MockRepository.Create(It.IsAny<Book>()))
-          .ThrowsAsync(new Exception("Title is required"));
+            .Setup(MockRepository => MockRepository.Create(It.IsAny<Book>()))
+            .ThrowsAsync(new Exception("Title is required"));
+        _mockBookService
+            .Setup(mockService => mockService.CreateAsync(It.IsAny<Book>()))
+            .ThrowsAsync(new Exception("Title is required"));
+       
 
         // Act
         var result = await _bookController.CreateBook(bookDtoRequest);
