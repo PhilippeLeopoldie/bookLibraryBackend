@@ -408,9 +408,7 @@ public class UnitTestBookController
                 .Select(int.Parse)
                 .ToList();
         var expectedPaginatedBooks = mockBookData
-            .Where(book => book.GenreId.HasValue
-            &&
-            genresId.Contains(book.GenreId.Value))
+            .Where(book => book.GenreId != 0)
             .Skip((page - 1) * itemsPerPage)
             .Take(itemsPerPage)
             .ToList();
@@ -477,7 +475,9 @@ public class UnitTestBookController
         var bookToCreate = new Book
         {
             Title = bookDtoRequest.Title,
-            Author = bookDtoRequest.Author
+            Author = bookDtoRequest.Author,
+            Description = bookDtoRequest.Description,
+            ImageUrl= bookDtoRequest.ImageUrl,
         };
         _mockBookRepository
           .Setup(MockRepository => MockRepository.Create(It.IsAny<Book>()))
@@ -579,24 +579,37 @@ public class UnitTestBookController
             "url",
             1
         );
-        var bookById = mockBookData.FirstOrDefault(book => book.Id == id);
-        _mockBookRepository
-          .Setup(mockRepository => mockRepository.GetByIdAsync(id))
-          .ReturnsAsync(bookById);
-        _mockBookRepository
-          .Setup(mockRepository => mockRepository.Update(bookById!))
-          .ReturnsAsync(bookById!);
+        var bookDtoResponse = new BookDtoResponse
+        (
+            new Book 
+            { 
+                Id = id,
+                Title = "titleToModify",
+                Author = "authorToModify",
+                Description = "Description",
+                ImageUrl = "url"
+            },
+            ""
+            
+        );
+        _mockBookService
+           .Setup(mockService => mockService.GetBookByIdAsync(id))
+          .ReturnsAsync(bookDtoRequest);
+        _mockBookService
+          .Setup(mockService => mockService.UpdateBookAsync(id,bookDtoRequest))
+          .ReturnsAsync(bookDtoResponse);
+
 
         // Act
         var result = await _bookController.UpdateBook(id, bookDtoRequest);
 
         // assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var updatedBook = Assert.IsType<Book>(okResult.Value);
-        Assert.Equal(id, updatedBook.Id);
-        Assert.Equal("titleToModify", updatedBook.Title);
-        Assert.Equal("authorToModify", updatedBook.Author);
-        _mockBookRepository.Verify(mockRepository => mockRepository.Update(bookById!), Times.Once);
+        var response = Assert.IsType<BookDtoResponse>(okResult.Value);
+        Assert.Equal(id, response.Book.Id);
+        Assert.Equal("titleToModify", response.Book.Title);
+        Assert.Equal("authorToModify", response.Book.Author);
+        _mockBookService.Verify(mockService => mockService.UpdateBookAsync(id, bookDtoRequest), Times.Once);
     }
 
     [Fact]
@@ -613,21 +626,16 @@ public class UnitTestBookController
             "url",
             6
         );
-        _mockBookRepository
-          .Setup(mockRepository => mockRepository.GetByIdAsync(id))
-          .ReturnsAsync(bookById);
-        _mockBookRepository
-          .Setup(mockRepository => mockRepository.Update(bookById!))
-          .ReturnsAsync(bookById!);
-
+        _bookController.ModelState.AddModelError("Title", "The Title field is required.");
+        _bookController.ModelState.AddModelError("Author", "The Author field is required.");
         // Act
         var result = await _bookController.UpdateBook(id, bookToUpdate);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-        var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
-        Assert.Equal("Validation Error", apiError.Message);
-        Assert.Equal("Title or Author cannot be empty", apiError.Detail);
+        var modelStateErrors = Assert.IsType<SerializableError>(badRequestResult.Value);
+        Assert.True(modelStateErrors.ContainsKey("Title"));
+        Assert.True(modelStateErrors.ContainsKey("Author"));
         _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(id), Times.Never);
         _mockBookRepository.Verify(mockRepository => mockRepository.Update(bookById!), Times.Never);
     }
@@ -647,21 +655,14 @@ public class UnitTestBookController
             3
         );
 
-        _mockBookRepository
-          .Setup(mockRepository => mockRepository.GetByIdAsync(id))
-          .ReturnsAsync(bookById);
-        _mockBookRepository
-          .Setup(mockRepository => mockRepository.Update(bookById!))
-          .ReturnsAsync(bookById!);
-
+        _bookController.ModelState.AddModelError("Title", "The Title field is required.");
         // Act
         var result = await _bookController.UpdateBook(id, bookToUpdate);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-        var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
-        Assert.Equal("Validation Error", apiError.Message);
-        Assert.Equal("Title or Author cannot be empty", apiError.Detail);
+        var errors = Assert.IsType<SerializableError>(badRequestResult.Value);
+        Assert.True(errors.ContainsKey("Title"));
         _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(id), Times.Never);
         _mockBookRepository.Verify(mockRepository => mockRepository.Update(bookById!), Times.Never);
     }
@@ -671,12 +672,18 @@ public class UnitTestBookController
     {
         //Arrange
         var id = 1;
-        Book? nullBook = null;
-        var book = new Book
-        {
-            Title = "UpdatedTitle",
-            Author = "updatedAuthor"
-        };
+        BookDtoResponse? nullBook = null;
+        var response = new BookDtoResponse
+        (
+         new Book
+         {
+             Title = "UpdatedTitle",
+             Author = "updatedAuthor",
+             Description = "updatedDescription",
+             ImageUrl = "updatedImageUrl"
+         },
+         ""
+        );
         var bookDtoRequest = new BookDtoRequest
         (
             "title",
@@ -685,12 +692,10 @@ public class UnitTestBookController
             "url",
             5
         );
-        _mockBookRepository
-          .Setup(mockRepository => mockRepository.GetByIdAsync(id))
+      
+        _mockBookService
+          .Setup(mockService => mockService.UpdateBookAsync(id, bookDtoRequest))
           .ReturnsAsync(nullBook);
-        _mockBookRepository
-          .Setup(mockRepository => mockRepository.Update(book))
-          .ReturnsAsync(book);
 
         // Act
         var result = await _bookController.UpdateBook(id, bookDtoRequest);
@@ -698,7 +703,6 @@ public class UnitTestBookController
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
         Assert.Equal($"Book with Id {id} not found", notFoundResult.Value);
-        _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(id), Times.Once);
-        _mockBookRepository.Verify(mockRepository => mockRepository.Update(book), Times.Never);
+        _mockBookService.Verify(mockService => mockService.UpdateBookAsync(id, bookDtoRequest), Times.Once);
     }
 }

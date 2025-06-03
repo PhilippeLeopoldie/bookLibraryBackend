@@ -14,6 +14,8 @@ public static List<Book> GetMockData ()
     Id = 1,
     Title = "title1",
     Author = "author1",
+    ImageUrl= "",
+    Description="",
     CreationDate = new DateOnly(2025,01,8),
     GenreId = 2,
     Opinions = new List<Opinion>
@@ -43,6 +45,8 @@ public static List<Book> GetMockData ()
     Id = 2,
     Title ="title2",
     Author ="author2",
+    ImageUrl= "",
+    Description="",
     CreationDate = new DateOnly(2025,01,9),
     GenreId = 3,
   },
@@ -51,6 +55,8 @@ public static List<Book> GetMockData ()
     Id = 3,
     Title ="title3",
     Author ="author3",
+    ImageUrl= "",
+    Description="",
     CreationDate = new DateOnly(2025,01,10),
     GenreId = 2,
   },
@@ -58,13 +64,17 @@ public static List<Book> GetMockData ()
   {
     Id = 4,
     Title ="title4",
-    Author ="author4"
+    Author ="author4",
+    ImageUrl= "",
+    Description="",
   },
   new Book
   {
     Id = 5,
     Title = "title5",
     Author = "author5",
+    ImageUrl= "",
+    Description="",
     Opinions = new List<Opinion>
       {
         new Opinion
@@ -91,25 +101,33 @@ public static List<Book> GetMockData ()
   {
     Id = 6,
     Title ="title6",
-    Author ="author6"
+    Author ="author6",
+    ImageUrl= "",
+    Description="",
   },
   new Book
   {
     Id = 7,
     Title ="title7",
-    Author ="author7"
+    Author ="author7",
+    ImageUrl= "",
+    Description="",
   },
   new Book
   {
     Id = 8,
     Title ="title8",
-    Author ="author8"
+    Author ="author8",
+    ImageUrl= "",
+    Description="",
   },
   new Book
   {
     Id = 9,
     Title ="title9",
-    Author ="author9"
+    Author ="author9",
+    ImageUrl= "",
+    Description="",
   },
 
 };
@@ -132,12 +150,16 @@ public static List<Genre> GetGenreMockData()
                         Id= 1,
                         Title= "title1Genre1",
                         Author= "author1Genre1",
+                        ImageUrl= "",
+                        Description="",
                     },
                     new Book
                     {
                         Id= 2,
                         Title= "title2Genre1",
                         Author= "author2Genre1",
+                        ImageUrl= "",
+                        Description="",
                     }
                 }
             },
@@ -153,12 +175,16 @@ public static List<Genre> GetGenreMockData()
                         Id= 3,
                         Title= "title3Genre2",
                         Author= "author3Genre2",
+                        ImageUrl= "",
+                        Description="",
                     },
                     new Book
                     {
                         Id= 4,
                         Title= "title4Genre2",
                         Author= "author4Genre2",
+                        ImageUrl= "",
+                        Description="",
                     }
 
                 }
@@ -175,6 +201,8 @@ public static List<Genre> GetGenreMockData()
                         Id= 5,
                         Title= "title5Genre3",
                         Author= "author5Genre3",
+                        ImageUrl= "",
+                        Description="",
                     }
                 }
             }

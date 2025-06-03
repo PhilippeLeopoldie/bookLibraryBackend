@@ -31,6 +31,8 @@ public class UnitTestOpinionService
             Id = 1,
             Title = "title1",
             Author = "author1",
+            Description = "Description1",
+            ImageUrl = "ImageUrl1",
             AverageRate = 3.6,
             Opinions = new List<Opinion>
       {

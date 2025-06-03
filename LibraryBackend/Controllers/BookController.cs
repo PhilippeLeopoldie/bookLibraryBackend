@@ -76,14 +76,7 @@ public class BookController : ControllerBase
         {
             return NotFound($"Book with Id {id} not found");
         }
-        return Ok
-        (
-          new BookDtoResponse
-          {
-              Book = bookById,
-              RequestedAt = DateTime.Now.ToString(dateTimeFormat)
-          }
-        );
+        return Ok( new BookDtoResponse(bookById, DateTime.Now.ToString(dateTimeFormat)));
     }
 
     [HttpGet("TitleOrAuthor")]
@@ -105,10 +98,10 @@ public class BookController : ControllerBase
         }
         var booksResponse = from book in books
                             select new BookDtoResponse
-                            {
-                                Book = book,
-                                RequestedAt = DateTime.Now.ToString(dateTimeFormat)
-                            };
+                            (
+                               book,
+                                DateTime.Now.ToString(dateTimeFormat)
+                            );
         return Ok(booksResponse);
     }
 
@@ -144,9 +137,9 @@ public class BookController : ControllerBase
             var newBook = await _bookService.CreateAsync(
                 new Book()
                     {
-                        Title = bookDto.Title,
-                        Author = bookDto.Author,
-                        Description = bookDto.Description,
+                        Title = bookDto.Title.Trim(),
+                        Author = bookDto.Author.Trim(),
+                        Description = bookDto.Description.Trim(),
                         ImageUrl = bookDto.ImageUrl,
                         GenreId = bookDto.GenreId,
                     });
@@ -162,29 +155,11 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Book>> UpdateBook(int id, BookDtoRequest bookToUpdate)
+    public async Task<ActionResult<Book>> UpdateBook(int id, [FromQuery]BookDtoRequest bookToUpdate)
     {
-        if (string.IsNullOrWhiteSpace(bookToUpdate.Title) || string.IsNullOrWhiteSpace(bookToUpdate.Author))
-        {
-            var emptyDataError = new ApiError
-            {
-                Message = "Validation Error",
-                Detail = "Title or Author cannot be empty"
-            };
-            return BadRequest(emptyDataError);
-        }
-
-        var bookByIdToUpdate = await _bookRepository.GetByIdAsync(id);
-        if (bookByIdToUpdate == null)
-        {
-            return NotFound($"Book with Id {id} not found");
-        }
-        bookByIdToUpdate.Author = bookToUpdate.Author;
-        bookByIdToUpdate.Title = bookToUpdate.Title;
-        bookByIdToUpdate.Description = bookToUpdate.Description;
-        bookByIdToUpdate.ImageUrl = bookToUpdate.ImageUrl;
-        bookByIdToUpdate.GenreId = bookToUpdate.GenreId;
-        var updatedBook = await _bookRepository.Update(bookByIdToUpdate);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var updatedBook = await _bookService.UpdateBookAsync(id, bookToUpdate);
+        if (updatedBook == null) return NotFound($"Book with Id {id} not found");
         return Ok(updatedBook);
     }
 

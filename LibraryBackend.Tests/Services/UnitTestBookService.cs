@@ -80,6 +80,8 @@ public class UnitTestBookService
             Id = 1,
             Title = "title1",
             Author = "author1",
+            Description = "Description1",
+            ImageUrl = "ImageUrl1",
             AverageRate = 3.3,
             Opinions = new List<Opinion>
       {
@@ -143,9 +145,9 @@ public class UnitTestBookService
                 .Select(int.Parse)
                 .ToList();
         var expectedPaginatedBooks = _mockBookData
-            .Where(book  => book.GenreId.HasValue
+            .Where(book  => book.GenreId != 0
             &&
-            genresId.Contains(book.GenreId.Value))
+            genresId.Contains(book.GenreId))
             .Skip((page - 1) * itemsPerPage)
             .Take(itemsPerPage)
             .ToList();
@@ -194,7 +196,7 @@ public class UnitTestBookService
         // Arrange
         var totalItems = _mockBookData.Count;
         var totalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage);
-        var expectedPaginatedBooks = _mockBookData.Where(book => book.GenreId.HasValue);
+        var expectedPaginatedBooks = _mockBookData.Where(book => book.GenreId != 0);
         _mockPaginationUtility
             .Setup(mockPaginationUtility => mockPaginationUtility
             .PaginatedItemsValidation(expectedPaginatedBooks, page))
@@ -243,7 +245,7 @@ public class UnitTestBookService
         // Arrange
         var totalItems = _mockBookData.Count;
         var totalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage);
-        var expectedPaginatedBooks = _mockBookData.Where(book => book.GenreId.HasValue);
+        var expectedPaginatedBooks = _mockBookData.Where(book => book.GenreId != 0);
         _mockPaginationUtility
             .Setup(mockPaginationUtility => mockPaginationUtility
             .PaginatedItemsValidation(expectedPaginatedBooks, page))

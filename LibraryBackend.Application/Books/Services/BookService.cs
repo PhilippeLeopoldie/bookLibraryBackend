@@ -9,7 +9,18 @@ public class BookService(
     PaginationUtility<Book> paginationUtility)
     : IBookService
 {
-
+    private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
+    public virtual async Task<BookDtoRequest?> GetBookByIdAsync(int id)
+    {
+        var bookById = await bookRepository.GetByIdAsync(id);
+        if (bookById == null) return null ;
+        return new BookDtoRequest(
+            bookById.Title,
+            bookById.Author,
+            bookById.Description,
+            bookById.ImageUrl,
+            bookById.GenreId);
+    }
     public virtual async Task<IEnumerable<Book>?> GetBooksWithHighestAverageRate(int numberOfBooks)
     {
         var books = await bookRepository.GetAllAsync(book => book.Opinions);
@@ -63,6 +74,20 @@ public class BookService(
         return await bookRepository.Create(book);
     }
 
+    public virtual async Task<BookDtoResponse?> UpdateBookAsync(int id, BookDtoRequest bookToUpdate)
+    {
+        var bookById = await bookRepository.GetByIdAsync(id);
+        if (bookById == null) return null;
+        bookById.Author = bookToUpdate.Author.Trim();
+        bookById.Title = bookToUpdate.Title.Trim();
+        bookById.Description = bookToUpdate.Description.Trim();
+        bookById.ImageUrl = bookToUpdate.ImageUrl;
+        bookById.GenreId = bookToUpdate.GenreId;
+        
+        var book = await bookRepository.Update(bookById);
+        return new BookDtoResponse (book, DateTime.UtcNow.ToString(dateTimeFormat));
+    }
+
     // Most popular books are those with the biggest number of reviews with a rate >=3
     private IEnumerable<Book>? GetMostPopularBooks(IEnumerable<Book> books, int numberOfBooks)
     {
@@ -94,7 +119,7 @@ public class BookService(
         Expression<Func<Book, bool>> condition;
         if (listOfGenreId == "All")
         {
-            condition = book => book.GenreId.HasValue;
+            condition = book => book.GenreId != 0;
         }
         else
         {
@@ -102,9 +127,9 @@ public class BookService(
                 .Split(",")
                 .Select(int.Parse)
                 .ToList();
-            condition = book => book.GenreId.HasValue
+            condition = book => book.GenreId !=0
             &&
-            genresId.Contains(book.GenreId.Value);
+            genresId.Contains(book.GenreId);
         };
         return condition;
     }
