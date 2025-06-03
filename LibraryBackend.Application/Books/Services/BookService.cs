@@ -60,7 +60,7 @@ public class BookService(
 
     public virtual async Task<IEnumerable<Book?>> GetBookByTitleOrAuthor (string titleOrAuthor)
     {
-        titleOrAuthor = titleOrAuthor.ToLower();
+        titleOrAuthor = titleOrAuthor.ToLower().Trim();
         Expression<Func<Book, bool>> condition = book =>
           book.Title!.ToLower().Contains(titleOrAuthor)
           ||

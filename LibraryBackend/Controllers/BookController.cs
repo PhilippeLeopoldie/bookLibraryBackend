@@ -87,21 +87,14 @@ public class BookController : ControllerBase
     {
         var error = NullOrWhiteSpaceValidation(titleOrAuthor);
         if (error != null) return BadRequest(error);
-
         var books = await _bookService.GetBookByTitleOrAuthor(titleOrAuthor);
-
-        titleOrAuthor = titleOrAuthor.ToLower();
 
         if (books.IsNullOrEmpty())
         {
             return NotFound($"Book with Title or Author '{titleOrAuthor}' not found");
         }
         var booksResponse = from book in books
-                            select new BookDtoResponse
-                            (
-                               book,
-                                DateTime.Now.ToString(dateTimeFormat)
-                            );
+                            select new BookDtoResponse(book,DateTime.Now.ToString(dateTimeFormat));
         return Ok(booksResponse);
     }
 
@@ -109,21 +102,19 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<PaginationResult<Book>>> GetPaginatedBookByGenreIdAsync([FromQuery] string genresId, [FromQuery] PaginationUtility<Book> parameters)
+    public async Task<ActionResult<PaginationResult<Book>>> GetPaginatedBookByGenreIdAsync(
+        [FromQuery] string genresId,
+        [FromQuery] PaginationUtility<Book> parameters)
     {
-        try
-        {
-            var paginatedBooksByGenreId = await _bookService.GetPaginatedBooksByGenreIdAsync(genresId, parameters.Page, parameters.PageSize);
-            if (!paginatedBooksByGenreId.PaginatedItems.Any())
-            {
-                return NotFound("No books found");
-            }
-            return Ok(paginatedBooksByGenreId);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var paginatedBooksByGenreId = await _bookService.GetPaginatedBooksByGenreIdAsync(
+                genresId,
+                parameters.Page,
+                parameters.PageSize);
+
+            if (!paginatedBooksByGenreId.PaginatedItems.Any()) return NotFound("No books found");
+
+            return Ok(paginatedBooksByGenreId);  
     }
 
 
@@ -132,8 +123,7 @@ public class BookController : ControllerBase
     [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Book>> CreateBook([FromQuery]BookDtoRequest bookDto)
     {
-        try 
-        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var newBook = await _bookService.CreateAsync(
                 new Book()
                     {
@@ -144,11 +134,6 @@ public class BookController : ControllerBase
                         GenreId = bookDto.GenreId,
                     });
             return CreatedAtAction(nameof(GetPaginatedBooks), new { id = newBook.Id }, newBook);
-        }
-        catch(Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
     }
 
     [HttpPut("{id}")]

@@ -366,7 +366,7 @@ public class UnitTestBookController
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(emptyBookList.Result);
         _mockBookService.Verify(mockService => mockService
             .GetBookByTitleOrAuthor(mockNonExistingTitleOrAuthor),Times.Once);
-        Assert.Equal($"Book with Title or Author '{mockNonExistingTitleOrAuthor.ToLower()}' not found", notFoundResult.Value);
+        Assert.Equal($"Book with Title or Author '{mockNonExistingTitleOrAuthor}' not found", notFoundResult.Value);
     }
 
     [Fact]
@@ -374,11 +374,8 @@ public class UnitTestBookController
     {
         // Arrange
         var mockEmptyAuthor = " ";
-        var mockEmptyBookList = new List<Book>();
-        _mockBookService
-            .Setup(mockService => mockService.GetBookByTitleOrAuthor(mockEmptyAuthor))
-            .ReturnsAsync(mockEmptyBookList);
-
+     
+        _bookController.ModelState.AddModelError("expression", "The expression field is required.");
         // Act
         var result = await _bookController.GetBookByTitleOrAuthor(mockEmptyAuthor);
 
@@ -509,22 +506,16 @@ public class UnitTestBookController
             "url",
             1
         );
-    
-        _mockBookRepository
-            .Setup(MockRepository => MockRepository.Create(It.IsAny<Book>()))
-            .ThrowsAsync(new Exception("Title is required"));
-        _mockBookService
-            .Setup(mockService => mockService.CreateAsync(It.IsAny<Book>()))
-            .ThrowsAsync(new Exception("Title is required"));
-       
+        _bookController.ModelState.AddModelError("Title", "The Title field is required.");
 
         // Act
         var result = await _bookController.CreateBook(bookDtoRequest);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-        Assert.Equal(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
-        Assert.Equal("Title is required", badRequestResult.Value);
+        var errorDetails = Assert.IsType<SerializableError>(badRequestResult.Value);
+        Assert.True(errorDetails.ContainsKey("Title"));
+        _mockBookService.Verify(s => s.CreateAsync(It.IsAny<Book>()), Times.Never);
     }
 
     [Fact]
