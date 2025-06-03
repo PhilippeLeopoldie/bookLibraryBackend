@@ -20,7 +20,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     // params is optional, Zero or more Expressions argument can be passed
     public virtual async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
     {
-        IQueryable<T> query = _entities;
+        IQueryable<T> query = _entities.AsNoTracking();
         if (includes.Any())
         {
             foreach (var include in includes)
@@ -33,7 +33,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
     public virtual async Task<IEnumerable<T>> GetPaginatedItemsAsync(int page, int numberOfItemsPerPage, Expression<Func<T, bool>>? condition = null)
     {
-        IQueryable<T> query = _entities;
+        IQueryable<T> query = _entities.AsNoTracking();
         if (condition != null) query = _entities.Where(condition);
   
         return await query
@@ -45,7 +45,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
     public virtual async Task<T?> GetByIdAsync(int id)
     {
-        return await _entities.FirstOrDefaultAsync(x => x.Id == id);
+        return await _entities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
     }
 
     // params is optional, Zero or more Expressions argument can be passed
@@ -53,7 +53,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         Expression<Func<T, bool>> condition,
         params Expression<Func<T, object>>[] includes)
     {
-        IQueryable<T> query = _entities.Where(condition);
+        IQueryable<T> query = _entities.AsNoTracking().Where(condition);
 
         if (includes.Any())
         {
@@ -87,7 +87,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
     public virtual async Task<int> GetCountAsync(Expression<Func<T, bool>>? condition = null)
     {
-        IQueryable<T> query = _entities;
+        IQueryable<T> query = _entities.AsNoTracking();
         if (condition != null) query = _entities.Where(condition);
         return await query.CountAsync();
     }
