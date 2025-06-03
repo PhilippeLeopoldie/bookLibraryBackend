@@ -4,44 +4,37 @@ using LibraryBackend.Application.Utilities;
 
 namespace LibraryBackend.Application;
 
-public class BookService : IBookService
+public class BookService(
+    IRepository<Book> bookRepository,
+    PaginationUtility<Book> paginationUtility)
+    : IBookService
 {
-    private readonly IRepository<Book> _bookRepository;
-    private readonly PaginationUtility<Book> _paginationUtility;
-
-    public BookService(IRepository<Book> bookRepository, PaginationUtility<Book> paginationUtility)
-    {
-        _bookRepository = bookRepository;
-        _paginationUtility = paginationUtility;
-    }
-
-    
 
     public virtual async Task<IEnumerable<Book>?> GetBooksWithHighestAverageRate(int numberOfBooks)
     {
-        var books = await _bookRepository.GetAllAsync(book => book.Opinions);
+        var books = await bookRepository.GetAllAsync(book => book.Opinions);
         if (books == null) return null;
         return GetMostPopularBooks(books, numberOfBooks);
     }
 
     public async Task<Book?> EditAverageRate(int bookId, double average)
     {
-        var book = await _bookRepository.GetByIdAsync(bookId);
+        var book = await bookRepository.GetByIdAsync(bookId);
 
         if (book == null)
         {
             return null;
         }
         book.AverageRate = average;
-        var updatedBook = await _bookRepository.Update(book);
+        var updatedBook = await bookRepository.Update(book);
         return updatedBook;
     }
 
     public virtual async Task<PaginationResult<Book>> GetListOfBooksWithOpinionsAsync(int page, int pageSize )
     {
         /*_paginationUtility.PaginationValidation(page, itemsPerPage);*/
-        var paginatedItems = await _bookRepository.GetPaginatedItemsAsync(page, pageSize);
-        _paginationUtility.PaginatedItemsValidation(paginatedItems, page);
+        var paginatedItems = await bookRepository.GetPaginatedItemsAsync(page, pageSize);
+        paginationUtility.PaginatedItemsValidation(paginatedItems, page);
         return await GetBookPaginationResultAsync(page,pageSize, paginatedItems);
     }
 
@@ -49,8 +42,8 @@ public class BookService : IBookService
     {
         GenresIdValidation(listOfGenreId);
         var genreIdCondition = GetGenreIdCondition(listOfGenreId);
-        var paginatedItems = await _bookRepository.GetPaginatedItemsAsync(page, pageSize, genreIdCondition );
-        _paginationUtility.PaginatedItemsValidation(paginatedItems, page);
+        var paginatedItems = await bookRepository.GetPaginatedItemsAsync(page, pageSize, genreIdCondition );
+        paginationUtility.PaginatedItemsValidation(paginatedItems, page);
         return await GetBookPaginationResultAsync(page, pageSize, paginatedItems, genreIdCondition);
     }
 
@@ -61,7 +54,7 @@ public class BookService : IBookService
           book.Title!.ToLower().Contains(titleOrAuthor)
           ||
           book.Author!.ToLower().Contains(titleOrAuthor);
-        var books = await _bookRepository.FindByConditionWithIncludesAsync(condition);
+        var books = await bookRepository.FindByConditionWithIncludesAsync(condition);
         return books;
     }
 
@@ -121,14 +114,14 @@ public class BookService : IBookService
         int totalItems;
         if(condition == null)
         {
-            totalItems = await _bookRepository.GetCountAsync();
+            totalItems = await bookRepository.GetCountAsync();
         } else
         {
-            totalItems= await _bookRepository.GetCountAsync(condition);
+            totalItems= await bookRepository.GetCountAsync(condition);
         }
 
-        if (totalItems == 0 ) return _paginationUtility.GetEmptyResult();
-        var result = _paginationUtility.GetPaginationResult(paginatedItems, totalItems, page, pageSize);
+        if (totalItems == 0 ) return paginationUtility.GetEmptyResult();
+        var result = paginationUtility.GetPaginationResult(paginatedItems, totalItems, page, pageSize);
         return result;
     }
 }
