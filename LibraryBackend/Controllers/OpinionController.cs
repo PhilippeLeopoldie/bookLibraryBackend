@@ -99,7 +99,7 @@ public async Task<ActionResult<Book>> UpdateOpinion(int id, OpinionDtoRequest op
 [HttpPost]
 [ProducesResponseType(StatusCodes.Status201Created)]
 [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
-public async Task<ActionResult<Opinion>> CreateOpinion (OpinionDtoRequest newOpinion)
+public async Task<ActionResult<Opinion>> CreateOpinion ([FromQuery] OpinionDtoRequest newOpinion)
 {
   if(newOpinion == null || newOpinion.Rate?.Equals(0) == true || 
     string.IsNullOrWhiteSpace(newOpinion.View) || string.IsNullOrWhiteSpace(newOpinion.UserName))
