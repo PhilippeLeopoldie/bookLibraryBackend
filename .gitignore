@@ -21,8 +21,10 @@ LibraryBackend/.vs/LibraryBackend/v16/.suo
 LibraryBackend.Application/obj/
 LibraryBackend.Infrastructure/obj/
 LibraryBackend.Domain/obj/
+LibraryBackend.Api/obj/
 LibraryBackend.Application/bin/
 LibraryBackend.Infrastructure/bin/
 LibraryBackend.Domain/bin/
+LibraryBackend.Api/bin/
 
  ## git rm -r --cached LibraryBackend.Domain/obj/

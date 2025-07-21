@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryBackend.Api", "LibraryBackend\LibraryBackend.Api.csproj", "{5757960D-3D16-425C-B13D-85CB41BC6143}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryBackend.Api", "LibraryBackend.Api\LibraryBackend.Api.csproj", "{5757960D-3D16-425C-B13D-85CB41BC6143}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryBackend.Tests", "LibraryBackend.Tests\LibraryBackend.Tests.csproj", "{8BEDD48D-5BE6-410B-8544-50D66BB37BAD}"
 EndProject
