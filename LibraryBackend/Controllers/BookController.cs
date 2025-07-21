@@ -29,20 +29,15 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<PaginationResult<Book>>> GetPaginatedBooks([FromQuery] PaginationUtility<Book> parameters)
     {
-       try
-        {
+      
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var paginatedListOfBooks = await _bookService.GetListOfBooksWithOpinionsAsync(parameters.Page, parameters.PageSize);
 
             if (paginatedListOfBooks.PaginatedItems == null || !paginatedListOfBooks.PaginatedItems.Any())
                 return NotFound("No books found!");
 
             return Ok(paginatedListOfBooks);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-       
+        
     }
 
     [HttpGet("TopBooks")]
@@ -52,18 +47,13 @@ public class BookController : ControllerBase
     {
         var topBooks = await _bookService.GetBooksWithHighestAverageRate(numberOfBooks);
 
-        if (topBooks == null || !topBooks.Any())
-        {
-            return NotFound("No Top Book found!");
-        }
-
-        var bookResponse = new BooksListDtoResponse
+        if (topBooks == null || !topBooks.Any()) return NotFound("No Top Book found!");
+        return Ok(new BooksListDtoResponse
         {
             Books = topBooks,
             TotalBooksCount = numberOfBooks,
             RequestedAt = DateTime.Now.ToString(dateTimeFormat)
-        };
-        return Ok(bookResponse);
+        });
     }
 
     [HttpGet("{id}")]
