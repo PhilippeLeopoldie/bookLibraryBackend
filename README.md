@@ -1,89 +1,153 @@
-# bookLibraryBackend
+﻿# 📚 BookLibrary API
 
-## Presentation
+## 🔗 Table of Contents
+- [📌 Project Goals](#project-goals)
+- [🏠 App Overview](#app-overview)
+- [📐 Clean Architecture Overview](#clean-architecture-overview)
+- [📋 Features](#features)
+  - [📄 Book List & Details](#book-list--details)
+  - [📝 CRUD Operations](#crud-operations)
+  - [🔍 Search & Filtering](#search--filtering)
+  - [📊 Ratings & Reviews](#ratings--reviews)
+  - [🧠 AI Story Generator](#ai-story-generator)
+  - [🔐 Authentication and Authorization](#authentication-and-authorization)
+- [📡 API Routes Overview](#api-routes-overview)
+- [🛠️ Technologies Used](#technologies-used)
+- [🚀 Getting Started](#getting-started)
 
-This is the backend of [bookLibraryProject](https://github.com/PhilippeLeopoldie/BooksLibraryProject)
-using Entity framework code first approach, following the repository pattern, implementing CRUD operations and Swagger Documentations.
+---
 
-This backend is deployed on heroku platform using postgres as database on a Vercel platform
+##  Project Goals
+This project aims to build a full-stack Book Library and personalized Short Stories application that enables users to:
 
-## Installation and Setup
+- Manage a collection of books with genres and user opinions
+- Add and read opinions about books
+- Use AI to generate creative stories based on books
+- Explore book information through a clean and structured backend API
 
-1. **Clone the Backend Repository:**
-    ```bash
-    git clone https://github.com/PhilippeLeopoldie/bookLibraryBackend.git
-    ```
+---
 
-2. **Navigate to the Backend Directory:**
-    ```bash
-    cd bookLibraryBackend
-    ```
+##  App Overview
 
-3. **Install Global Tools:**
-    ```bash
-    dotnet tool install -g dotnet-aspnet-codegenerator
-    dotnet tool install -g dotnet-ef
-    ```
+The application consists of a **frontend in React (TypeScript)** and a **.NET backend** following **Clean Architecture principles**. 
 
-4. **Install Dependencies:**
-    ```bash
-    dotnet restore
-    ```
+- Backend: CRUD operations for books, genres, and opinions
+- Frontend: View books, view/create opinions, and interact with the AI Story feature
 
-5. **Add Entity Framework Tools:**
-    ```bash
-    dotnet add package Microsoft.EntityFrameworkCore.Tools -version 9.0.0
-    ```
+> 🔧 Swagger is enabled for API documentation  
+> 🛠️ Backend hosted on **Heroku**  
+> 🗄️ Database hosted on **Eons**
 
-6. **Add Entity Framework Design:**
-    ```bash
-    dotnet add package Microsoft.EntityFrameworkCore.Design -version 9.0.0
-    ```
+---
 
-7. **Add CodeGeneration.Design (if needed):**
-    ```bash
-    dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design -version 9.0.0
-    ```
+##  Clean Architecture Overview
 
-8. **Add Database Provider (Choose one):**
-    ```bash
-    dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL -version 9.0.2
-    ```
+The solution is split into the following layers:
 
-9. **Run the Backend Locally:**
-    ```bash
-    dotnet run
-    ```
-    - The backend should now be running at:
-        - HTTP: [http://localhost:5281](http://localhost:5281)  
-        - Swagger UI: [http://localhost:5281/swagger/index.html](http://localhost:5281/swagger/index.html)
+- 🧠 **BookLibrary.Core** — domain entities, DTOs, interfaces, and core logic
+- ⚙️ **BookLibrary.Services** — business logic and service implementations
+- 🗄️ **BookLibrary.Infrastructure** — database context and data access using Entity Framework Core
+- 🌐 **BookLibrary.Presentation** — contains the controllers and route handling
+- 🧪 **BookLibrary.Tests** — xUnit-based unit tests for services and controllers
 
-## Technologies
+---
 
-  - .Net 9.0.0
+##  Features
 
-  - C# 13
+### 📄 Book List & Details
+- Retrieve all books
+- Get book by ID
+- Filter by title, author, or genre
+- View top books
 
-  - ASP.NET Core Web APIs
-  
-  - xUnit 2.9.2
-  
-  - Moq 4.20.72
+### 📝 CRUD Operations
+#### Backend:
+- Create, Read, Update, Delete books
+- Create, Read, Update, Delete genres
+- Create and Read opinions
+- (Planned): Update and Delete opinions
 
-  - API platform: Heroku
+### 🔍 Search & Filtering
+- Search books by title or author
+- Filter by genre
 
-  - Database platform: Vercel
+### 📊 Ratings & Reviews
+- Submit opinions with ratings
+- Get average rating for a specific book
+- Fetch opinions related to a book
 
-    - Database : postGres
+### 🧠 AI Story Generator
+- Generate short stories based on book context using the OpenAI API
 
+> ⚠️ Planned: More prompt customization and story saving
 
+### 🔐 Authentication and Authorization
+- Role field available in the registration form (to assign admin rights)
+- (Planned): Implement login system and secure admin/user routes
 
+---
 
-Test Driven Development: using Mock library and  xUnit framework for [UnitTest](https://github.com/PhilippeLeopoldie/bookLibraryBackend/blob/main/LibraryBackend.Tests/)
+##  Technologies Used
 
- 
+- 🔷 **ASP.NET Core 8.0**
+- 💬 **C#**
+- 📦 **Entity Framework Core**
+- 🗃️ **PostgreSQL** (hosted on Eons)
+- 🌐 **Swagger / OpenAPI**
+- ⚛️ **React + TypeScript** (frontend)
+- 🔒 **JWT (Planned)** for authentication
+- 🤖 **OpenAI API** for story generation
+- 🧪 **xUnit** for backend unit tests
 
-## Deploying link
+---
 
-[readsphere.vercel.app](https://readsphere.vercel.app)
+##  API Routes Overview
 
+📘 Book
+- GET /api/Books
+
+- POST /api/Books
+
+- GET /api/Books/{id}
+
+- PUT /api/Books/{id}
+
+- DELETE /api/Books/{id}
+
+- GET /api/Books/TopBooks
+
+- GET /api/Books/TitleOrAuthor
+
+- GET /api/Books/genre
+
+🏷️ Genre
+- GET /api/Genres
+
+- POST /api/Genres
+
+- GET /api/Genres/{id}
+
+- PUT /api/Genres/{id}
+
+- DELETE /api/Genres/{id}
+
+💬 Opinion
+- GET /api/Opinions
+
+- POST /api/Opinions
+
+- GET /api/Opinions/BookId={bookId}
+
+- GET /api/Opinions/averageRate
+
+- PUT /api/Opinions/{id} (planned for frontend)
+
+✍️ Story
+- POST /api/Story/AI — AI-generated short story
+
+##  Getting Started
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/yourusername/BookLibrary.git
+   cd BookLibrary
