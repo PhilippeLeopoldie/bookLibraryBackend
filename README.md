@@ -54,36 +54,36 @@ The solution is split into the following layers:
 
 ##  Features
 
-### 📄 Book List & Details
+###  Book List & Details
 - Retrieve all books
 - Get book by ID
 - Filter by title, author, or genre
 - View top books
 
-### 📝 CRUD Operations
+###  CRUD Operations
 #### Backend:
 - Create, Read, Update, Delete books
 - Create, Read, Update, Delete genres
 - Create and Read opinions
 - (Planned): Update and Delete opinions
 
-### 🔍 Search & Filtering
+###  Search & Filtering
 - Search books by title or author
 - Filter by genre
 
-### 📊 Ratings & Reviews
+###  Ratings & Reviews
 - Submit opinions with ratings
 - Get average rating for a specific book
 - Fetch opinions related to a book
 
-### 🧠 AI Story Generator
+###  AI Story Generator
 - Generate short stories based on book context using the OpenAI API
 
-> ⚠️ Planned: More prompt customization and story saving
+- ⚠️ Planned: More prompt customization and story saving
 
 ### 🔐 Authentication and Authorization
 - Role field available in the registration form (to assign admin rights)
-- (Planned): Implement login system and secure admin/user routes
+- ⚠️ Planned: Implement login system and secure admin/user routes
 
 ---
 
@@ -149,5 +149,5 @@ The solution is split into the following layers:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/BookLibrary.git
+   git clone https://github.com/PhilippeLeopoldie/BookLibrary.git
    cd BookLibrary
