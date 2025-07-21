@@ -1,6 +1,6 @@
-using LibraryBackend.Application;
-using LibraryBackend.Domain.Entities;
-using LibraryBackend.Infrastructure.Persistance.DbContexts;
+using LibraryBackend.Core.Contracts;
+using LibraryBackend.Core.Entities;
+using LibraryBackend.Infrastructure.Persistance.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 

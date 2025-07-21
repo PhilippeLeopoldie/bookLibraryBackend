@@ -1,7 +1,9 @@
 using Moq;
 using System.Linq.Expressions;
-using LibraryBackend.Application;
-using LibraryBackend.Domain.Entities;
+using LibraryBackend.Core.Entities;
+using Services.Contracts;
+using LibraryBackend.Core.Contracts;
+using LibraryBackend.Services;
 
 namespace LibraryBackend.Tests.Services;
 

@@ -1,4 +1,4 @@
-using LibraryBackend.Domain.Entities;
+using LibraryBackend.Core.Entities;
 
 namespace LibraryBackend.Tests.Data; 
 

@@ -1,7 +1,9 @@
-﻿using LibraryBackend.Application;
-using LibraryBackend.Domain.Entities;
+﻿using LibraryBackend.Core.Contracts;
+using LibraryBackend.Core.Entities;
+using LibraryBackend.Services;
 using LibraryBackend.Tests.Data;
 using Moq;
+using Services.Contracts;
 namespace LibraryBackend.Tests.Services;
 
 public class UnitTestGenreService

@@ -2,10 +2,12 @@ using Moq;
 using LibraryBackend.Tests.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using LibraryBackend.Application;
-using LibraryBackend.Domain.Entities;
-using LibraryBackend.Application.Utilities;
-using LibraryBackend.Infrastructure.Persistance.DbContexts;
+using LibraryBackend.Infrastructure.Persistance.Data;
+using LibraryBackend.Core.Entities;
+using LibraryBackend.Core.Requests;
+using LibraryBackend.Core.Contracts;
+using Services.Contracts;
+using LibraryBackend.Services;
 
 namespace LibraryBackend.Tests.Services;
 

@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
-using LibraryBackend.Infrastructure.Persistance.DbContexts;
-using LibraryBackend.Application;
 using LibraryBackend.Infrastructure.Persistance.Repositories;
-using LibraryBackend.Application.Utilities;
+using LibraryBackend.Infrastructure.Persistance.Data;
+using Services.Contracts;
+using LibraryBackend.Services;
+using LibraryBackend.Core.Requests;
+using LibraryBackend.Core.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 

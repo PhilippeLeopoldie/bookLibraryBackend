@@ -18,13 +18,25 @@ LibraryBackend/.vs/LibraryBackend/v16/.suo
 /.vs/bookLibraryBackend/v17/
 /.vs/ProjectEvaluation
 /.vs
-LibraryBackend.Application/obj/
-LibraryBackend.Infrastructure/obj/
-LibraryBackend.Domain/obj/
-LibraryBackend.Api/obj/
-LibraryBackend.Application/bin/
-LibraryBackend.Infrastructure/bin/
-LibraryBackend.Domain/bin/
-LibraryBackend.Api/bin/
+/LibraryBackend.Application/obj/
+/LibraryBackend.Infrastructure/obj/
+/LibraryBackend.Domain/obj/
+/LibraryBackend.Api/obj/
+/LibraryBackend.Api/obj/Debug/net9.0
+/LibraryBackend.Application/bin/
+/LibraryBackend.Infrastructure/bin/
+/LibraryBackend.Domain/bin/
+/LibraryBackend.Api/bin/
 
  ## git rm -r --cached LibraryBackend.Domain/obj/
+/LibraryBackend.Core/obj/Debug/net9.0
+/LibraryBackend.Core/obj
+/LibraryBackend.Presentation/obj
+/LibraryBackend.Services/obj
+/Services.Contracts/obj
+/LibraryBackend.Api/obj/Debug/net9.0/LibraryBackend.Api.AssemblyInfo.cs
+/LibraryBackend.Api/obj/Debug/net9.0/LibraryBackend.Api.AssemblyInfoInputs.cache
+/LibraryBackend.Core/bin/Debug/net9.0
+/LibraryBackend.Presentation/bin/Debug/net9.0
+/LibraryBackend.Services/bin/Debug/net9.0
+/Services.Contracts/bin/Debug/net9.0

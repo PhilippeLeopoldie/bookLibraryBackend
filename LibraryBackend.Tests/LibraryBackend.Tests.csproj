@@ -38,7 +38,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LibraryBackend.Api\LibraryBackend.Api.csproj" />
+    <ProjectReference Include="..\LibraryBackend.Core\LibraryBackend.Core.csproj" />
+    <ProjectReference Include="..\LibraryBackend.Presentation\LibraryBackend.Presentation.csproj" />
+    <ProjectReference Include="..\LibraryBackend.Services\LibraryBackend.Services.csproj" />
+    <ProjectReference Include="..\Services.Contracts\Services.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
