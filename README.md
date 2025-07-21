@@ -81,7 +81,7 @@ The solution is split into the following layers:
 
 - ⚠️ Planned: More prompt customization and story saving
 
-### 🔐 Authentication and Authorization
+###  Authentication and Authorization
 - Role field available in the registration form (to assign admin rights)
 - ⚠️ Planned: Implement login system and secure admin/user routes
 
