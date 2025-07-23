@@ -12,4 +12,6 @@ public interface IGenreRepository
 {
     Task<IEnumerable<Genre>> GetAllAsync(params Expression<Func<Genre, object>>[] includes);
     Task<Genre> Create(Genre newGenre);
+    Task<Genre> GetByIdAsync(int id);
+    Task Delete(Genre genre);
 }

@@ -5,6 +5,7 @@ using LibraryBackend.Core.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
+using System.Threading.Tasks;
 
 
 
@@ -14,15 +15,12 @@ namespace LibraryBackend.Presentation.Controllers;
 [ApiController]
 public class GenreController : ControllerBase
 {
-    private readonly IUnitOfWork _uow;
     private readonly IGenreService _genreService;
     private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
 
     public GenreController(IUnitOfWork uow, IGenreService genreService)
     {
-        _uow = uow;
         _genreService = genreService;
-
     }
 
     // GET: api/<GenreController>
@@ -48,9 +46,14 @@ public class GenreController : ControllerBase
 
     // GET api/<GenreController>/5
     [HttpGet("{id}")]
-    public string Get(int id)
+    public async Task<ActionResult<Genre>> GetGenreById(int id)
     {
-        throw new NotImplementedException();
+        var genre = await _genreService.GetGenreByIdAsync(id);
+        if (genre == null)
+        {
+            return NotFound($"No genre with id: '{id}' found!");
+        }
+        return Ok(genre);
     }
 
     // POST api/<GenreController>
@@ -71,7 +74,7 @@ public class GenreController : ControllerBase
             Name = genre.Name,
             IsForStoryGeneration = genre.IsForStoryGeneration
         };
-        var createdGenre = await _uow.GenreRepository.Create(request);
+        var createdGenre = await _genreService.Create(request);
         return CreatedAtAction(nameof(GetGenres), new { id = createdGenre.Id }, createdGenre);
     }
 
@@ -84,8 +87,16 @@ public class GenreController : ControllerBase
 
     // DELETE api/<GenreController>/5
     [HttpDelete("{id}")]
-    public void Delete(int id)
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeleteGenre(int id)
     {
-        throw new NotImplementedException();
+        var genreToDelete = await _genreService.GetGenreByIdAsync(id);
+        if (genreToDelete == null)
+        {
+            return NotFound($"No genre with id: '{id}' found!");
+        }
+        await _genreService.Delete(genreToDelete);
+        return NoContent();
     }
 }
