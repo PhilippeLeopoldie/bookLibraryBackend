@@ -9,24 +9,21 @@ using LibraryBackend.Presentation.Controllers;
 using LibraryBackend.Services;
 using LibraryBackend.Core.Dtos.Books;
 using LibraryBackend.Core.Exceptions;
+using Services.Contracts;
 
 namespace LibraryBackend.Tests.Controllers;
 
 public class UnitTestBookController
 {
     readonly BookController _bookController;
-    readonly Mock<IUnitOfWork> _uow;
-    readonly Mock<BookService> _mockBookService;
-    readonly Mock<PaginationUtility<Book>> _mockPaginationUtility;
+    readonly Mock<IServiceManager> _mockServiceManager;
     readonly List<Book> mockBookData;
     private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
      
     public UnitTestBookController()
     {
-        _uow = new Mock<IUnitOfWork>();
-        _mockPaginationUtility = new Mock<PaginationUtility<Book>>();
-        _mockBookService = new Mock<BookService>(_uow.Object, _mockPaginationUtility.Object);
-        _bookController = new BookController(_uow.Object, _mockBookService.Object);
+        _mockServiceManager = new Mock<IServiceManager>();
+        _bookController = new BookController( _mockServiceManager.Object);
         mockBookData = MockData.GetMockData(); 
     }
 
@@ -47,8 +44,8 @@ public class UnitTestBookController
           .Skip((page - 1) * numberOfItemsPerPage)
           .Take(numberOfItemsPerPage)
           .ToList();
-        _mockBookService
-          .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
+        _mockServiceManager
+          .Setup(serviceManager => serviceManager.BookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
           .ReturnsAsync(new PaginationResult<Book>(
               expectedPaginatedItems,
               numberOfItemsPerPage,
@@ -68,7 +65,7 @@ public class UnitTestBookController
         Assert.Equal(9, paginationResult.PaginatedItems.ElementAt(0).Id);
         Assert.Equal("author9", paginationResult.PaginatedItems.ElementAt(0).Author);
 
-        _mockBookService.Verify(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
     }
 
     [Theory]
@@ -87,8 +84,8 @@ public class UnitTestBookController
           .Skip((page - 1) * numberOfItemsPerPage)
           .Take(numberOfItemsPerPage)
           .ToList();
-        _mockBookService
-          .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
+        _mockServiceManager
+          .Setup(serviceManager => serviceManager.BookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
           .ReturnsAsync(new PaginationResult<Book>(
               expectedPaginatedItems,
               numberOfItemsPerPage,
@@ -107,7 +104,7 @@ public class UnitTestBookController
         Assert.Equal("title7", paginationResult.PaginatedItems.ElementAt(0)?.Title);
         Assert.Equal(7, paginationResult.PaginatedItems.ElementAt(0)?.Id);
         Assert.Equal("author7", paginationResult.PaginatedItems.ElementAt(0)?.Author);
-        _mockBookService.Verify(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
     }
 
     [Theory]
@@ -122,8 +119,8 @@ public class UnitTestBookController
         };
         List<Book>? mockNullBookData = null;
 #pragma warning disable CS8604
-        _mockBookService
-        .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
+        _mockServiceManager
+        .Setup(serviceManager => serviceManager.BookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
         .ReturnsAsync(new PaginationResult<Book>(
             mockNullBookData,
             numberOfItemsPerPage,
@@ -139,7 +136,7 @@ public class UnitTestBookController
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
         Assert.Equal("No books found!", notFoundResult.Value);
-        _mockBookService.Verify(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
     }
 
     [Theory]
@@ -153,8 +150,8 @@ public class UnitTestBookController
             PageSize = numberOfItemsPerPage
         };
         var mockEmptyBookData = Enumerable.Empty<Book>();
-        _mockBookService
-        .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
+        _mockServiceManager
+        .Setup(serviceManager => serviceManager.BookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
         .ReturnsAsync(new PaginationResult<Book>(
             mockEmptyBookData,
             numberOfItemsPerPage,
@@ -168,7 +165,7 @@ public class UnitTestBookController
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
         Assert.Equal("No books found!", notFoundResult.Value);
-        _mockBookService.Verify(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
     }
 
     [Fact]
@@ -181,11 +178,8 @@ public class UnitTestBookController
             PageSize = 3
         };
         var exception = new ArgumentException("Number of page must be greater than 0");
-        _mockPaginationUtility
-           .Setup(mockUtilityPagination => mockUtilityPagination.GetPaginationResult(It.IsAny<IEnumerable<Book>>(), It.IsAny<int>(),It.IsAny<int>(), It.IsAny<int>()))
-           .Throws(exception);
-        _mockBookService
-          .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
+        _mockServiceManager
+          .Setup(serviceManager => serviceManager.BookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
           .ThrowsAsync(exception);
 
         // act
@@ -206,8 +200,8 @@ public class UnitTestBookController
             PageSize = 8
         };
         var exception =  new ArgumentException($"Number of items per page cannot be greater than {_bookController.pageSizeLimit + 1}");
-        _mockBookService
-          .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
+        _mockServiceManager
+          .Setup(serviceManager => serviceManager.BookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
           .ThrowsAsync(exception);
 
         // act
@@ -230,8 +224,8 @@ public class UnitTestBookController
             PageSize = pageSize
         };
         var exception = new ArgumentException($"Page {page} do not exist, the last page is 3");
-        _mockBookService
-          .Setup(mockBookService => mockBookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
+        _mockServiceManager
+          .Setup(serviceManager => serviceManager.BookService.GetListOfBooksWithOpinionsAsync(It.IsAny<int>(), It.IsAny<int>()))
           .ThrowsAsync(exception);
 
         // Act
@@ -247,8 +241,8 @@ public class UnitTestBookController
     public async Task Should_get_HighestAverageRate_in_GetHighestAverageBook()
     {
         // Arrange      
-        _mockBookService
-        .Setup(mockService => mockService.GetBooksWithHighestAverageRate(1))
+        _mockServiceManager
+        .Setup(serviceManager => serviceManager.BookService.GetBooksWithHighestAverageRate(1))
         .ReturnsAsync(mockBookData.Take(1).ToList());
 
         // Act
@@ -267,8 +261,8 @@ public class UnitTestBookController
     {
         // Arrange
 
-        _mockBookService
-        .Setup(mockService => mockService.GetBooksWithHighestAverageRate(1))
+        _mockServiceManager
+        .Setup(serviceManager => serviceManager.BookService.GetBooksWithHighestAverageRate(1))
         .ReturnsAsync(null as List<Book>);
 
         // Act
@@ -286,8 +280,8 @@ public class UnitTestBookController
         // Arrange
         int bookId = 2;
         var expectedBook = mockBookData.FirstOrDefault(x => x.Id == bookId);
-        _uow
-          .Setup(uow => uow.BookRepository.GetByIdAsync(bookId))
+        _mockServiceManager
+          .Setup(serviceManager => serviceManager.BookService.GetByIdAsync(bookId))
           .ReturnsAsync(expectedBook);
 
         // Act
@@ -299,7 +293,7 @@ public class UnitTestBookController
         Assert.Equal(expectedBook?.Id, bookResponse?.Book?.Id);
         Assert.Equal(expectedBook?.Title, bookResponse?.Book?.Title);
         Assert.Equal(expectedBook?.Author, bookResponse?.Book?.Author);
-        _uow.Verify(uow => uow.BookRepository.GetByIdAsync(bookId), Times.Once);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.GetByIdAsync(bookId), Times.Once);
     }
 
     [Fact]
@@ -307,8 +301,8 @@ public class UnitTestBookController
     {
         // Arrange
         int nonExistingId = 3;
-        _uow
-          .Setup(uow => uow.BookRepository.GetByIdAsync(nonExistingId))
+        _mockServiceManager
+          .Setup(serviceManager => serviceManager.BookService.GetByIdAsync(nonExistingId))
           .ReturnsAsync(null as Book);
 
         // Act
@@ -317,7 +311,7 @@ public class UnitTestBookController
         // Assert
         var notFoundId = Assert.IsType<NotFoundObjectResult>(result.Result);
         Assert.Equal($"Book with Id {nonExistingId} not found", notFoundId.Value);
-        _uow.Verify(uow => uow.BookRepository.GetByIdAsync(nonExistingId), Times.Once);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.GetByIdAsync(nonExistingId), Times.Once);
     }
 
     [Fact]
@@ -331,8 +325,8 @@ public class UnitTestBookController
             book.Title!.ToLower().Contains(mockTitleOrAuthor)
             ||
             book.Author!.ToLower().Contains(mockTitleOrAuthor)).ToList();
-        _mockBookService
-            .Setup(mockService => mockService.GetBookByTitleOrAuthor(mockTitleOrAuthor))
+        _mockServiceManager
+            .Setup(serviceManager => serviceManager.BookService.GetBookByTitleOrAuthor(mockTitleOrAuthor))
             .ReturnsAsync(expectedBooks);
 
         // Act
@@ -342,7 +336,7 @@ public class UnitTestBookController
         Assert.Single(expectedBooks);
         var okResult = Assert.IsType<OkObjectResult>(books.Result);
         var bookDtoResponses = Assert.IsAssignableFrom<IEnumerable<BookDtoResponse>>(okResult.Value);
-        _mockBookService.Verify(mockService => mockService.GetBookByTitleOrAuthor(mockTitleOrAuthor),
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.GetBookByTitleOrAuthor(mockTitleOrAuthor),
             Times.Once);
         foreach (var bookDtoResponse in bookDtoResponses!)
         {
@@ -357,8 +351,8 @@ public class UnitTestBookController
         // Arrange
         string mockNonExistingTitleOrAuthor = "nonExistingTitleOrAuthor";
         var mockEmptyBookAuthor = new List<Book>();
-        _mockBookService
-            .Setup(mockService => mockService.GetBookByTitleOrAuthor(mockNonExistingTitleOrAuthor))
+        _mockServiceManager
+            .Setup(serviceManager => serviceManager.BookService.GetBookByTitleOrAuthor(mockNonExistingTitleOrAuthor))
             .ReturnsAsync(mockEmptyBookAuthor);
 
         // Act
@@ -366,7 +360,7 @@ public class UnitTestBookController
 
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(emptyBookList.Result);
-        _mockBookService.Verify(mockService => mockService
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService
             .GetBookByTitleOrAuthor(mockNonExistingTitleOrAuthor),Times.Once);
         Assert.Equal($"Book with Title or Author '{mockNonExistingTitleOrAuthor}' not found", notFoundResult.Value);
     }
@@ -385,7 +379,7 @@ public class UnitTestBookController
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
         var errorResult = Assert.IsType<ApiError>(badRequestResult.Value);
         Assert.Equal("Expression without argument", errorResult.Detail);
-        _mockBookService.Verify(mockService => mockService.GetBookByTitleOrAuthor(mockEmptyAuthor),
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.GetBookByTitleOrAuthor(mockEmptyAuthor),
             Times.Never);
     }
 
@@ -411,8 +405,8 @@ public class UnitTestBookController
             .Skip((page - 1) * itemsPerPage)
             .Take(itemsPerPage)
             .ToList();
-        _mockBookService
-            .Setup(mockService => mockService.GetPaginatedBooksByGenreIdAsync(listOfGenreId,page,itemsPerPage))
+        _mockServiceManager
+            .Setup(serviceManager => serviceManager.BookService.GetPaginatedBooksByGenreIdAsync(listOfGenreId, page, itemsPerPage))
             .ReturnsAsync(new PaginationResult<Book>(expectedPaginatedBooks, totalItems,page, totalPages,""));
         // Act
         var booksByGenreId = await _bookController.GetPaginatedBookByGenreIdAsync(listOfGenreId, parameters);
@@ -478,11 +472,11 @@ public class UnitTestBookController
             Description = bookDtoRequest.Description,
             ImageUrl= bookDtoRequest.ImageUrl,
         };
-        _uow
-          .Setup(uow => uow.BookRepository.Create(It.IsAny<Book>()))
-          .ReturnsAsync(bookToCreate);
-        _mockBookService
-            .Setup(mockService => mockService.CreateAsync(It.IsAny<Book>()))
+        /*_mockServiceManager
+          .Setup(serviceManager => serviceManager.BookService.CreateAsync(It.IsAny<Book>()))
+          .ReturnsAsync(bookToCreate);*/
+        _mockServiceManager
+            .Setup(serviceManager => serviceManager.BookService.CreateAsync(It.IsAny<Book>()))
             .ReturnsAsync(bookToCreate);
 
         // Act
@@ -517,7 +511,7 @@ public class UnitTestBookController
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
         var errorDetails = Assert.IsType<SerializableError>(badRequestResult.Value);
         Assert.True(errorDetails.ContainsKey("Title"));
-        _mockBookService.Verify(s => s.CreateAsync(It.IsAny<Book>()), Times.Never);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.CreateAsync(It.IsAny<Book>()), Times.Never);
     }
 
     [Fact]
@@ -526,11 +520,11 @@ public class UnitTestBookController
         // Arrange
         var bookIdToDelete = 2;
         var bookToDelete = mockBookData.First(book => book.Id == bookIdToDelete);
-        _uow
-          .Setup(uow => uow.BookRepository.GetByIdAsync(bookIdToDelete))
+        _mockServiceManager
+          .Setup(serviceManager => serviceManager.BookService.GetByIdAsync(bookIdToDelete))
           .ReturnsAsync(bookToDelete);
-        _uow
-          .Setup(uow => uow.BookRepository.Delete(bookToDelete))
+        _mockServiceManager
+          .Setup(serviceManager => serviceManager.BookService.Delete(bookToDelete))
           .Returns(Task.CompletedTask);
 
         // Act
@@ -538,8 +532,8 @@ public class UnitTestBookController
 
         // Assert
         Assert.IsType<NoContentResult>(result);
-        _uow.Verify(uow => uow.BookRepository.GetByIdAsync(bookIdToDelete), Times.Once);
-        _uow.Verify(uow => uow.BookRepository.Delete(bookToDelete), Times.Once);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.GetByIdAsync(bookIdToDelete), Times.Once);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.Delete(bookToDelete), Times.Once);
     }
 
     [Fact]
@@ -547,8 +541,8 @@ public class UnitTestBookController
     {
         // Arrange
         var nonExistingId = 99;
-        _uow
-          .Setup(uow => uow.BookRepository.GetByIdAsync(nonExistingId))
+        _mockServiceManager
+          .Setup(serviceManager => serviceManager.BookService.GetByIdAsync(nonExistingId))
           .ReturnsAsync(null as Book);
 
         // act
@@ -585,11 +579,11 @@ public class UnitTestBookController
             ""
             
         );
-        _mockBookService
-           .Setup(mockService => mockService.GetBookByIdAsync(id))
+        _mockServiceManager
+           .Setup(serviceManager => serviceManager.BookService.GetBookByIdAsync(id))
           .ReturnsAsync(bookDtoRequest);
-        _mockBookService
-          .Setup(mockService => mockService.UpdateBookAsync(id,bookDtoRequest))
+        _mockServiceManager
+          .Setup(serviceManager => serviceManager.BookService.UpdateBookAsync(id, bookDtoRequest))
           .ReturnsAsync(bookDtoResponse);
 
 
@@ -602,7 +596,7 @@ public class UnitTestBookController
         Assert.Equal(id, response.Book.Id);
         Assert.Equal("titleToModify", response.Book.Title);
         Assert.Equal("authorToModify", response.Book.Author);
-        _mockBookService.Verify(mockService => mockService.UpdateBookAsync(id, bookDtoRequest), Times.Once);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.UpdateBookAsync(id, bookDtoRequest), Times.Once);
     }
 
     [Fact]
@@ -629,8 +623,8 @@ public class UnitTestBookController
         var modelStateErrors = Assert.IsType<SerializableError>(badRequestResult.Value);
         Assert.True(modelStateErrors.ContainsKey("Title"));
         Assert.True(modelStateErrors.ContainsKey("Author"));
-        _uow.Verify(uow => uow.BookRepository.GetByIdAsync(id), Times.Never);
-        _uow.Verify(uow => uow.BookRepository.Update(bookById!), Times.Never);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.GetByIdAsync(id), Times.Never);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.UpdateBookAsync(id, bookToUpdate), Times.Never);
     }
 
     [Fact]
@@ -656,8 +650,8 @@ public class UnitTestBookController
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
         var errors = Assert.IsType<SerializableError>(badRequestResult.Value);
         Assert.True(errors.ContainsKey("Title"));
-        _uow.Verify(uow => uow.BookRepository.GetByIdAsync(id), Times.Never);
-        _uow.Verify(uow => uow.BookRepository.Update(bookById!), Times.Never);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.GetByIdAsync(id), Times.Never);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.UpdateBookAsync(id, bookToUpdate), Times.Never);
     }
 
     [Fact]
@@ -686,8 +680,8 @@ public class UnitTestBookController
             5
         );
       
-        _mockBookService
-          .Setup(mockService => mockService.UpdateBookAsync(id, bookDtoRequest))
+        _mockServiceManager
+          .Setup(serviceManager => serviceManager.BookService.UpdateBookAsync(id, bookDtoRequest))
           .ReturnsAsync(nullBook);
 
         // Act
@@ -696,6 +690,6 @@ public class UnitTestBookController
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
         Assert.Equal($"Book with Id {id} not found", notFoundResult.Value);
-        _mockBookService.Verify(mockService => mockService.UpdateBookAsync(id, bookDtoRequest), Times.Once);
+        _mockServiceManager.Verify(serviceManager => serviceManager.BookService.UpdateBookAsync(id, bookDtoRequest), Times.Once);
     }
 }

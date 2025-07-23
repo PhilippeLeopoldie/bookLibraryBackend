@@ -14,13 +14,14 @@ namespace LibraryBackend.Presentation.Controllers;
 [ApiController]
 public class BookController : ControllerBase
 {
-    private readonly IBookService _bookService;
+    private readonly IServiceManager _serviceManager;
     private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
     public readonly int pageSizeLimit = 6;
 
-    public BookController(IUnitOfWork uow, IBookService bookService)
+    public BookController(IServiceManager serviceManager)
     {
-        _bookService = bookService;
+        _serviceManager = serviceManager ??
+            throw new ArgumentNullException(nameof(serviceManager));
     }
     
     [HttpGet]
@@ -31,7 +32,7 @@ public class BookController : ControllerBase
     {
       
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var paginatedListOfBooks = await _bookService.GetListOfBooksWithOpinionsAsync(parameters.Page, parameters.PageSize);
+            var paginatedListOfBooks = await _serviceManager.BookService.GetListOfBooksWithOpinionsAsync(parameters.Page, parameters.PageSize);
 
             if (paginatedListOfBooks.PaginatedItems == null || !paginatedListOfBooks.PaginatedItems.Any())
                 return NotFound("No books found!");
@@ -45,7 +46,7 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<BooksListDtoResponse>> GetHighestAverageRate([FromQuery] int numberOfBooks)
     {
-        var topBooks = await _bookService.GetBooksWithHighestAverageRate(numberOfBooks);
+        var topBooks = await _serviceManager.BookService.GetBooksWithHighestAverageRate(numberOfBooks);
 
         if (topBooks == null || !topBooks.Any()) return NotFound("No Top Book found!");
         return Ok(new BooksListDtoResponse
@@ -61,7 +62,7 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<BookDtoResponse>> GetBookById(int id)
     {
-        var bookById = await _bookService.GetByIdAsync(id);
+        var bookById = await _serviceManager.BookService.GetByIdAsync(id);
         if (bookById == null)
         {
             return NotFound($"Book with Id {id} not found");
@@ -77,7 +78,7 @@ public class BookController : ControllerBase
     {
         var error = NullOrWhiteSpaceValidation(titleOrAuthor);
         if (error != null) return BadRequest(error);
-        var books = await _bookService.GetBookByTitleOrAuthor(titleOrAuthor);
+        var books = await _serviceManager.BookService.GetBookByTitleOrAuthor(titleOrAuthor);
 
         if (books.IsNullOrEmpty())
         {
@@ -97,7 +98,7 @@ public class BookController : ControllerBase
         [FromQuery] PaginationUtility<Book> parameters)
     {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var paginatedBooksByGenreId = await _bookService.GetPaginatedBooksByGenreIdAsync(
+            var paginatedBooksByGenreId = await _serviceManager.BookService.GetPaginatedBooksByGenreIdAsync(
                 genresId,
                 parameters.Page,
                 parameters.PageSize);
@@ -114,7 +115,7 @@ public class BookController : ControllerBase
     public async Task<ActionResult<Book>> CreateBook([FromQuery]BookDtoRequest bookDto)
     {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var newBook = await _bookService.CreateAsync(
+            var newBook = await _serviceManager.BookService.CreateAsync(
                 new Book()
                     {
                         Title = bookDto.Title.Trim(),
@@ -133,7 +134,7 @@ public class BookController : ControllerBase
     public async Task<ActionResult<Book>> UpdateBook(int id, [FromQuery]BookDtoRequest bookToUpdate)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        var updatedBook = await _bookService.UpdateBookAsync(id, bookToUpdate);
+        var updatedBook = await _serviceManager.BookService.UpdateBookAsync(id, bookToUpdate);
         if (updatedBook == null) return NotFound($"Book with Id {id} not found");
         return Ok(updatedBook);
     }
@@ -143,12 +144,12 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteBook(int id)
     {
-        var bookToDelete = await _bookService.GetByIdAsync(id);
+        var bookToDelete = await _serviceManager.BookService.GetByIdAsync(id);
         if (bookToDelete == null)
         {
             return NotFound($"Book with Id {id} not found");
         }
-        await _bookService.Delete(bookToDelete);
+        await _serviceManager.BookService.Delete(bookToDelete);
         return NoContent();
     }
 

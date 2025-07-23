@@ -6,6 +6,7 @@ using LibraryBackend.Core.Requests;
 using LibraryBackend.Core.Contracts;
 using LibraryBackend.Infrastructure.Repositories;
 using LibraryBackend.Infrastructure.Data;
+using LibraryBackend.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,11 +44,19 @@ builder.Services.AddCors(options =>
 // Add services to the container.
 builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddScoped<IOpinionService, OpinionService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped(typeof(PaginationUtility<>));
 builder.Services.AddTransient<IStoryService,StoryService>();
+
+builder.Services.AddLazy<IBookService>();
+builder.Services.AddLazy<IOpinionService>();
+builder.Services.AddLazy<IGenreService>();
+builder.Services.AddLazy<IStoryService>();
+
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
