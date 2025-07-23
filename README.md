@@ -23,6 +23,8 @@ This is the backend of [bookLibraryProject](https://github.com/PhilippeLeopoldie
 This project aims to build a full-stack Book Library and personalized Short Stories application that enables users to:
 
 - Manage a collection of books with genres and user opinions
+- Reading a description of a book
+- Rating a book
 - Add and read opinions about books
 - Use [OpenAI](https://openai.com/) to generate creative stories based on books
 - Explore book information through a clean and structured backend API
