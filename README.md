@@ -53,6 +53,8 @@ The solution is split into the following layers:
 - 🗄️ **BookLibrary.Infrastructure** — database context and data access using Entity Framework Core
 - 🌐 **BookLibrary.Presentation** — contains the controllers and route handling
 - 🧪 **BookLibrary.Tests** — xUnit-based unit tests for services and controllers
+- 📡 **BookLibrary.Api** — Entry point of the application, responsible for application startup and middleware configuration
+- 🔌 **Services.Contracts** — Defines contracts (interfaces) between services and other layers for loose coupling
 
 ---
 
