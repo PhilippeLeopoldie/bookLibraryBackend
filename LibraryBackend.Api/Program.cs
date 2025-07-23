@@ -46,7 +46,7 @@ builder.Services.AddScoped<IOpinionService, OpinionService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped(typeof(PaginationUtility<>));
-builder.Services.AddSingleton<IStoryService,StoryService>();
+builder.Services.AddTransient<IStoryService,StoryService>();
 builder.Services.AddControllers().AddJsonOptions(options =>
 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 

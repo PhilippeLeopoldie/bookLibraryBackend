@@ -40,3 +40,7 @@ LibraryBackend/.vs/LibraryBackend/v16/.suo
 /LibraryBackend.Presentation/bin/Debug/net9.0
 /LibraryBackend.Services/bin/Debug/net9.0
 /Services.Contracts/bin/Debug/net9.0
+/LibraryBackend.Core/bin/Debug/net8.0
+/LibraryBackend.Presentation/bin/Debug/net8.0
+/LibraryBackend.Services/bin/Debug/net8.0
+/Services.Contracts/bin/Debug/net8.0
