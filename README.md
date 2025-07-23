@@ -20,6 +20,8 @@
 ##  Project Goals
 This is the backend of [bookLibraryProject](https://github.com/PhilippeLeopoldie/BooksLibraryProject).
 
+🔗 Live deployment: [ReadSphere](https://readsphere.vercel.app/)
+
 The project aims to build a full-stack Book Library and personalized Short Stories application, enabling users to:
 
 - Manage a collection of books with genres and user opinions
