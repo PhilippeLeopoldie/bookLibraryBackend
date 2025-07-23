@@ -10,15 +10,15 @@ namespace LibraryBackend.Tests.Controllers;
 public class UnitTestGenreController
 {
     readonly GenreController _genreController;
-    readonly Mock<IRepositoryBase<Genre>> _mockGenreRepository;
+    readonly Mock<IUnitOfWork> _uow;
     readonly Mock<GenreService> _mockGenreService;
     readonly List<Genre> mockGenreData;
 
     public UnitTestGenreController() 
     {
-        _mockGenreRepository = new Mock<IRepositoryBase<Genre>>();
-        _mockGenreService = new Mock<GenreService>( _mockGenreRepository.Object);
-        _genreController = new GenreController(_mockGenreRepository.Object, _mockGenreService.Object);
+        _uow = new Mock<IUnitOfWork>();
+        _mockGenreService = new Mock<GenreService>( _uow.Object);
+        _genreController = new GenreController(_uow.Object, _mockGenreService.Object);
         mockGenreData = MockData.GetGenreMockData();
     }
 

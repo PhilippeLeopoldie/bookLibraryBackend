@@ -10,21 +10,21 @@ public class UnitTestGenreService
 {
     readonly IGenreService _genreService;
     readonly List<Genre> _mockGenreData;
-    readonly Mock<IRepositoryBase<Genre>> _mockGenreRepository;
+    readonly Mock<IUnitOfWork> _uow;
 
     public UnitTestGenreService ()
     {
         _mockGenreData = MockData.GetGenreMockData ();
-        _mockGenreRepository = new Mock<IRepositoryBase<Genre>>();
-        _genreService = new GenreService( _mockGenreRepository!.Object);
+        _uow = new Mock<IUnitOfWork>();
+        _genreService = new GenreService( _uow!.Object);
     }
 
     [Fact]
     public async Task Should_GetAllGenres_async()
     {
         // arrange
-        _mockGenreRepository
-            .Setup(mockGenreRepository => mockGenreRepository.GetAllAsync())
+        _uow
+            .Setup(uow => uow.GenreRepository.GetAllAsync())
             .ReturnsAsync(_mockGenreData);
 
         // Act

@@ -14,13 +14,13 @@ namespace LibraryBackend.Presentation.Controllers;
 [ApiController]
 public class GenreController : ControllerBase
 {
-    private readonly IRepositoryBase<Genre> _genreRepository;
+    private readonly IUnitOfWork _uow;
     private readonly IGenreService _genreService;
     private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
 
-    public GenreController(IRepositoryBase<Genre> genreRepository, IGenreService genreService)
+    public GenreController(IUnitOfWork uow, IGenreService genreService)
     {
-        _genreRepository = genreRepository;
+        _uow = uow;
         _genreService = genreService;
 
     }
@@ -71,7 +71,7 @@ public class GenreController : ControllerBase
             Name = genre.Name,
             IsForStoryGeneration = genre.IsForStoryGeneration
         };
-        var createdGenre = await _genreRepository.Create(request);
+        var createdGenre = await _uow.GenreRepository.Create(request);
         return CreatedAtAction(nameof(GetGenres), new { id = createdGenre.Id }, createdGenre);
     }
 
