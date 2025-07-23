@@ -1,6 +1,6 @@
 ﻿namespace LibraryBackend.Api.Extensions;
 
-public class ServiceExtention
+public class ServiceExtensions
 {
 
 }
