@@ -66,8 +66,8 @@ The solution is split into the following layers:
 #### Backend:
 - Create, Read, Update, Delete books
 - Create, Read, Update, Delete genres
-- Create and Read opinions
-- (Planned): Update and Delete opinions
+- Create, Read, Update opinions
+- (Planned): Delete opinions
 
 ###  Search & Filtering
 - Search books by title or author
