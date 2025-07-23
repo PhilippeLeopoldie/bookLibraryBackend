@@ -18,11 +18,13 @@
 ---
 
 ##  Project Goals
+This is the backend of [bookLibraryProject](https://github.com/PhilippeLeopoldie/BooksLibraryProject).
+
 This project aims to build a full-stack Book Library and personalized Short Stories application that enables users to:
 
 - Manage a collection of books with genres and user opinions
 - Add and read opinions about books
-- Use AI to generate creative stories based on books
+- Use [OpenAI](https://openai.com/) to generate creative stories based on books
 - Explore book information through a clean and structured backend API
 
 ---
