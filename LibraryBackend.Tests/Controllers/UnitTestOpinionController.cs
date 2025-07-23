@@ -14,15 +14,15 @@ namespace LibraryBackend.Tests.Controllers;
 public class UnitTestOpinionController
 {
     readonly OpinionController _opinionController;
-    readonly Mock<IRepositoryBase<Opinion>> _mockOpinionRepository;
+    readonly Mock<IUnitOfWork> _uow;
     readonly Mock<IOpinionService> _mockOpinionService;
 
     private const string notFoundErrorMessage = "No opinion found!";
     public UnitTestOpinionController()
     {
-        _mockOpinionRepository = new Mock<IRepositoryBase<Opinion>>();
+        _uow = new Mock<IUnitOfWork>();
         _mockOpinionService = new Mock<IOpinionService>();
-        _opinionController = new OpinionController(_mockOpinionRepository.Object, _mockOpinionService.Object);
+        _opinionController = new OpinionController(_uow.Object, _mockOpinionService.Object);
     }
 
     List<Opinion> mockOpinionData = new List<Opinion>
@@ -39,7 +39,7 @@ public class UnitTestOpinionController
     public async Task Should_get_all_opinions_in_GetOpinions()
     {
         // Arrange
-        _mockOpinionRepository!.Setup(mockRepository => mockRepository.GetAllAsync()).ReturnsAsync(mockOpinionData);
+        _uow.Setup(uow => uow.OpinionRepository.GetAllAsync()).ReturnsAsync(mockOpinionData);
 
         // Act
         var result = await _opinionController.GetOpinions();
@@ -56,8 +56,8 @@ public class UnitTestOpinionController
         // Arrange
         List<Opinion>? nullOpinionData = null;
 #pragma warning disable CS8604
-        _mockOpinionRepository
-          .Setup(mockRepository => mockRepository.GetAllAsync())
+        _uow
+          .Setup(uow => uow.OpinionRepository.GetAllAsync())
           .ReturnsAsync(nullOpinionData);
 #pragma warning restore CS8604
 
@@ -67,7 +67,7 @@ public class UnitTestOpinionController
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(actionResult.Result);
         Assert.Equal(notFoundErrorMessage, notFoundResult.Value);
-        _mockOpinionRepository.Verify(mockRepository => mockRepository.GetAllAsync(), Times.Once);
+        _uow.Verify(uow => uow.OpinionRepository.GetAllAsync(), Times.Once);
     }
 
     [Fact]
@@ -75,8 +75,8 @@ public class UnitTestOpinionController
     {
         // Arrange
         List<Opinion>? emptyOpinionData = new List<Opinion>();
-        _mockOpinionRepository
-          .Setup(mockRepository => mockRepository.GetAllAsync())
+        _uow
+          .Setup(uow => uow.OpinionRepository.GetAllAsync())
           .ReturnsAsync(emptyOpinionData);
 
         // Act
@@ -85,7 +85,7 @@ public class UnitTestOpinionController
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(actionResult.Result);
         Assert.Equal(notFoundErrorMessage, notFoundResult.Value);
-        _mockOpinionRepository.Verify(mockRepository => mockRepository.GetAllAsync(), Times.Once);
+        _uow.Verify(uow => uow.OpinionRepository.GetAllAsync(), Times.Once);
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public class UnitTestOpinionController
         var ActualOpinions = from opinion in mockOpinionData
                              where opinion.BookId == bookIdToSearch
                              select opinion;
-        _mockOpinionRepository.Setup(mockRepository => mockRepository.FindByConditionWithIncludesAsync(
+        _uow.Setup(uow => uow.OpinionRepository.FindByConditionWithIncludesAsync(
           It.IsAny<Expression<Func<Opinion, bool>>>()
         ))
         .ReturnsAsync(ActualOpinions);
@@ -107,7 +107,7 @@ public class UnitTestOpinionController
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
         var listOpinions = Assert.IsAssignableFrom<IEnumerable<Opinion>>(okResult.Value);
-        _mockOpinionRepository.Verify(mockRepository => mockRepository.FindByConditionWithIncludesAsync(
+        _uow.Verify(uow => uow.OpinionRepository.FindByConditionWithIncludesAsync(
           It.IsAny<Expression<Func<Opinion, bool>>>()
           ), Times.Once);
         Assert.Equal(2, ActualOpinions.Count());
@@ -125,8 +125,8 @@ public class UnitTestOpinionController
         // Arrange
         var nonExistingId = 99;
         var emptyList = new List<Opinion>();
-        _mockOpinionRepository
-          .Setup(mockRepository => mockRepository.FindByConditionWithIncludesAsync(
+        _uow
+          .Setup(uow => uow.OpinionRepository.FindByConditionWithIncludesAsync(
             It.IsAny<Expression<Func<Opinion, bool>>>()
           ))
           .ReturnsAsync(emptyList);
@@ -137,7 +137,7 @@ public class UnitTestOpinionController
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(actionResult.Result);
         Assert.Equal(notFoundErrorMessage, notFoundResult.Value);
-        _mockOpinionRepository.Verify(mockRepository => mockRepository.FindByConditionWithIncludesAsync(
+        _uow.Verify(uow => uow.OpinionRepository.FindByConditionWithIncludesAsync(
           It.IsAny<Expression<Func<Opinion, bool>>>()
         ), Times.Once);
     }
@@ -154,12 +154,12 @@ public class UnitTestOpinionController
             View = "amazing! I'm warmly recommend it",
             UserName = "Lise"
         };
-        _mockOpinionRepository
-          .Setup(opinionRepository => opinionRepository.GetByIdAsync(opinionId))
+        _uow
+          .Setup(uow => uow.OpinionRepository.GetByIdAsync(opinionId))
           .ReturnsAsync(opinionById);
 
-        _mockOpinionRepository
-          .Setup(mockOpinion => mockOpinion.Update(opinionById!))
+        _uow
+          .Setup(uow => uow.OpinionRepository.Update(opinionById!))
           .ReturnsAsync(opinionById!);
 
         // Act
@@ -174,10 +174,10 @@ public class UnitTestOpinionController
 
         Assert.Equal(expectedOpinion, actualOpinion);
 
-        _mockOpinionRepository
-          .Verify(mockRepository => mockRepository.GetByIdAsync(It.IsAny<int>()), Times.Once);
-        _mockOpinionRepository
-          .Verify(mockRepository => mockRepository.Update(It.IsAny<Opinion>()), Times.Once);
+        _uow
+          .Verify(uow => uow.OpinionRepository.GetByIdAsync(It.IsAny<int>()), Times.Once);
+        _uow
+          .Verify(uow => uow.OpinionRepository.Update(It.IsAny<Opinion>()), Times.Once);
     }
 
     [Fact]
@@ -229,12 +229,12 @@ public class UnitTestOpinionController
             View = "",
             UserName = ""
         };
-        _mockOpinionRepository
-          .Setup(opinionRepository => opinionRepository.GetByIdAsync(opinionId))
+        _uow
+          .Setup(uow => uow.OpinionRepository.GetByIdAsync(opinionId))
           .ReturnsAsync(opinionById);
 
-        _mockOpinionRepository
-          .Setup(mockOpinion => mockOpinion.Update(opinionById!))
+        _uow
+          .Setup(uow => uow.OpinionRepository.Update(opinionById!))
           .ReturnsAsync(opinionById!);
 
         // Act
@@ -247,10 +247,10 @@ public class UnitTestOpinionController
 
         Assert.Equal("View or UserName cannot be empty", error.Detail);
 
-        _mockOpinionRepository
-          .Verify(mockRepository => mockRepository.GetByIdAsync(It.IsAny<int>()), Times.Never);
-        _mockOpinionRepository
-          .Verify(mockRepository => mockRepository.Update(It.IsAny<Opinion>()), Times.Never);
+        _uow
+          .Verify(uow => uow.OpinionRepository.GetByIdAsync(It.IsAny<int>()), Times.Never);
+        _uow
+          .Verify(uow => uow.OpinionRepository.Update(It.IsAny<Opinion>()), Times.Never);
 
     }
 
@@ -271,12 +271,12 @@ public class UnitTestOpinionController
             View = "viewdTO",
             UserName = "usernameDTO"
         };
-        _mockOpinionRepository
-          .Setup(opinionRepository => opinionRepository.GetByIdAsync(opinionId))
+        _uow
+          .Setup(uow => uow.OpinionRepository.GetByIdAsync(opinionId))
           .ReturnsAsync(nullOpinion);
 
-        _mockOpinionRepository
-          .Setup(mockOpinion => mockOpinion.Update(opinion))
+        _uow
+          .Setup(uow => uow.OpinionRepository.Update(opinion))
           .ReturnsAsync(opinion);
 
         // Act
@@ -285,10 +285,10 @@ public class UnitTestOpinionController
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(actionResult.Result);
         Assert.Equal($"Opinion with Id {opinionId} not found", notFoundResult.Value);
-        _mockOpinionRepository
-          .Verify(mockRepository => mockRepository.GetByIdAsync(It.IsAny<int>()), Times.Once);
-        _mockOpinionRepository
-          .Verify(mockRepository => mockRepository.Update(It.IsAny<Opinion>()), Times.Never);
+        _uow
+          .Verify(uow => uow.OpinionRepository.GetByIdAsync(It.IsAny<int>()), Times.Once);
+        _uow
+          .Verify(uow => uow.OpinionRepository.Update(It.IsAny<Opinion>()), Times.Never);
 
     }
 
@@ -310,8 +310,8 @@ public class UnitTestOpinionController
             View = opinionDtoRequest.View,
             UserName = opinionDtoRequest.UserName
         };
-        _mockOpinionRepository
-          .Setup(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()))
+        _uow
+          .Setup(uow => uow.OpinionRepository.Create(It.IsAny<Opinion>()))
           .ReturnsAsync(opinionToCreate);
 
         // Act
@@ -324,7 +324,7 @@ public class UnitTestOpinionController
         var expectedOpinion = (opinionDtoRequest.BookId, opinionDtoRequest.Rate, opinionDtoRequest.View, opinionDtoRequest.UserName);
         var actualOpinion = (createdOpinion.BookId, createdOpinion.Rate, createdOpinion.View, createdOpinion.UserName);
         Assert.Equal(expectedOpinion, actualOpinion);
-        _mockOpinionRepository.Verify(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()), Times.Once);
+        _uow.Verify(uow => uow.OpinionRepository.Create(It.IsAny<Opinion>()), Times.Once);
     }
 
     [Fact]
@@ -345,8 +345,8 @@ public class UnitTestOpinionController
             View = opinionDtoRequest.View,
             UserName = opinionDtoRequest.UserName
         };
-        _mockOpinionRepository
-          .Setup(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()))
+        _uow
+          .Setup(uow => uow.OpinionRepository.Create(It.IsAny<Opinion>()))
           .ReturnsAsync(opinionToCreate);
 
         // Act
@@ -357,7 +357,7 @@ public class UnitTestOpinionController
         var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
         Assert.Equal("Validation Error", apiError.Message);
         Assert.Equal("View, UserName or Rate cannot be empty", apiError.Detail);
-        _mockOpinionRepository.Verify(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()), Times.Never);
+        _uow.Verify(uow => uow.OpinionRepository.Create(It.IsAny<Opinion>()), Times.Never);
     }
 
     [Fact]
@@ -378,8 +378,8 @@ public class UnitTestOpinionController
             View = opinionDtoRequest.View,
             UserName = opinionDtoRequest.UserName
         };
-        _mockOpinionRepository
-          .Setup(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()))
+        _uow
+          .Setup(uow => uow.OpinionRepository.Create(It.IsAny<Opinion>()))
           .ReturnsAsync(opinionToCreate);
 
         // Act
@@ -390,6 +390,6 @@ public class UnitTestOpinionController
         var apiError = Assert.IsType<ApiError>(badRequestResult.Value);
         Assert.Equal("Validation Error", apiError.Message);
         Assert.Equal("View, UserName or Rate cannot be empty", apiError.Detail);
-        _mockOpinionRepository.Verify(opinionRepository => opinionRepository.Create(It.IsAny<Opinion>()), Times.Never);
+        _uow.Verify(uow => uow.OpinionRepository.Create(It.IsAny<Opinion>()), Times.Never);
     }
 }

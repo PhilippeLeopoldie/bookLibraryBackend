@@ -12,14 +12,14 @@ public class UnitTestOpinionService
 {
     readonly IOpinionService _opinionService;
     readonly Mock<IBookService> _mockBookService;
-    readonly Mock<IRepositoryBase<Opinion>> _mockOpinionRepository;
+    readonly Mock<IUnitOfWork> _uow;
 
 
     public UnitTestOpinionService()
     {
-        _mockOpinionRepository = new Mock<IRepositoryBase<Opinion>>();
+        _uow = new Mock<IUnitOfWork>();
         _mockBookService = new Mock<IBookService>();
-        _opinionService = new OpinionService(_mockOpinionRepository.Object, _mockBookService.Object);
+        _opinionService = new OpinionService(_uow.Object, _mockBookService.Object);
     }
 
     [Fact]
@@ -45,8 +45,8 @@ public class UnitTestOpinionService
       }
         };
 
-        _mockOpinionRepository
-          .Setup(mockOpinionRepository => mockOpinionRepository.FindByConditionWithIncludesAsync(
+        _uow
+          .Setup(uow => uow.OpinionRepository.FindByConditionWithIncludesAsync(
             It.IsAny<Expression<Func<Opinion, bool>>>()))
             .ReturnsAsync(book.Opinions);
         _mockBookService

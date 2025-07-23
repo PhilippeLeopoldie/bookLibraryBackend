@@ -14,13 +14,13 @@ namespace LibraryBackend.Presentation.Controllers;
 [ApiController]
 public class OpinionController : ControllerBase
 {
-private readonly IRepositoryBase<Opinion> _OpinionRepository;
+private readonly IUnitOfWork _uow;
 private readonly IOpinionService _opinionService;
 
 private const string notFoundErrorMessage = "No opinion found!";
-public OpinionController(IRepositoryBase<Opinion> opinionRepository, IOpinionService opinionService)
+public OpinionController(IUnitOfWork uow, IOpinionService opinionService)
 {
-  _OpinionRepository = opinionRepository;
+  _uow = uow;
   _opinionService = opinionService;
 }
 
@@ -30,7 +30,7 @@ public OpinionController(IRepositoryBase<Opinion> opinionRepository, IOpinionSer
 [ProducesResponseType(StatusCodes.Status404NotFound)]
 public async Task<ActionResult<IEnumerable<Opinion>>> GetOpinions()
 {
-  var Opinions = await _OpinionRepository.GetAllAsync();
+  var Opinions = await _uow.OpinionRepository.GetAllAsync();
   if (Opinions == null || !Opinions.Any())
   {
     return NotFound(notFoundErrorMessage);
@@ -45,7 +45,7 @@ public async Task<ActionResult<IEnumerable<Opinion>>> GetOpinions()
 public async Task<ActionResult<IEnumerable<Opinion>>> GetOpinionsByBookId(int bookId)
 {
   Expression<Func<Opinion, bool>> condition = opinion => opinion.BookId == bookId;
-  var opinions = await _OpinionRepository.FindByConditionWithIncludesAsync(condition);
+  var opinions = await _uow.OpinionRepository.FindByConditionWithIncludesAsync(condition);
   if (opinions == null || !opinions.Any())
   {
     return NotFound(notFoundErrorMessage);
@@ -86,7 +86,7 @@ public async Task<ActionResult<Book>> UpdateOpinion(int id, OpinionDtoRequest op
     return BadRequest(emptyDataError);
   }
 
-  var opinionById = await _OpinionRepository.GetByIdAsync(id);
+  var opinionById = await _uow.OpinionRepository.GetByIdAsync(id);
   if (opinionById == null)
   {
     return NotFound($"Opinion with Id {id} not found");
@@ -95,7 +95,7 @@ public async Task<ActionResult<Book>> UpdateOpinion(int id, OpinionDtoRequest op
   opinionById.View = opinionToUpdate.View;
   opinionById.UserName = opinionToUpdate.UserName;
 
-  var updatedOpinion = await _OpinionRepository.Update(opinionById);
+  var updatedOpinion = await _uow.OpinionRepository.Update(opinionById);
   return Ok(updatedOpinion);
 }
 
@@ -114,7 +114,7 @@ public async Task<ActionResult<Opinion>> CreateOpinion ([FromQuery] OpinionDtoRe
     };
     return BadRequest(error);
   }
-  var opinionCreated = await _OpinionRepository.Create(
+  var opinionCreated = await _uow.OpinionRepository.Create(
     new Opinion 
     {
       BookId = newOpinion.BookId,
