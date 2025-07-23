@@ -14,14 +14,12 @@ namespace LibraryBackend.Presentation.Controllers;
 [ApiController]
 public class BookController : ControllerBase
 {
-    private readonly IUnitOfWork _uow;
     private readonly IBookService _bookService;
     private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
     public readonly int pageSizeLimit = 6;
 
     public BookController(IUnitOfWork uow, IBookService bookService)
     {
-        _uow = uow;
         _bookService = bookService;
     }
     
@@ -63,7 +61,7 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<BookDtoResponse>> GetBookById(int id)
     {
-        var bookById = await _uow.BookRepository.GetByIdAsync(id);
+        var bookById = await _bookService.GetByIdAsync(id);
         if (bookById == null)
         {
             return NotFound($"Book with Id {id} not found");
@@ -145,12 +143,12 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteBook(int id)
     {
-        var bookToDelete = await _uow.BookRepository.GetByIdAsync(id);
+        var bookToDelete = await _bookService.GetByIdAsync(id);
         if (bookToDelete == null)
         {
             return NotFound($"Book with Id {id} not found");
         }
-        await _uow.BookRepository.Delete(bookToDelete);
+        await _bookService.Delete(bookToDelete);
         return NoContent();
     }
 

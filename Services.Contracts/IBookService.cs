@@ -14,4 +14,6 @@ public interface IBookService
     Task<IEnumerable<Book?>> GetBookByTitleOrAuthor(string titleOrAuthor);
     Task<Book> CreateAsync(Book book);
     Task<BookDtoResponse?> UpdateBookAsync(int id, BookDtoRequest book);
+    Task<Book?> GetByIdAsync(int id);
+    Task Delete(Book bookToDelete);
 }

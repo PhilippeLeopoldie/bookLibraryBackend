@@ -157,4 +157,15 @@ public class BookService(
         var result = paginationUtility.GetPaginationResult(paginatedItems, totalItems, page, pageSize);
         return result;
     }
+
+    public async Task<Book?> GetByIdAsync(int id)
+    {
+       return await _uow.BookRepository.GetByIdAsync(id);
+    }
+
+    public async Task Delete(Book bookToDelete)
+    {
+       await _uow.BookRepository.Delete(bookToDelete);
+       await  _uow.CompleteAsync();
+    }
 }
