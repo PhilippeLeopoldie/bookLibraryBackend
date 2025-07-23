@@ -4,7 +4,7 @@ using LibraryBackend.Services;
 using LibraryBackend.Tests.Data;
 using Moq;
 using Services.Contracts;
-namespace LibraryBackend.Tests.Services;
+namespace LibraryBackend.Tests.UnitTests.Services;
 
 public class UnitTestGenreService
 {

@@ -9,7 +9,7 @@ using Services.Contracts;
 using LibraryBackend.Services;
 using LibraryBackend.Infrastructure.Data;
 
-namespace LibraryBackend.Tests.Services;
+namespace LibraryBackend.Tests.UnitTests.Services;
 
 public class UnitTestBookService
 {

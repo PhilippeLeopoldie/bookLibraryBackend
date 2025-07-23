@@ -9,7 +9,7 @@ using LibraryBackend.Presentation.Controllers;
 using LibraryBackend.Core.Dtos.Opinions;
 using LibraryBackend.Core.Exceptions;
 
-namespace LibraryBackend.Tests.Controllers;
+namespace LibraryBackend.Tests.UnitTests.Controllers;
 
 public class UnitTestOpinionController
 {

@@ -5,7 +5,7 @@ using Services.Contracts;
 using LibraryBackend.Core.Contracts;
 using LibraryBackend.Services;
 
-namespace LibraryBackend.Tests.Services;
+namespace LibraryBackend.Tests.UnitTests.Services;
 
 
 public class UnitTestOpinionService

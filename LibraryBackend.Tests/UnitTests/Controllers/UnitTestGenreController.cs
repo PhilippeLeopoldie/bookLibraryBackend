@@ -5,7 +5,7 @@ using LibraryBackend.Services;
 using LibraryBackend.Tests.Data;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-namespace LibraryBackend.Tests.Controllers;
+namespace LibraryBackend.Tests.UnitTests.Controllers;
 
 public class UnitTestGenreController
 {

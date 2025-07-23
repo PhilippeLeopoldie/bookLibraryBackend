@@ -11,7 +11,7 @@ using LibraryBackend.Core.Dtos.Books;
 using LibraryBackend.Core.Exceptions;
 using Services.Contracts;
 
-namespace LibraryBackend.Tests.Controllers;
+namespace LibraryBackend.Tests.UnitTests.Controllers;
 
 public class UnitTestBookController
 {
