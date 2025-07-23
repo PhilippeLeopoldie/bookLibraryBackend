@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace LibraryBackend.Core.Contracts;
 
-public interface IRepository<T> where T : BaseEntity
+public interface IRepositoryBase<T> where T : BaseEntity
 {
     Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);
 

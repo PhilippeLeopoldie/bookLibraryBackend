@@ -14,11 +14,11 @@ namespace LibraryBackend.Presentation.Controllers;
 [ApiController]
 public class GenreController : ControllerBase
 {
-    private readonly IRepository<Genre> _genreRepository;
+    private readonly IRepositoryBase<Genre> _genreRepository;
     private readonly IGenreService _genreService;
     private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
 
-    public GenreController(IRepository<Genre> genreRepository, IGenreService genreService)
+    public GenreController(IRepositoryBase<Genre> genreRepository, IGenreService genreService)
     {
         _genreRepository = genreRepository;
         _genreService = genreService;

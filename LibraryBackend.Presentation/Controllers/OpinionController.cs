@@ -14,11 +14,11 @@ namespace LibraryBackend.Presentation.Controllers;
 [ApiController]
 public class OpinionController : ControllerBase
 {
-private readonly IRepository<Opinion> _OpinionRepository;
+private readonly IRepositoryBase<Opinion> _OpinionRepository;
 private readonly IOpinionService _opinionService;
 
 private const string notFoundErrorMessage = "No opinion found!";
-public OpinionController(IRepository<Opinion> opinionRepository, IOpinionService opinionService)
+public OpinionController(IRepositoryBase<Opinion> opinionRepository, IOpinionService opinionService)
 {
   _OpinionRepository = opinionRepository;
   _opinionService = opinionService;

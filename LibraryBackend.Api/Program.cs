@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
-using LibraryBackend.Infrastructure.Persistance.Repositories;
-using LibraryBackend.Infrastructure.Persistance.Data;
 using Services.Contracts;
 using LibraryBackend.Services;
 using LibraryBackend.Core.Requests;
 using LibraryBackend.Core.Contracts;
+using LibraryBackend.Infrastructure.Repositories;
+using LibraryBackend.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +41,8 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IOpinionService, OpinionService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IGenreService, GenreService>();

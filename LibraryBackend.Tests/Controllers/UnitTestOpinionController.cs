@@ -14,13 +14,13 @@ namespace LibraryBackend.Tests.Controllers;
 public class UnitTestOpinionController
 {
     readonly OpinionController _opinionController;
-    readonly Mock<IRepository<Opinion>> _mockOpinionRepository;
+    readonly Mock<IRepositoryBase<Opinion>> _mockOpinionRepository;
     readonly Mock<IOpinionService> _mockOpinionService;
 
     private const string notFoundErrorMessage = "No opinion found!";
     public UnitTestOpinionController()
     {
-        _mockOpinionRepository = new Mock<IRepository<Opinion>>();
+        _mockOpinionRepository = new Mock<IRepositoryBase<Opinion>>();
         _mockOpinionService = new Mock<IOpinionService>();
         _opinionController = new OpinionController(_mockOpinionRepository.Object, _mockOpinionService.Object);
     }

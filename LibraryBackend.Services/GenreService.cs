@@ -5,8 +5,8 @@ namespace LibraryBackend.Services;
 
 public class GenreService : IGenreService
 {
-    private readonly IRepository<Genre> _genreRepository;
-    public GenreService( IRepository<Genre> genreRepository)
+    private readonly IRepositoryBase<Genre> _genreRepository;
+    public GenreService( IRepositoryBase<Genre> genreRepository)
     {
         _genreRepository = genreRepository;
     }

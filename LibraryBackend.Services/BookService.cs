@@ -8,14 +8,14 @@ using LibraryBackend.Core.Dtos.Books;
 namespace LibraryBackend.Services;
 
 public class BookService(
-    IRepository<Book> bookRepository,
+    IUnitOfWork _uow,
     PaginationUtility<Book> paginationUtility)
     : IBookService
 {
     private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
     public virtual async Task<BookDtoRequest?> GetBookByIdAsync(int id)
     {
-        var bookById = await bookRepository.GetByIdAsync(id);
+        var bookById = await _uow.BookRepository.GetByIdAsync(id);
         if (bookById == null) return null ;
         return new BookDtoRequest(
             bookById.Title,
@@ -26,28 +26,28 @@ public class BookService(
     }
     public virtual async Task<IEnumerable<Book>?> GetBooksWithHighestAverageRate(int numberOfBooks)
     {
-        var books = await bookRepository.GetAllAsync(book => book.Opinions);
+        var books = await _uow.BookRepository.GetAllAsync(book => book.Opinions);
         if (books == null) return null;
         return GetMostPopularBooks(books, numberOfBooks);
     }
 
     public async Task<Book?> EditAverageRate(int bookId, double average)
     {
-        var book = await bookRepository.GetByIdAsync(bookId);
+        var book = await _uow.BookRepository.GetByIdAsync(bookId);
 
         if (book == null)
         {
             return null;
         }
         book.AverageRate = average;
-        var updatedBook = await bookRepository.Update(book);
+        var updatedBook = await _uow.BookRepository.Update(book);
         return updatedBook;
     }
 
     public virtual async Task<PaginationResult<Book>> GetListOfBooksWithOpinionsAsync(int page, int pageSize )
     {
         /*_paginationUtility.PaginationValidation(page, itemsPerPage);*/
-        var paginatedItems = await bookRepository.GetPaginatedItemsAsync(page, pageSize);
+        var paginatedItems = await _uow.BookRepository.GetPaginatedItemsAsync(page, pageSize);
         paginationUtility.PaginatedItemsValidation(paginatedItems, page);
         return await GetBookPaginationResultAsync(page,pageSize, paginatedItems);
     }
@@ -56,7 +56,7 @@ public class BookService(
     {
         GenresIdValidation(listOfGenreId);
         var genreIdCondition = GetGenreIdCondition(listOfGenreId);
-        var paginatedItems = await bookRepository.GetPaginatedItemsAsync(page, pageSize, genreIdCondition );
+        var paginatedItems = await _uow.BookRepository.GetPaginatedItemsAsync(page, pageSize, genreIdCondition );
         paginationUtility.PaginatedItemsValidation(paginatedItems, page);
         return await GetBookPaginationResultAsync(page, pageSize, paginatedItems, genreIdCondition);
     }
@@ -68,18 +68,18 @@ public class BookService(
           book.Title!.ToLower().Contains(titleOrAuthor)
           ||
           book.Author!.ToLower().Contains(titleOrAuthor);
-        var books = await bookRepository.FindByConditionWithIncludesAsync(condition);
+        var books = await _uow.BookRepository.FindByConditionWithIncludesAsync(condition);
         return books;
     }
 
     public virtual async Task<Book> CreateAsync(Book book)
     {
-        return await bookRepository.Create(book);
+        return await _uow.BookRepository.Create(book);
     }
 
     public virtual async Task<BookDtoResponse?> UpdateBookAsync(int id, BookDtoRequest bookToUpdate)
     {
-        var bookById = await bookRepository.GetByIdAsync(id);
+        var bookById = await _uow.BookRepository.GetByIdAsync(id);
         if (bookById == null) return null;
         bookById.Author = bookToUpdate.Author.Trim();
         bookById.Title = bookToUpdate.Title.Trim();
@@ -87,7 +87,7 @@ public class BookService(
         bookById.ImageUrl = bookToUpdate.ImageUrl;
         bookById.GenreId = bookToUpdate.GenreId;
         
-        var book = await bookRepository.Update(bookById);
+        var book = await _uow.BookRepository.Update(bookById);
         return new BookDtoResponse (book, DateTime.UtcNow.ToString(dateTimeFormat));
     }
 
@@ -147,10 +147,10 @@ public class BookService(
         int totalItems;
         if(condition == null)
         {
-            totalItems = await bookRepository.GetCountAsync();
+            totalItems = await _uow.BookRepository.GetCountAsync();
         } else
         {
-            totalItems= await bookRepository.GetCountAsync(condition);
+            totalItems= await _uow.BookRepository.GetCountAsync(condition);
         }
 
         if (totalItems == 0 ) return paginationUtility.GetEmptyResult();

@@ -12,12 +12,12 @@ public class UnitTestOpinionService
 {
     readonly IOpinionService _opinionService;
     readonly Mock<IBookService> _mockBookService;
-    readonly Mock<IRepository<Opinion>> _mockOpinionRepository;
+    readonly Mock<IRepositoryBase<Opinion>> _mockOpinionRepository;
 
 
     public UnitTestOpinionService()
     {
-        _mockOpinionRepository = new Mock<IRepository<Opinion>>();
+        _mockOpinionRepository = new Mock<IRepositoryBase<Opinion>>();
         _mockBookService = new Mock<IBookService>();
         _opinionService = new OpinionService(_mockOpinionRepository.Object, _mockBookService.Object);
     }

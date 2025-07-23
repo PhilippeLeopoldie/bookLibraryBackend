@@ -6,10 +6,10 @@ namespace LibraryBackend.Services;
 
 public class OpinionService : IOpinionService
 {
-private readonly IRepository<Opinion> _opinionRepository;
+private readonly IRepositoryBase<Opinion> _opinionRepository;
 private readonly IBookService _bookService;
 
-public OpinionService(IRepository<Opinion> opinionRepository,IBookService bookService)
+public OpinionService(IRepositoryBase<Opinion> opinionRepository,IBookService bookService)
 {
   _opinionRepository = opinionRepository;
   _bookService = bookService;

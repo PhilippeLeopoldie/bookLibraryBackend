@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using LibraryBackend.Core.Entities;
 
-namespace LibraryBackend.Infrastructure.Persistance.Data;
+namespace LibraryBackend.Infrastructure.Data;
 public class MyLibraryContext : DbContext
     {
         public MyLibraryContext (DbContextOptions<MyLibraryContext> options)

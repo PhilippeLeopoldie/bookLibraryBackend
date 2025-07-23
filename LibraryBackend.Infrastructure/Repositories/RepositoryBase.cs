@@ -1,17 +1,17 @@
 using LibraryBackend.Core.Contracts;
 using LibraryBackend.Core.Entities;
-using LibraryBackend.Infrastructure.Persistance.Data;
+using LibraryBackend.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace LibraryBackend.Infrastructure.Persistance.Repositories;
+namespace LibraryBackend.Infrastructure.Repositories;
 
-public class Repository<T> : IRepository<T> where T : BaseEntity
+public class RepositoryBase<T> : IRepositoryBase<T> where T : BaseEntity
 {
     private readonly MyLibraryContext _context = default!;
     private readonly DbSet<T> _entities;
 
-    public Repository(MyLibraryContext context)
+    public RepositoryBase(MyLibraryContext context)
     {
         _context = context;
         _entities = context.Set<T>();

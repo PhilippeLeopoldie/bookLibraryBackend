@@ -15,7 +15,7 @@ namespace LibraryBackend.Tests.Controllers;
 public class UnitTestBookController
 {
     readonly BookController _bookController;
-    readonly Mock<IRepository<Book>> _mockBookRepository;
+    readonly Mock<IUnitOfWork> _uow;
     readonly Mock<BookService> _mockBookService;
     readonly Mock<PaginationUtility<Book>> _mockPaginationUtility;
     readonly List<Book> mockBookData;
@@ -23,10 +23,10 @@ public class UnitTestBookController
      
     public UnitTestBookController()
     {
-        _mockBookRepository = new Mock<IRepository<Book>>();
+        _uow = new Mock<IUnitOfWork>();
         _mockPaginationUtility = new Mock<PaginationUtility<Book>>();
-        _mockBookService = new Mock<BookService>(_mockBookRepository.Object, _mockPaginationUtility.Object);
-        _bookController = new BookController(_mockBookRepository.Object, _mockBookService.Object);
+        _mockBookService = new Mock<BookService>(_uow.Object, _mockPaginationUtility.Object);
+        _bookController = new BookController(_uow.Object, _mockBookService.Object);
         mockBookData = MockData.GetMockData(); 
     }
 
@@ -286,8 +286,8 @@ public class UnitTestBookController
         // Arrange
         int bookId = 2;
         var expectedBook = mockBookData.FirstOrDefault(x => x.Id == bookId);
-        _mockBookRepository
-          .Setup(repositoryMock => repositoryMock.GetByIdAsync(bookId))
+        _uow
+          .Setup(uow => uow.BookRepository.GetByIdAsync(bookId))
           .ReturnsAsync(expectedBook);
 
         // Act
@@ -299,7 +299,7 @@ public class UnitTestBookController
         Assert.Equal(expectedBook?.Id, bookResponse?.Book?.Id);
         Assert.Equal(expectedBook?.Title, bookResponse?.Book?.Title);
         Assert.Equal(expectedBook?.Author, bookResponse?.Book?.Author);
-        _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(bookId), Times.Once);
+        _uow.Verify(uow => uow.BookRepository.GetByIdAsync(bookId), Times.Once);
     }
 
     [Fact]
@@ -307,8 +307,8 @@ public class UnitTestBookController
     {
         // Arrange
         int nonExistingId = 3;
-        _mockBookRepository
-          .Setup(repositoryMock => repositoryMock.GetByIdAsync(nonExistingId))
+        _uow
+          .Setup(uow => uow.BookRepository.GetByIdAsync(nonExistingId))
           .ReturnsAsync(null as Book);
 
         // Act
@@ -317,7 +317,7 @@ public class UnitTestBookController
         // Assert
         var notFoundId = Assert.IsType<NotFoundObjectResult>(result.Result);
         Assert.Equal($"Book with Id {nonExistingId} not found", notFoundId.Value);
-        _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(nonExistingId), Times.Once);
+        _uow.Verify(uow => uow.BookRepository.GetByIdAsync(nonExistingId), Times.Once);
     }
 
     [Fact]
@@ -478,8 +478,8 @@ public class UnitTestBookController
             Description = bookDtoRequest.Description,
             ImageUrl= bookDtoRequest.ImageUrl,
         };
-        _mockBookRepository
-          .Setup(MockRepository => MockRepository.Create(It.IsAny<Book>()))
+        _uow
+          .Setup(uow => uow.BookRepository.Create(It.IsAny<Book>()))
           .ReturnsAsync(bookToCreate);
         _mockBookService
             .Setup(mockService => mockService.CreateAsync(It.IsAny<Book>()))
@@ -526,11 +526,11 @@ public class UnitTestBookController
         // Arrange
         var bookIdToDelete = 2;
         var bookToDelete = mockBookData.First(book => book.Id == bookIdToDelete);
-        _mockBookRepository
-          .Setup(mockRepository => mockRepository.GetByIdAsync(bookIdToDelete))
+        _uow
+          .Setup(uow => uow.BookRepository.GetByIdAsync(bookIdToDelete))
           .ReturnsAsync(bookToDelete);
-        _mockBookRepository
-          .Setup(MockRepository => MockRepository.Delete(bookToDelete))
+        _uow
+          .Setup(uow => uow.BookRepository.Delete(bookToDelete))
           .Returns(Task.CompletedTask);
 
         // Act
@@ -538,8 +538,8 @@ public class UnitTestBookController
 
         // Assert
         Assert.IsType<NoContentResult>(result);
-        _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(bookIdToDelete), Times.Once);
-        _mockBookRepository.Verify(mockRepository => mockRepository.Delete(bookToDelete), Times.Once);
+        _uow.Verify(uow => uow.BookRepository.GetByIdAsync(bookIdToDelete), Times.Once);
+        _uow.Verify(uow => uow.BookRepository.Delete(bookToDelete), Times.Once);
     }
 
     [Fact]
@@ -547,8 +547,8 @@ public class UnitTestBookController
     {
         // Arrange
         var nonExistingId = 99;
-        _mockBookRepository
-          .Setup(mockRepository => mockRepository.GetByIdAsync(nonExistingId))
+        _uow
+          .Setup(uow => uow.BookRepository.GetByIdAsync(nonExistingId))
           .ReturnsAsync(null as Book);
 
         // act
@@ -629,8 +629,8 @@ public class UnitTestBookController
         var modelStateErrors = Assert.IsType<SerializableError>(badRequestResult.Value);
         Assert.True(modelStateErrors.ContainsKey("Title"));
         Assert.True(modelStateErrors.ContainsKey("Author"));
-        _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(id), Times.Never);
-        _mockBookRepository.Verify(mockRepository => mockRepository.Update(bookById!), Times.Never);
+        _uow.Verify(uow => uow.BookRepository.GetByIdAsync(id), Times.Never);
+        _uow.Verify(uow => uow.BookRepository.Update(bookById!), Times.Never);
     }
 
     [Fact]
@@ -656,8 +656,8 @@ public class UnitTestBookController
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
         var errors = Assert.IsType<SerializableError>(badRequestResult.Value);
         Assert.True(errors.ContainsKey("Title"));
-        _mockBookRepository.Verify(mockRepository => mockRepository.GetByIdAsync(id), Times.Never);
-        _mockBookRepository.Verify(mockRepository => mockRepository.Update(bookById!), Times.Never);
+        _uow.Verify(uow => uow.BookRepository.GetByIdAsync(id), Times.Never);
+        _uow.Verify(uow => uow.BookRepository.Update(bookById!), Times.Never);
     }
 
     [Fact]

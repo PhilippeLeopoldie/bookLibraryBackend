@@ -10,12 +10,12 @@ public class UnitTestGenreService
 {
     readonly IGenreService _genreService;
     readonly List<Genre> _mockGenreData;
-    readonly Mock<IRepository<Genre>> _mockGenreRepository;
+    readonly Mock<IRepositoryBase<Genre>> _mockGenreRepository;
 
     public UnitTestGenreService ()
     {
         _mockGenreData = MockData.GetGenreMockData ();
-        _mockGenreRepository = new Mock<IRepository<Genre>>();
+        _mockGenreRepository = new Mock<IRepositoryBase<Genre>>();
         _genreService = new GenreService( _mockGenreRepository!.Object);
     }
 

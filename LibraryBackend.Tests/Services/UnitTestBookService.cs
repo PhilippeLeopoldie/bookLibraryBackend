@@ -2,19 +2,19 @@ using Moq;
 using LibraryBackend.Tests.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using LibraryBackend.Infrastructure.Persistance.Data;
 using LibraryBackend.Core.Entities;
 using LibraryBackend.Core.Requests;
 using LibraryBackend.Core.Contracts;
 using Services.Contracts;
 using LibraryBackend.Services;
+using LibraryBackend.Infrastructure.Data;
 
 namespace LibraryBackend.Tests.Services;
 
 public class UnitTestBookService
 {
     readonly IBookService _bookService;
-    readonly Mock<IRepository<Book>> _mockBookRepository;
+    readonly Mock<IUnitOfWork> _mockUow;
     readonly Mock<PaginationUtility<Book>> _mockPaginationUtility;
     readonly List<Book> _mockBookData;
     readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
@@ -22,7 +22,7 @@ public class UnitTestBookService
 
     public UnitTestBookService()
     {
-        _mockBookRepository = new Mock<IRepository<Book>>();
+        _mockUow = new Mock<IUnitOfWork>();
         _mockPaginationUtility = new Mock<PaginationUtility<Book>>();
         _mockBookData = MockData.GetMockData();
 
@@ -31,7 +31,7 @@ public class UnitTestBookService
           .UseInMemoryDatabase("TestBookDatabase")
           .Options;
 
-        _bookService = new BookService(_mockBookRepository.Object, _mockPaginationUtility.Object);
+        _bookService = new BookService(_mockUow.Object, _mockPaginationUtility.Object);
     }
 
 
@@ -49,11 +49,11 @@ public class UnitTestBookService
           .Skip((page - 1) * numberOfItemsPerPage)
           .Take(numberOfItemsPerPage)
           .ToList();
-        _mockBookRepository
-          .Setup(mockBookRepository => mockBookRepository.GetPaginatedItemsAsync(page, numberOfItemsPerPage,null))
+        _mockUow
+          .Setup(uow => uow.BookRepository.GetPaginatedItemsAsync(page, numberOfItemsPerPage,null))
           .ReturnsAsync(expectedPaginatedItems);
-        _mockBookRepository
-            .Setup(mockBookRepository => mockBookRepository.GetCountAsync(null))
+        _mockUow
+            .Setup(uow => uow.BookRepository.GetCountAsync(null))
             .ReturnsAsync(totalItems);
         _mockPaginationUtility
             .Setup(mockUtilityPagination => mockUtilityPagination.GetPaginationResult(expectedPaginatedItems, totalItems, page, numberOfItemsPerPage ))
@@ -68,8 +68,10 @@ public class UnitTestBookService
         Assert.Equal(expectedPaginatedItems.Count, paginationResult.PaginatedItems.Count());
         Assert.Equal(totalItems, paginationResult.TotalItems);
         Assert.Equal(totalPages, paginationResult.TotalPages);
-        _mockBookRepository.Verify(repo => repo.GetPaginatedItemsAsync(page, numberOfItemsPerPage, null), Times.Once);
-        _mockPaginationUtility.Verify(repo => repo.GetPaginationResult(expectedPaginatedItems, totalItems, page, numberOfItemsPerPage), Times.Once);
+        _mockUow
+            .Verify(uow => uow.BookRepository.GetPaginatedItemsAsync(page, numberOfItemsPerPage, null), Times.Once);
+        _mockPaginationUtility
+            .Verify(repo => repo.GetPaginationResult(expectedPaginatedItems, totalItems, page, numberOfItemsPerPage), Times.Once);
     }
 
     [Fact]
@@ -93,12 +95,12 @@ public class UnitTestBookService
 
       }
         };
-        _mockBookRepository
-          .Setup(mockBookRepository => mockBookRepository.GetByIdAsync(bookToUpdate.Id))
+        _mockUow
+          .Setup(uow => uow.BookRepository.GetByIdAsync(bookToUpdate.Id))
           .ReturnsAsync(bookToUpdate);
 
-        _mockBookRepository
-          .Setup(mockBookRepository => mockBookRepository.Update(bookToUpdate))
+        _mockUow
+          .Setup(uow => uow.BookRepository.Update(bookToUpdate))
           .ReturnsAsync(bookToUpdate);
 
 
@@ -108,8 +110,8 @@ public class UnitTestBookService
         // Assert
         Assert.NotNull(updatedBook);
         Assert.Equal(average, updatedBook?.AverageRate);
-        _mockBookRepository.Verify(repo => repo.GetByIdAsync(It.IsAny<int>()), Times.Once);
-        _mockBookRepository.Verify(repo => repo.Update(It.IsAny<Book>()), Times.Once);
+        _mockUow.Verify(uow => uow.BookRepository.GetByIdAsync(It.IsAny<int>()), Times.Once);
+        _mockUow.Verify(uow => uow.BookRepository.Update(It.IsAny<Book>()), Times.Once);
     }
 
     [Fact]
@@ -117,8 +119,8 @@ public class UnitTestBookService
     {
         // Arrange
         var numberOfBooks = 1;
-        _mockBookRepository
-            .Setup(mockRepository => mockRepository.GetAllAsync(book => book.Opinions))
+        _mockUow
+            .Setup(uow => uow.BookRepository.GetAllAsync(book => book.Opinions!))
             .ReturnsAsync(_mockBookData);
 
         // Act
@@ -157,12 +159,12 @@ public class UnitTestBookService
             .Setup(mockPaginationUtility => mockPaginationUtility
             .PaginatedItemsValidation(expectedPaginatedBooks,page))
             .Verifiable();
-        _mockBookRepository
-            .Setup(mockBookRepository => mockBookRepository
+        _mockUow
+            .Setup(uow => uow.BookRepository
             .GetPaginatedItemsAsync(It.IsAny<int>(), It.IsAny<int>(),It.IsAny<Expression<Func<Book, bool>>>()))
             .ReturnsAsync(expectedPaginatedBooks);
-        _mockBookRepository
-            .Setup(mockBookRepository => mockBookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
+        _mockUow
+            .Setup(uow => uow.BookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
             .ReturnsAsync(totalItems);
         _mockPaginationUtility
             .Setup(mockPaginationUtility => mockPaginationUtility
@@ -183,10 +185,10 @@ public class UnitTestBookService
         GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage), Times.Once());
         _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility
         .PaginatedItemsValidation(expectedPaginatedBooks,page), Times.Once());
-        _mockBookRepository.Verify(mockBookRepository => mockBookRepository
+        _mockUow.Verify(uow => uow.BookRepository
         .GetPaginatedItemsAsync(page,itemsPerPage, It.IsAny<Expression<Func<Book, bool>>>()),Times.Once());
-        _mockBookRepository.Verify(mockRepository => mockRepository
-        .GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
+        _mockUow.Verify(uow => uow
+        .BookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
     }
 
     [Theory]
@@ -203,12 +205,12 @@ public class UnitTestBookService
             .Setup(mockPaginationUtility => mockPaginationUtility
             .PaginatedItemsValidation(expectedPaginatedBooks, page))
             .Verifiable();
-        _mockBookRepository
-            .Setup(mockBookRepository => mockBookRepository
+        _mockUow
+            .Setup(uow => uow.BookRepository
             .GetPaginatedItemsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Expression<Func<Book, bool>>>()))
             .ReturnsAsync(expectedPaginatedBooks);
-        _mockBookRepository
-            .Setup(mockBookRepository => mockBookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
+        _mockUow
+            .Setup(uow => uow.BookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
             .ReturnsAsync(totalItems);
         _mockPaginationUtility
             .Setup(mockPaginationUtility => mockPaginationUtility
@@ -229,10 +231,10 @@ public class UnitTestBookService
         GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage), Times.Once());
         _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility
         .PaginatedItemsValidation(expectedPaginatedBooks, page), Times.Once());
-        _mockBookRepository.Verify(mockBookRepository => mockBookRepository
+        _mockUow.Verify(uow => uow.BookRepository
         .GetPaginatedItemsAsync(page, itemsPerPage, It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
-        _mockBookRepository.Verify(mockRepository => mockRepository
-        .GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
+        _mockUow.Verify(uow => uow
+        .BookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Once());
     }
    
     
@@ -252,12 +254,12 @@ public class UnitTestBookService
             .Setup(mockPaginationUtility => mockPaginationUtility
             .PaginatedItemsValidation(expectedPaginatedBooks, page))
             .Verifiable();
-        _mockBookRepository
-            .Setup(mockBookRepository => mockBookRepository
+        _mockUow
+            .Setup(uow => uow.BookRepository
             .GetPaginatedItemsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Expression<Func<Book, bool>>>()))
             .ReturnsAsync(expectedPaginatedBooks);
-        _mockBookRepository
-            .Setup(mockBookRepository => mockBookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
+        _mockUow
+            .Setup(uow => uow.BookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
             .ReturnsAsync(totalItems);
         _mockPaginationUtility
             .Setup(mockPaginationUtility => mockPaginationUtility
@@ -277,9 +279,9 @@ public class UnitTestBookService
         GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage), Times.Never);
         _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility
         .PaginatedItemsValidation(expectedPaginatedBooks, page), Times.Never);
-        _mockBookRepository.Verify(mockBookRepository => mockBookRepository
+        _mockUow.Verify(uow => uow.BookRepository
         .GetPaginatedItemsAsync(page, itemsPerPage, It.IsAny<Expression<Func<Book, bool>>>()), Times.Never);
-        _mockBookRepository.Verify(mockRepository => mockRepository
+        _mockUow.Verify(uow => uow.BookRepository
         .GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Never);
     }
 
@@ -298,12 +300,12 @@ public class UnitTestBookService
             .Setup(mockPaginationUtility => mockPaginationUtility
             .PaginatedItemsValidation(expectedPaginatedBooks, page))
             .Verifiable();
-        _mockBookRepository
-            .Setup(mockBookRepository => mockBookRepository
+        _mockUow
+            .Setup(uow => uow.BookRepository
             .GetPaginatedItemsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Expression<Func<Book, bool>>>()))
             .ReturnsAsync(expectedPaginatedBooks);
-        _mockBookRepository
-            .Setup(mockBookRepository => mockBookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
+        _mockUow
+            .Setup(uow => uow.BookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
             .ReturnsAsync(totalItems);
         _mockPaginationUtility
             .Setup(mockPaginationUtility => mockPaginationUtility
@@ -323,9 +325,9 @@ public class UnitTestBookService
         GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage), Times.Never);
         _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility
         .PaginatedItemsValidation(expectedPaginatedBooks, page), Times.Never);
-        _mockBookRepository.Verify(mockBookRepository => mockBookRepository
+        _mockUow.Verify(uow => uow.BookRepository
         .GetPaginatedItemsAsync(page, itemsPerPage, It.IsAny<Expression<Func<Book, bool>>>()), Times.Never);
-        _mockBookRepository.Verify(mockRepository => mockRepository
+        _mockUow.Verify(uow => uow.BookRepository
         .GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Never);
     }
 
@@ -343,12 +345,12 @@ public class UnitTestBookService
             .Setup(mockPaginationUtility => mockPaginationUtility
             .PaginatedItemsValidation(expectedPaginatedBooks, page))
             .Verifiable();
-        _mockBookRepository
-            .Setup(mockBookRepository => mockBookRepository
+        _mockUow
+            .Setup(uow => uow.BookRepository
             .GetPaginatedItemsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Expression<Func<Book, bool>>>()))
             .ReturnsAsync(expectedPaginatedBooks);
-        _mockBookRepository
-            .Setup(mockBookRepository => mockBookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
+        _mockUow
+            .Setup(uow => uow.BookRepository.GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()))
             .ReturnsAsync(totalItems);
         _mockPaginationUtility
             .Setup(mockPaginationUtility => mockPaginationUtility
@@ -369,9 +371,9 @@ public class UnitTestBookService
         GetPaginationResult(expectedPaginatedBooks, totalItems, page, itemsPerPage), Times.Never);
         _mockPaginationUtility.Verify(mockPaginationUtility => mockPaginationUtility
         .PaginatedItemsValidation(expectedPaginatedBooks, page), Times.Never);
-        _mockBookRepository.Verify(mockBookRepository => mockBookRepository
+        _mockUow.Verify(uow => uow.BookRepository
         .GetPaginatedItemsAsync(page, itemsPerPage, It.IsAny<Expression<Func<Book, bool>>>()), Times.Never);
-        _mockBookRepository.Verify(mockRepository => mockRepository
+        _mockUow.Verify(uow => uow.BookRepository
         .GetCountAsync(It.IsAny<Expression<Func<Book, bool>>>()), Times.Never);
     }
 }
