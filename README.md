@@ -26,7 +26,7 @@ The project aims to build a full-stack Book Library and personalized Short Stori
 - Read descriptions of books
 - Rate and review books
 - Read and contribute opinions
-- Generate creative stories based on books using [OpenAI](https://openai.com/) 
+- Generate creative stories based on user settings using [OpenAI](https://openai.com/) 
 - Access book data through a clean, structured, and well-documented API
 
 ---
