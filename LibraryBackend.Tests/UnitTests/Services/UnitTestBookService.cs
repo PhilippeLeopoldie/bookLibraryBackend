@@ -120,8 +120,9 @@ public class UnitTestBookService
         // Arrange
         var numberOfBooks = 1;
         _mockUow
-            .Setup(uow => uow.BookRepository.GetAllAsync(book => book.Opinions!))
-            .ReturnsAsync(_mockBookData);
+            .Setup(uow => uow.BookRepository.FindByCondition(It.IsAny<Expression<Func<Book, bool>>>()))
+            .Returns((Expression<Func<Book, bool>> condition) =>
+                _mockBookData.AsQueryable().Where(condition.Compile()).AsQueryable());
 
         // Act
         var highestRateBook = await _bookService.GetBooksWithHighestAverageRate(numberOfBooks);

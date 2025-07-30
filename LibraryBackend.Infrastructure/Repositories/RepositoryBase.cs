@@ -2,6 +2,7 @@ using LibraryBackend.Core.Contracts;
 using LibraryBackend.Core.Entities;
 using LibraryBackend.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace LibraryBackend.Infrastructure.Repositories;
@@ -63,6 +64,11 @@ public class RepositoryBase<T> : IRepositoryBase<T> where T : BaseEntity
             }
         }
         return await query.ToListAsync();
+    }
+
+    public IQueryable<T> FindByCondition(Expression<Func<T, bool>> condition)
+    {
+        return _entities.AsNoTracking().Where(condition);
     }
 
     public virtual async Task<T> Create(T entity)

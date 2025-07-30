@@ -13,6 +13,7 @@ public interface IBookRepository
     Task<IEnumerable<Book?>> FindByConditionWithIncludesAsync(
         Expression<Func<Book, bool>> condition,
         params Expression<Func<Book, object>>[] includes);
+    IQueryable<Book> FindByCondition(Expression<Func<Book, bool>> condition);
     Task<IEnumerable<Book>> GetAllAsync(params Expression<Func<Book, object>>[] includes);
     Task<Book?> GetByIdAsync(int id);
     Task<IEnumerable<Book>> GetPaginatedItemsAsync(int page, int pageSize, Expression<Func<Book, bool>>? condition = null);

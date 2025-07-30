@@ -4,6 +4,7 @@ using LibraryBackend.Core.Requests;
 using LibraryBackend.Core.Contracts;
 using Services.Contracts;
 using LibraryBackend.Core.Dtos.Books;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryBackend.Services;
 
@@ -12,7 +13,8 @@ public class BookService(
     PaginationUtility<Book> paginationUtility)
     : IBookService
 {
-    private readonly string dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
+    private readonly int _goodOpinionThreshold = 3;
+    private readonly string _dateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
     public virtual async Task<BookDtoRequest?> GetBookByIdAsync(int id)
     {
         var bookById = await _uow.BookRepository.GetByIdAsync(id);
@@ -24,12 +26,29 @@ public class BookService(
             bookById.ImageUrl,
             bookById.GenreId);
     }
-    public virtual async Task<IEnumerable<Book>?> GetBooksWithHighestAverageRate(int numberOfBooks)
+    /*public virtual async Task<IEnumerable<Book>?> GetBooksWithHighestAverageRate(int numberOfBooks)
     {
         var books = await _uow.BookRepository.GetAllAsync(book => book.Opinions);
         if (books == null) return null;
         return GetMostPopularBooks(books, numberOfBooks);
+    }*/
+
+    public virtual async Task<IEnumerable<Book>?> GetBooksWithHighestAverageRate(int numberOfBooks)
+    {
+        Expression<Func<Book, bool>> condition =
+            book => book.Opinions != null &&
+            book.Opinions.Any(opinion => opinion.Rate >= _goodOpinionThreshold);
+            
+        var hasGoodOpinionsQuery = _uow.BookRepository.FindByCondition(condition);
+
+        var opinionSortingQuery = ApplyOpinionSortingByCountAndByAverageRate(hasGoodOpinionsQuery).Take(numberOfBooks);
+
+        //return await opinionSortingQuery.ToListAsync();
+        return await Task.FromResult(opinionSortingQuery.ToList());
+
+
     }
+
 
     public async Task<Book?> EditAverageRate(int bookId, double average)
     {
@@ -88,11 +107,11 @@ public class BookService(
         bookById.GenreId = bookToUpdate.GenreId;
         
         var book = await _uow.BookRepository.Update(bookById);
-        return new BookDtoResponse (book, DateTime.UtcNow.ToString(dateTimeFormat));
+        return new BookDtoResponse (book, DateTime.UtcNow.ToString(_dateTimeFormat));
     }
 
     // Most popular books are those with the biggest number of reviews with a rate >=3
-    private IEnumerable<Book>? GetMostPopularBooks(IEnumerable<Book> books, int numberOfBooks)
+    /*private IEnumerable<Book>? GetMostPopularBooks(IEnumerable<Book> books, int numberOfBooks)
     {
         var mostPopularBooks = books
             .Where(book => book.Opinions != null && book.Opinions.Any(opinion => opinion.Rate >= 3))
@@ -105,6 +124,15 @@ public class BookService(
             .Take(numberOfBooks).ToList();
 
         return mostPopularBooks;
+    }*/
+
+    private IQueryable<Book> ApplyOpinionSortingByCountAndByAverageRate(IQueryable<Book> query)
+    {
+        return query
+            .OrderByDescending(book => book.Opinions!.Count(opinion => opinion.Rate >= _goodOpinionThreshold))
+            .ThenByDescending(book => book.Opinions!
+                .Where(opinion => opinion.Rate >= _goodOpinionThreshold)
+                .Average(opinion => opinion.Rate));
     }
 
     private void GenresIdValidation(string listOfGenreId)
