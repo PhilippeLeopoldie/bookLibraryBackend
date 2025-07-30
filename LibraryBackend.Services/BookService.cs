@@ -26,14 +26,8 @@ public class BookService(
             bookById.ImageUrl,
             bookById.GenreId);
     }
-    /*public virtual async Task<IEnumerable<Book>?> GetBooksWithHighestAverageRate(int numberOfBooks)
-    {
-        var books = await _uow.BookRepository.GetAllAsync(book => book.Opinions);
-        if (books == null) return null;
-        return GetMostPopularBooks(books, numberOfBooks);
-    }*/
 
-    public virtual async Task<IEnumerable<Book>?> GetBooksWithHighestAverageRate(int numberOfBooks)
+    public async Task<IEnumerable<Book>?> GetBooksWithHighestAverageRate(int numberOfBooks)
     {
         Expression<Func<Book, bool>> condition =
             book => book.Opinions != null &&
@@ -43,12 +37,10 @@ public class BookService(
 
         var opinionSortingQuery = ApplyOpinionSortingByCountAndByAverageRate(hasGoodOpinionsQuery).Take(numberOfBooks);
 
-        //return await opinionSortingQuery.ToListAsync();
         return await Task.FromResult(opinionSortingQuery.ToList());
 
 
     }
-
 
     public async Task<Book?> EditAverageRate(int bookId, double average)
     {
@@ -63,7 +55,7 @@ public class BookService(
         return updatedBook;
     }
 
-    public virtual async Task<PaginationResult<Book>> GetListOfBooksWithOpinionsAsync(int page, int pageSize )
+    public async Task<PaginationResult<Book>> GetListOfBooksWithOpinionsAsync(int page, int pageSize )
     {
         /*_paginationUtility.PaginationValidation(page, itemsPerPage);*/
         var paginatedItems = await _uow.BookRepository.GetPaginatedItemsAsync(page, pageSize);
@@ -71,7 +63,7 @@ public class BookService(
         return await GetBookPaginationResultAsync(page,pageSize, paginatedItems);
     }
 
-    public virtual async Task<PaginationResult<Book>> GetPaginatedBooksByGenreIdAsync (string listOfGenreId, int page, int pageSize)
+    public async Task<PaginationResult<Book>> GetPaginatedBooksByGenreIdAsync (string listOfGenreId, int page, int pageSize)
     {
         GenresIdValidation(listOfGenreId);
         var genreIdCondition = GetGenreIdCondition(listOfGenreId);
@@ -80,7 +72,7 @@ public class BookService(
         return await GetBookPaginationResultAsync(page, pageSize, paginatedItems, genreIdCondition);
     }
 
-    public virtual async Task<IEnumerable<Book?>> GetBookByTitleOrAuthor (string titleOrAuthor)
+    public async Task<IEnumerable<Book?>> GetBookByTitleOrAuthor (string titleOrAuthor)
     {
         titleOrAuthor = titleOrAuthor.ToLower().Trim();
         Expression<Func<Book, bool>> condition = book =>
@@ -91,12 +83,23 @@ public class BookService(
         return books;
     }
 
-    public virtual async Task<Book> CreateAsync(Book book)
+    public async Task<Book> CreateAsync(Book book)
     {
         return await _uow.BookRepository.Create(book);
     }
 
-    public virtual async Task<BookDtoResponse?> UpdateBookAsync(int id, BookDtoRequest bookToUpdate)
+    public async Task<Book?> GetByIdAsync(int id)
+    {
+        return await _uow.BookRepository.GetByIdAsync(id);
+    }
+
+    public async Task Delete(Book bookToDelete)
+    {
+        await _uow.BookRepository.Delete(bookToDelete);
+        await _uow.CompleteAsync();
+    }
+
+    public async Task<BookDtoResponse?> UpdateBookAsync(int id, BookDtoRequest bookToUpdate)
     {
         var bookById = await _uow.BookRepository.GetByIdAsync(id);
         if (bookById == null) return null;
@@ -109,22 +112,6 @@ public class BookService(
         var book = await _uow.BookRepository.Update(bookById);
         return new BookDtoResponse (book, DateTime.UtcNow.ToString(_dateTimeFormat));
     }
-
-    // Most popular books are those with the biggest number of reviews with a rate >=3
-    /*private IEnumerable<Book>? GetMostPopularBooks(IEnumerable<Book> books, int numberOfBooks)
-    {
-        var mostPopularBooks = books
-            .Where(book => book.Opinions != null && book.Opinions.Any(opinion => opinion.Rate >= 3))
-            .OrderByDescending(book => book.Opinions != null ?
-                book.Opinions.Count(opinion => opinion.Rate >= 3)
-                : 0)
-            .ThenByDescending(book => book.Opinions != null ?
-                book.Opinions.Where(opinion => opinion.Rate >= 3).Average(opinion => opinion.Rate)
-                : null)
-            .Take(numberOfBooks).ToList();
-
-        return mostPopularBooks;
-    }*/
 
     private IQueryable<Book> ApplyOpinionSortingByCountAndByAverageRate(IQueryable<Book> query)
     {
@@ -184,16 +171,5 @@ public class BookService(
         if (totalItems == 0 ) return paginationUtility.GetEmptyResult();
         var result = paginationUtility.GetPaginationResult(paginatedItems, totalItems, page, pageSize);
         return result;
-    }
-
-    public async Task<Book?> GetByIdAsync(int id)
-    {
-       return await _uow.BookRepository.GetByIdAsync(id);
-    }
-
-    public async Task Delete(Book bookToDelete)
-    {
-       await _uow.BookRepository.Delete(bookToDelete);
-       await  _uow.CompleteAsync();
     }
 }
